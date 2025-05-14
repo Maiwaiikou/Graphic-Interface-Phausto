@@ -14,5 +14,5 @@ ToWidgetElementSkin >> installSkinEvent: anEvent [
 		elt border: (BlBorder paint: Color black width: 1).
 		elt background: (elt valueOfTokenNamed: #'widget-background').
 		elt geometry: (BlRoundedRectangleGeometry cornerRadius: 5).
-		elt barElement size: 300@20; background: Color palePeach; border: (BlBorder paint: Color black width: 1).]
+		elt barElement size: 300@20; background: (elt valueOfTokenNamed: #'bar-background'); border: (BlBorder paint: Color black width: 1).]
 ]

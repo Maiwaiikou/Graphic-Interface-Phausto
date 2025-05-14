@@ -2,9 +2,10 @@ Class {
 	#name : 'Connector',
 	#superclass : 'BlElement',
 	#instVars : [
-		'left',
-		'right',
-		'line'
+		'isLeftConnect',
+		'isRightConnect',
+		'line',
+		'connectTo'
 	],
 	#category : 'Phausto-Element',
 	#package : 'Phausto-Element'
@@ -12,23 +13,37 @@ Class {
 
 { #category : 'initialization' }
 Connector >> initialize [
+
 	super initialize.
+	isLeftConnect := false.
+	isRightConnect := false.
 	line := BlElement new.
 	self background: Color red.
 	self border: (BlBorder paint: Color black width: 2).
 	self layout: BlFrameLayout new.
 	self geometry: BlCircleGeometry new.
-	self border: (BlBorder paint: Color black width:1).
+	self border: (BlBorder paint: Color black width: 1)
 ]
 
-{ #category : 'initialization' }
-Connector >> left [
-	^ left
+{ #category : 'accessing' }
+Connector >> isLeftConnect [
+	^ isLeftConnect 
 ]
 
-{ #category : 'initialization' }
-Connector >> left: aConnector [
-	left := aConnector
+{ #category : 'accessing' }
+Connector >> isLeftConnect: aBoolean [
+	isLeftConnect := aBoolean.
+]
+
+{ #category : 'accessing' }
+Connector >> isRightConnect [
+
+	^ isRightConnect
+]
+
+{ #category : 'accessing' }
+Connector >> isRightConnect: aBoolean [
+	isRightConnect := aBoolean.
 ]
 
 { #category : 'initialization' }
@@ -39,14 +54,4 @@ Connector >> line [
 { #category : 'initialization' }
 Connector >> line: aPolyLine [
 	line := aPolyLine.
-]
-
-{ #category : 'initialization' }
-Connector >> right [
-	^ right
-]
-
-{ #category : 'initialization' }
-Connector >> right: aConnector [
-	right := aConnector
 ]

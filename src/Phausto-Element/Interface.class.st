@@ -29,12 +29,14 @@ Interface >> childrenElements: aCollectionOfElements [
 
 { #category : 'as yet unclassified' }
 Interface >> drawChildren [
-	childrenElements do: [ :elt | 
+
+	childrenElements do: [ :elt |
 		self addChild: elt.
 		(elt isKindOf: ToWidgetElement) ifTrue: [
-			self addChild: elt currentLine.
-			elt lines do: [ :line | self addChild: line. ]
-			]]
+			(elt leftConnect isKindOf: Connector) ifTrue: [
+				self addChild: elt leftConnect line ].
+			(elt rightConnect isKindOf: Connector) ifTrue: [
+				self addChild: elt rightConnect line ] ] ]
 ]
 
 { #category : 'as yet unclassified' }
@@ -46,11 +48,17 @@ Interface >> drawElement [
 
 { #category : 'initialization' }
 Interface >> initialize [
+
 	super initialize.
 	childrenElements := OrderedCollection new.
-	self size: 800@600.
+	self size: 800 @ 600.
 	menu := MenuElement withWidgets.
-	self drawElement.
+	self addEventHandlerOn: BlDropEvent do: [ :evt |
+		evt consumed: true.
+		(evt gestureSource isKindOf: Connector) ifTrue: [
+			evt gestureSource line: BlElement new.
+			self drawElement ] ].
+	self drawElement
 ]
 
 { #category : 'accessing' }

@@ -4,7 +4,9 @@ Class {
 	#instVars : [
 		'value',
 		'button',
-		'announcer'
+		'announcer',
+		'minValue',
+		'maxValue'
 	],
 	#category : 'Phausto-Sliders',
 	#package : 'Phausto-Sliders'
@@ -16,11 +18,24 @@ ToSliders >> announcer [
 ]
 
 { #category : 'as yet unclassified' }
-ToSliders >> checkBounds: pos [
+ToSliders >> checkBounds: aPosition [
 
-	((pos between: self position x and: self size x) and:
-		 pos ~= button position x) ifTrue: [ ^ true ].
+	| slidPosInSpace |
+	slidPosInSpace := self positionInSpace x.
+	(aPosition
+		 between: slidPosInSpace + 10
+		 and: slidPosInSpace + self size x - 10) ifTrue: [ ^ true ].
 	^ false
+]
+
+{ #category : 'as yet unclassified' }
+ToSliders >> checkMoveInBounds: aPosition [
+
+	aPosition < (self positionInSpace + button position x) and:
+		(aPosition isDivisibleBy: 2).
+	self haltOnce.
+	"(ifTrue: [ self decreaseValue ]
+		ifFalse: [ self increaseValue ])."
 ]
 
 { #category : 'accessing' }
@@ -37,8 +52,9 @@ ToSliders >> createCircle [
 
 { #category : 'evaluating' }
 ToSliders >> decreaseValue [
+	value > minValue ifFalse: [ ^ self ].
 	value := value - 1.
-	self notifyValueChange.
+	self notifyValueChange
 ]
 
 { #category : 'accessing' }
@@ -46,26 +62,26 @@ ToSliders >> drawButton [
 
 	| offset |
 	button := self createCircle.
-	"button constraintsDo: [ :c |
-		c frame horizontal alignLeft.
-		c frame vertical alignCenter ]."
+	button position: 50 @ 0.
 	button addEventHandlerOn: BlDragStartEvent do: [ :evt |
 		evt consumed: true.
-		offset := evt position - button position.].
+		self positionInSpace.
+		button positionInSpace.
+		offset := evt position - button position ].
 	button addEventHandlerOn: BlDragEvent do: [ :evt |
 		evt consumed: true.
-		(self checkBounds: evt localPosition x) ifTrue: [
-			evt localPosition x < button position x
-				ifTrue: [ self decreaseValue ]
-				ifFalse: [ self increaseValue ] ].
-		button position: (evt position - offset) x @ 0 ].
+		(self checkBounds: evt position x) ifTrue: [
+			self checkMoveInBounds: evt position x.
+			button position: (evt position - offset) x @ 0 ] ].
 	self addChild: button
 ]
 
 { #category : 'evaluating' }
 ToSliders >> increaseValue [
+
+	value < maxValue ifFalse: [ ^ self ].
 	value := value + 1.
-	self notifyValueChange.
+	self notifyValueChange
 ]
 
 { #category : 'initialization' }
@@ -73,7 +89,29 @@ ToSliders >> initialize [
 	super initialize.
 	self layout: BlBasicLayout new.
 	value := 0.
+	minValue := 0.
+	maxValue := 100.
 	self drawButton.
+]
+
+{ #category : 'accessing' }
+ToSliders >> maxValue [
+	^ maxValue
+]
+
+{ #category : 'accessing' }
+ToSliders >> maxValue: anInteger [
+	maxValue := anInteger.
+]
+
+{ #category : 'accessing' }
+ToSliders >> minValue [
+	^ minValue
+]
+
+{ #category : 'accessing' }
+ToSliders >> minValue: anInteger [
+	minValue := anInteger.
 ]
 
 { #category : 'instance creation' }

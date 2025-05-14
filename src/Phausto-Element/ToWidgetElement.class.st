@@ -10,7 +10,6 @@ Class {
 		'volumeValue',
 		'leftConnect',
 		'rightConnect',
-		'currentLine',
 		'lines',
 		'announcer'
 	],
@@ -38,17 +37,16 @@ ToWidgetElement class >> onlyWithRightConnector [
 
 { #category : 'as yet unclassified' }
 ToWidgetElement >> adjustLine: aPolyline [
-	|points line|
+
+	| points line |
 	points := OrderedCollection new.
 	points add: aPolyline geometry vertices first.
 	points add: aPolyline geometry vertices last.
-	currentLine := BlElement new.
 	line := BlElement new.
 	line geometry: (BlPolylineGeometry vertices: points).
 	line border: (BlBorder paint: Color black width: 1).
 	lines add: line.
-	self notifyDrawingLine.
-	
+	self notifyDrawingLine
 ]
 
 { #category : 'accessing' }
@@ -87,11 +85,6 @@ ToWidgetElement >> configuredVolumeSliders [
 	
 ]
 
-{ #category : 'accessing' }
-ToWidgetElement >> currentLine [
-	^ currentLine
-]
-
 { #category : 'drawing' }
 ToWidgetElement >> draw [
 	self removeChildren.
@@ -102,37 +95,36 @@ ToWidgetElement >> draw [
 ]
 
 { #category : 'drawing' }
-ToWidgetElement >> drawALine: points [
-	currentLine := BlElement new.
-	currentLine border: (BlBorder paint: Color black width: 1).
-	currentLine geometry: (BlPolylineGeometry vertices: points).
-	self notifyDrawingLine.
-	
+ToWidgetElement >> drawALine: points atConnector: aConnector [
+	|newline|
+	newline := BlElement new.
+	newline border: (BlBorder paint: Color black width: 2).
+	newline geometry: (BlPolylineGeometry vertices: points).
+	aConnector line: newline. 
+	self notifyDrawingLine
 ]
 
 { #category : 'drawing' }
 ToWidgetElement >> drawBar [
+
 	| offset |
 	barElement := BarElement new name: self name.
+	barElement border: (BlBorder paint: Color black width: 1).
 	barElement constraintsDo: [ :c |
 		c frame vertical alignTop.
-		c frame horizontal alignCenter.
-		 ].
+		c frame horizontal alignCenter ].
 	barElement closeButton newClickAction: [
 		self parent childrenElements remove: self.
-		self removeFromParent.
-		].
-	
+		self removeFromParent ].
+
 	barElement addEventHandlerOn: BlDragStartEvent do: [ :evt |
-		evt consumed:true.
-		offset := evt position - self position.
-		 ]. 
+		evt consumed: true.
+		offset := evt position - self position ].
 	barElement addEventHandlerOn: BlDragEvent do: [ :evt |
 		evt consumed: true.
-		self position: evt position - offset.
-		 ]. 
-	
-	self addChild: barElement.
+		self position: evt position - offset ].
+
+	self addChild: barElement
 ]
 
 { #category : 'drawing' }
@@ -149,55 +141,53 @@ ToWidgetElement >> drawLabelVolume [
 
 { #category : 'drawing' }
 ToWidgetElement >> drawLeftConnect [
-	leftConnect := Connector new.
+
+	leftConnect := Connector new isLeftConnect: true.
 	leftConnect constraintsDo: [ :c |
 		c frame horizontal alignLeft.
 		c frame vertical alignCenter.
-		c margin: (BlInsets all:-30) ].
-	self eventConnector: leftConnect.
+		c margin: (BlInsets all: -30) ].
+	self eventConnector: leftConnect
 ]
 
 { #category : 'drawing' }
 ToWidgetElement >> drawRightConnect [
-	rightConnect := Connector new.
+
+	rightConnect := Connector new isRightConnect: true.
 	rightConnect constraintsDo: [ :c |
 		c frame horizontal alignRight.
-		c frame vertical alignCenter].
-	rightConnect zIndex: 2.
-	rightConnect transformDo: [ :t | t translateBy: 30@0 ].
+		c frame vertical alignCenter ].
+	rightConnect transformDo: [ :t | t translateBy: 30 @ 0 ].
 	self eventConnector: rightConnect
 ]
 
 { #category : 'drawing' }
 ToWidgetElement >> eventConnector: aConnector [
-	|points|
-	aConnector addEventHandlerOn: BlDragStartEvent
-	 do: [ :evt | 
+
+	| points |
+	aConnector addEventHandlerOn: BlDragStartEvent do: [ :evt |
 		evt consumed: true.
-		points := OrderedCollection new.
-		aConnector line: currentLine.
-		].
+		points := OrderedCollection new.].
 	aConnector addEventHandlerOn: BlDragEvent do: [ :evt |
 		evt consumed: true.
-		points add: (evt position).
-		self drawALine: points.
-		 ].
+		points add: evt position.
+		self drawALine: points atConnector: aConnector ].
 	aConnector addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
-		self adjustLine: evt gestureSource line ].
+		self adjustLine: evt gestureSource line ]
 ]
 
 { #category : 'initialization' }
 ToWidgetElement >> initialize [
+
 	super initialize.
 	name := ''.
-	lines:= OrderedCollection new.
-	currentLine := BlElement new.
+	lines := OrderedCollection new.
 	self configuredVolumeSliders.
 	self layout: BlFrameLayout new.
 	self drawLeftConnect.
 	self drawRightConnect.
-	self draw.
+	self draw
 ]
 
 { #category : 'accessing' }
