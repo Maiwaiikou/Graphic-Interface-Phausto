@@ -33,9 +33,9 @@ Interface >> drawChildren [
 	childrenElements do: [ :elt |
 		self addChild: elt.
 		(elt isKindOf: ToWidgetElement) ifTrue: [
-			(elt leftConnect isKindOf: Connector) ifTrue: [
+			(elt isConnector: elt leftConnect) ifTrue: [
 				self addChild: elt leftConnect line ].
-			(elt rightConnect isKindOf: Connector) ifTrue: [
+			(elt isConnector: elt rightConnect) ifTrue: [
 				self addChild: elt rightConnect line ] ] ]
 ]
 

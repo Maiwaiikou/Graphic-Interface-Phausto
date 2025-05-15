@@ -36,16 +36,24 @@ ToWidgetElement class >> onlyWithRightConnector [
 ]
 
 { #category : 'as yet unclassified' }
-ToWidgetElement >> adjustLine: aPolyline [
+ToWidgetElement >> adjustLine: aConnector [
 
-	| points line |
+	| points line first last midX |
+	(aConnector line geometry isKindOf: BlPolylineGeometry) ifFalse: [
+		^ self ].
 	points := OrderedCollection new.
-	points add: aPolyline geometry vertices first.
-	points add: aPolyline geometry vertices last.
+	first := aConnector line geometry vertices first.
+	last := aConnector line geometry vertices last.
+	midX := aConnector middleX.
+	points add: first.
+	points add: midX @ first y.
+	points add: midX @ last y.
+	points add: last.
 	line := BlElement new.
 	line geometry: (BlPolylineGeometry vertices: points).
-	line border: (BlBorder paint: Color black width: 1).
-	lines add: line.
+	line outskirts: BlOutskirts centered.
+	line border: (BlBorder paint: Color black width: 2).
+	aConnector line: line.
 	self notifyDrawingLine
 ]
 
@@ -56,11 +64,11 @@ ToWidgetElement >> announcer [
 
 { #category : 'accessing' }
 ToWidgetElement >> atRandomPos [
-	|x y|
-	
-	x:= (1 to: 600) atRandom.
-	y:= (50 to: 600) atRandom.
-	self position: x@y.
+
+	| x y |
+	x := (1 to: 600) atRandom.
+	y := (50 to: 600) atRandom.
+	self position: x @ y.
 ]
 
 { #category : 'accessing' }
@@ -87,20 +95,24 @@ ToWidgetElement >> configuredVolumeSliders [
 
 { #category : 'drawing' }
 ToWidgetElement >> draw [
+
 	self removeChildren.
 	self drawBar.
 	self drawLabelVolume.
 	self addChild: leftConnect.
-	self addChild: rightConnect.
+	self addChild: rightConnect
 ]
 
 { #category : 'drawing' }
 ToWidgetElement >> drawALine: points atConnector: aConnector [
-	|newline|
+
+	| newline |
 	newline := BlElement new.
 	newline border: (BlBorder paint: Color black width: 2).
 	newline geometry: (BlPolylineGeometry vertices: points).
-	aConnector line: newline. 
+	newline zIndex: 2.
+	newline outskirts: BlOutskirts centered.
+	aConnector line: newline.
 	self notifyDrawingLine
 ]
 
@@ -147,7 +159,15 @@ ToWidgetElement >> drawLeftConnect [
 		c frame horizontal alignLeft.
 		c frame vertical alignCenter.
 		c margin: (BlInsets all: -30) ].
-	self eventConnector: leftConnect
+	leftConnect addEventHandlerOn: BlDropEvent do: [ :evt |
+		evt consumed: true.
+		evt gestureSource isRightConnect
+			ifTrue: [
+				self adjustLine: evt gestureSource.
+				leftConnect connect: evt gestureSource. ]
+			ifFalse: [
+				evt gestureSource line: BlElement new.
+				self notifyDrawingLine ] ]
 ]
 
 { #category : 'drawing' }
@@ -158,23 +178,14 @@ ToWidgetElement >> drawRightConnect [
 		c frame horizontal alignRight.
 		c frame vertical alignCenter ].
 	rightConnect transformDo: [ :t | t translateBy: 30 @ 0 ].
-	self eventConnector: rightConnect
-]
-
-{ #category : 'drawing' }
-ToWidgetElement >> eventConnector: aConnector [
-
-	| points |
-	aConnector addEventHandlerOn: BlDragStartEvent do: [ :evt |
+	rightConnect addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
-		points := OrderedCollection new.].
-	aConnector addEventHandlerOn: BlDragEvent do: [ :evt |
-		evt consumed: true.
-		points add: evt position.
-		self drawALine: points atConnector: aConnector ].
-	aConnector addEventHandlerOn: BlDropEvent do: [ :evt |
-		evt consumed: true.
-		self adjustLine: evt gestureSource line ]
+		evt gestureSource isLeftConnect
+			ifTrue: [ self adjustLine: evt gestureSource.
+				rightConnect connect: evt gestureSource. ]
+			ifFalse: [
+				evt gestureSource line: BlElement new.
+				self notifyDrawingLine ] ]
 ]
 
 { #category : 'initialization' }
@@ -187,7 +198,18 @@ ToWidgetElement >> initialize [
 	self layout: BlFrameLayout new.
 	self drawLeftConnect.
 	self drawRightConnect.
-	self draw
+	self draw.
+	self addEventHandlerOn: BlDropEvent do: [ :evt |
+		evt consumed: true.
+		(evt gestureSource isKindOf: Connector) ifTrue: [
+			evt gestureSource line: BlElement new.
+			self draw ] ].
+]
+
+{ #category : 'testing' }
+ToWidgetElement >> isConnector: anElement [
+	^ anElement class = Connector.
+	
 ]
 
 { #category : 'accessing' }
@@ -254,13 +276,6 @@ ToWidgetElement >> rightConnect [
 { #category : 'accessing' }
 ToWidgetElement >> rightConnect: anElement [
 	rightConnect := anElement.
-]
-
-{ #category : 'drawing' }
-ToWidgetElement >> switchConnectColor: aConnector [
-	(self valueOfTokenNamed: #'notConnect-background') = aConnector background
-	ifTrue: [ aConnector background: (self valueOfTokenNamed: #'connect-background') ]
-	ifFalse: [ aConnector background: (self valueOfTokenNamed: #'notConnect-background') ]
 ]
 
 { #category : 'accessing' }

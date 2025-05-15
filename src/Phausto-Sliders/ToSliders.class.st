@@ -31,11 +31,10 @@ ToSliders >> checkBounds: aPosition [
 { #category : 'as yet unclassified' }
 ToSliders >> checkMoveInBounds: aPosition [
 
-	aPosition < (self positionInSpace + button position x) and:
-		(aPosition isDivisibleBy: 2).
-	self haltOnce.
-	"(ifTrue: [ self decreaseValue ]
-		ifFalse: [ self increaseValue ])."
+	(aPosition < (self positionInSpace + button position x) and:
+		(aPosition isDivisibleBy: 2))
+	ifTrue: [ self decreaseValue ]
+		ifFalse: [ self increaseValue ].
 ]
 
 { #category : 'accessing' }
@@ -62,7 +61,6 @@ ToSliders >> drawButton [
 
 	| offset |
 	button := self createCircle.
-	button position: 50 @ 0.
 	button addEventHandlerOn: BlDragStartEvent do: [ :evt |
 		evt consumed: true.
 		self positionInSpace.
