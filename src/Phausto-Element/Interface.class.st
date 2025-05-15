@@ -5,7 +5,8 @@ Class {
 		'menu',
 		'childrenElements',
 		'micro',
-		'audio'
+		'audio',
+		'lines'
 	],
 	#category : 'Phausto-Element',
 	#package : 'Phausto-Element'
@@ -41,9 +42,14 @@ Interface >> drawChildren [
 
 { #category : 'as yet unclassified' }
 Interface >> drawElement [
+
 	self removeChildren.
 	self addChild: menu.
-	self drawChildren.
+	self addChild: micro.
+	self addChild: micro rightConnect line.
+	self addChild: audio.
+	self addChild: audio leftConnect line.
+	self drawChildren
 ]
 
 { #category : 'initialization' }
@@ -53,12 +59,38 @@ Interface >> initialize [
 	childrenElements := OrderedCollection new.
 	self size: 800 @ 600.
 	menu := MenuElement withWidgets.
+	self initializeMicro.
+	self initializeAudio.
 	self addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
 		(evt gestureSource isKindOf: Connector) ifTrue: [
 			evt gestureSource line: BlElement new.
 			self drawElement ] ].
 	self drawElement
+]
+
+{ #category : 'initialization' }
+Interface >> initializeAudio [
+
+	audio := ToWidgetWithIconElement withAudioIcon.
+	"TODO : Action audio"
+	audio announcer
+		when: LineCurrentlyDrawAnnouncer
+		send: #drawElement
+		to: self.
+	audio position: 400 @ 150
+]
+
+{ #category : 'initialization' }
+Interface >> initializeMicro [
+
+	micro := ToWidgetWithIconElement withMicroIcon.
+	"TODO : Action mic"
+	micro announcer
+		when: LineCurrentlyDrawAnnouncer
+		send: #drawElement
+		to: self.
+	micro position: 0 @ 150
 ]
 
 { #category : 'accessing' }
@@ -84,4 +116,13 @@ Interface >> open [
 	space toTheme: ToWidgetTheme new.
 	space root addChild: self.
 	space show
+]
+
+{ #category : 'initialization' }
+Interface >> resetElements [
+
+	micro resetToInit.
+	audio resetToInit.
+	childrenElements do: [ :elt |
+		(elt isKindOf: ToWidgetElement) ifTrue: [ elt resetToInit ] ]
 ]

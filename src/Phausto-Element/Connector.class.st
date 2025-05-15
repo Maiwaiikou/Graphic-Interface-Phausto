@@ -12,13 +12,33 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
+Connector >> calcMiddleWith: anInteger and: anotherInteger [
+	anInteger < anotherInteger
+		ifTrue: [ ^ anInteger + (anotherInteger - anInteger / 2) ]
+		ifFalse: [ ^ anotherInteger + (anInteger - anotherInteger / 2) ]
+	
+]
+
+{ #category : 'initialization' }
+Connector >> checkBeforeDisconnect [
+
+	self connectTo ifNotNil: [
+		self isRightConnect
+			ifTrue: [ self disconnect: connectTo leftConnect ]
+			ifFalse: [
+				self disconnect: connectTo rightConnect ] ]
+]
+
+{ #category : 'as yet unclassified' }
 Connector >> connect: aConnector [
 
+	{
+		self.
+		aConnector } do: [ :c |
+		c checkBeforeDisconnect.
+		c switchColor ].
 	self connectTo: aConnector parent.
-	aConnector connectTo: self parent.
-	self switchColor.
-	aConnector switchColor.
-	aConnector line: self line
+	aConnector connectTo: self parent
 ]
 
 { #category : 'accessing' }
@@ -30,6 +50,18 @@ Connector >> connectTo [
 Connector >> connectTo: aWidget [
 
 	connectTo := aWidget
+]
+
+{ #category : 'as yet unclassified' }
+Connector >> disconnect: aConnector [
+
+	connectTo ifNil: [ ^ self ].
+	aConnector background: Color red.
+	aConnector connectTo: nil.
+	"aConnector line geometry = BlPolylineGeometry
+		ifTrue: [ aConnector line: BlElement new ]
+		ifFalse: [ line := BlElement new ]."
+	connectTo := nil
 ]
 
 { #category : 'initialization' }
@@ -45,7 +77,7 @@ Connector >> initialize [
 	self layout: BlFrameLayout new.
 	self geometry: BlCircleGeometry new.
 	self border: (BlBorder paint: Color black width: 1).
-	self initializeDrag.
+	self initializeDrag
 ]
 
 { #category : 'as yet unclassified' }
@@ -54,7 +86,7 @@ Connector >> initializeDrag [
 	| points |
 	self addEventHandlerOn: BlDragStartEvent do: [ :evt |
 		evt consumed: true.
-		self resetInitBackgroundColor.
+		self resetInit.
 		points := OrderedCollection new ].
 	self addEventHandlerOn: BlDragEvent do: [ :evt |
 		evt consumed: true.
@@ -86,6 +118,12 @@ Connector >> isRightConnect: aBoolean [
 	isRightConnect := aBoolean.
 ]
 
+{ #category : 'testing' }
+Connector >> isUsefulSwitchColor [
+
+	^ self background paint color ~= Color green
+]
+
 { #category : 'initialization' }
 Connector >> line [
 	^line
@@ -96,22 +134,11 @@ Connector >> line: aPolyLine [
 	line := aPolyLine.
 ]
 
-{ #category : 'as yet unclassified' }
-Connector >> middleX [
-
-	| first last |
-	first := line geometry vertices first x.
-	last := line geometry vertices last x.
-	first < last
-		ifTrue: [ ^ first + (last - first/2) ]
-		ifFalse: [ ^ last + (first - last/2) ]
-]
-
 { #category : 'initialization' }
-Connector >> resetInitBackgroundColor [
+Connector >> resetInit [
 
 	self background: Color red.
-	self connectTo ifNotNil: [ self isRightConnect ifTrue: [ connectTo leftConnect background: Color red ] ifFalse: [connectTo rightConnect background: Color red]].
+	
 ]
 
 { #category : 'blinking' }
@@ -120,4 +147,23 @@ Connector >> switchColor [
 		self background: Color lightGreen.
 		^ self ].
 	self background: Color red
+]
+
+{ #category : 'as yet unclassified' }
+Connector >> updateLine [
+
+	| newLine points first last midX |
+	(line geometry isKindOf: BlPolylineGeometry) ifFalse: [ ^ self ].
+	points := OrderedCollection new.
+	first := self positionInSpace.
+	last := isRightConnect
+		        ifTrue: [ connectTo leftConnect positionInSpace ]
+		        ifFalse: [ connectTo rightConnect positionInSpace ].
+
+	midX := self calcMiddleWith: first x and: last x.
+	points add: first.
+	points add: midX @ first y.
+	points add: midX @ last y.
+	points add: last.
+	line geometry: (BlPolylineGeometry vertices: points).
 ]

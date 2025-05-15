@@ -27,16 +27,20 @@ MenuElement >> createFileMenu [
 
 { #category : 'as yet unclassified' }
 MenuElement >> createSettingMenu [
-	|menu items elt|
+
+	| menu items elt |
 	menu := ToMenu new labelText: 'Settings'.
-	items := { 'Contact support'.}.
-	items do: [ :i | 
-		elt := ToMenuItem new labelText:i.
+	items := { 'Contact support' }.
+	items do: [ :i |
+		elt := ToMenuItem new labelText: i.
 		menu addItem: elt ].
 	elt := ToMenuItem new labelText: 'Clear'.
-	elt addEventHandlerOn: BlClickEvent do: [ self parent childrenElements removeAll. self parent drawElement. ].
+	elt addEventHandlerOn: BlClickEvent do: [
+		self parent resetElements.
+		self parent childrenElements removeAll.
+		self parent drawElement ].
 	menu addItem: elt.
-	self addChild: menu.
+	self addChild: menu
 ]
 
 { #category : 'as yet unclassified' }

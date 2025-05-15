@@ -23,6 +23,7 @@ ToWidgetElement class >> onlyWithLeftConnector [
 	widget := self new.
 	widget rightConnect: BlElement new.
 	widget rightConnect background: BlBackground transparent; border: BlBorder empty.
+	widget draw.
 	^ widget
 ]
 
@@ -32,6 +33,7 @@ ToWidgetElement class >> onlyWithRightConnector [
 	widget := self new.
 	widget leftConnect: BlElement new.
 	widget leftConnect background: BlBackground transparent; border: BlBorder empty.
+	widget draw.
 	^ widget
 ]
 
@@ -44,7 +46,7 @@ ToWidgetElement >> adjustLine: aConnector [
 	points := OrderedCollection new.
 	first := aConnector line geometry vertices first.
 	last := aConnector line geometry vertices last.
-	midX := aConnector middleX.
+	midX := aConnector calcMiddleWith: first x and: last x.
 	points add: first.
 	points add: midX @ first y.
 	points add: midX @ last y.
@@ -126,6 +128,9 @@ ToWidgetElement >> drawBar [
 		c frame vertical alignTop.
 		c frame horizontal alignCenter ].
 	barElement closeButton newClickAction: [
+		(self isConnector: leftConnect) ifTrue: [ leftConnect checkBeforeDisconnect ].
+		(self isConnector: rightConnect) ifTrue: [ rightConnect checkBeforeDisconnect ].
+		self resetToInit.
 		self parent childrenElements remove: self.
 		self removeFromParent ].
 
@@ -134,7 +139,12 @@ ToWidgetElement >> drawBar [
 		offset := evt position - self position ].
 	barElement addEventHandlerOn: BlDragEvent do: [ :evt |
 		evt consumed: true.
-		self position: evt position - offset ].
+		self position: evt position - offset
+		"(self isConnector:leftConnect) ifTrue: [ leftConnect updateLine. self notifyDrawingLine ].
+		(self isConnector:rightConnect) ifTrue: [ rightConnect updateLine. self notifyDrawingLine ]." ].
+	barElement
+		addEventHandlerOn: BlDragEndEvent
+		do: [ :evt | evt consumed: true ].
 
 	self addChild: barElement
 ]
@@ -164,10 +174,10 @@ ToWidgetElement >> drawLeftConnect [
 		evt gestureSource isRightConnect
 			ifTrue: [
 				self adjustLine: evt gestureSource.
-				leftConnect connect: evt gestureSource. ]
+				leftConnect connect: evt gestureSource ]
 			ifFalse: [
 				evt gestureSource line: BlElement new.
-				self notifyDrawingLine ] ]
+				self notifyDrawingLine] ]
 ]
 
 { #category : 'drawing' }
@@ -203,7 +213,7 @@ ToWidgetElement >> initialize [
 		evt consumed: true.
 		(evt gestureSource isKindOf: Connector) ifTrue: [
 			evt gestureSource line: BlElement new.
-			self draw ] ].
+			self draw ] ]
 ]
 
 { #category : 'testing' }
@@ -266,6 +276,19 @@ ToWidgetElement >> phaustoSound [
 { #category : 'accessing' }
 ToWidgetElement >> phaustoSound: aPhaustoSound [
 	phaustoSound := aPhaustoSound stereo asDsp.
+]
+
+{ #category : 'initialization' }
+ToWidgetElement >> resetToInit [
+
+	volumeSliders position: 0 @ 0.
+	volumeSliders value: 0.
+	(self isConnector: leftConnect) ifTrue: [
+		leftConnect line: BlElement new.
+		leftConnect resetInit ].
+	(self isConnector: rightConnect) ifTrue: [
+		rightConnect line: BlElement new.
+		rightConnect resetInit ]
 ]
 
 { #category : 'accessing' }
