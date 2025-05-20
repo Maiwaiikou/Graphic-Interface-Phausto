@@ -43,12 +43,13 @@ BarElement >> drawLabelName [
 
 { #category : 'initialization' }
 BarElement >> initialize [
+
 	super initialize.
 	self horizontal: true.
 	self layout: BlFrameLayout new.
 	name := ''.
 	self drawCloseButton.
-	self drawLabelName.
+	self drawLabelName
 ]
 
 { #category : 'accessing' }

@@ -10,7 +10,13 @@ Class {
 
 { #category : 'as yet unclassified' }
 MenuElement class >> withWidgets [
-	^ self new menuItem: { (ToWidgetElement new name: 'Sine Oscillator' ). (ToWidgetElement new name: 'Saw Oscillator'). (ToWidgetElement onlyWithLeftConnector name: 'Tester')}
+
+	^ self new menuItem: {
+			  (ToWidgetElement new
+				   name: 'Sine Oscillator';
+				   slidersDic: { ('Freq' -> ToSliders new) . ('Something else' -> ToSliders new) } asDictionary).
+			  (ToWidgetElement new name: 'Saw Oscillator').
+			  (ToWidgetElement onlyWithLeftConnector name: 'Tester') }
 ]
 
 { #category : 'as yet unclassified' }

@@ -4,6 +4,7 @@ Class {
 	#instVars : [
 		'barElement',
 		'name',
+		'slidersDic',
 		'phaustoSound',
 		'labelVolume',
 		'volumeSliders',
@@ -100,7 +101,8 @@ ToWidgetElement >> draw [
 
 	self removeChildren.
 	self drawBar.
-	self drawLabelVolume.
+	"self drawLabelVolume."
+	self drawLabel.
 	self addChild: leftConnect.
 	self addChild: rightConnect
 ]
@@ -150,15 +152,33 @@ ToWidgetElement >> drawBar [
 ]
 
 { #category : 'drawing' }
+ToWidgetElement >> drawLabel [
+
+	| label key dicSize |
+	dicSize := slidersDic size.
+	1 to: dicSize do: [ :i |
+		key := slidersDic keys at: i.
+		label := BlTextElement new.
+		label text:
+			(key , ' : ' , (slidersDic at: key) value asString) asRopedText.
+		label constraintsDo: [ :c |
+			c frame horizontal alignCenter.
+			c margin: (BlInsets all: 30 * dicSize / (dicSize - i + 1)) ].
+		self addChild: label.
+		self drawSlider: (slidersDic at: key) ]
+]
+
+{ #category : 'drawing' }
 ToWidgetElement >> drawLabelVolume [
+
 	labelVolume := BlTextElement new.
-	labelVolume text: ('Volume :', volumeSliders value asString) asRopedText.
+	labelVolume text:
+		('Volume :' , volumeSliders value asString) asRopedText.
 	labelVolume constraintsDo: [ :c |
 		c frame horizontal alignCenter.
-		c margin: (BlInsets all:25)].
+		c margin: (BlInsets all: 25) ].
 	self addChild: labelVolume.
-	self addChild: volumeSliders.
-	
+	self addChild: volumeSliders
 ]
 
 { #category : 'drawing' }
@@ -198,12 +218,26 @@ ToWidgetElement >> drawRightConnect [
 				self notifyDrawingLine ] ]
 ]
 
+{ #category : 'accessing' }
+ToWidgetElement >> drawSlider: aSlider [
+
+	| dicSize index |
+	dicSize := slidersDic size.
+	index := self sliderIndex: aSlider.
+	aSlider announcer when: AnnouncerValueChange send: #draw to: self.
+	aSlider constraintsDo: [ :c |
+		c frame horizontal alignCenter.
+		c margin: (BlInsets all: 40 * dicSize / (dicSize - index + 1)) ].
+	self addChild: aSlider
+]
+
 { #category : 'initialization' }
 ToWidgetElement >> initialize [
 
 	super initialize.
 	name := ''.
 	lines := OrderedCollection new.
+	slidersDic := Dictionary new.
 	self configuredVolumeSliders.
 	self layout: BlFrameLayout new.
 	self drawLeftConnect.
@@ -299,6 +333,29 @@ ToWidgetElement >> rightConnect [
 { #category : 'accessing' }
 ToWidgetElement >> rightConnect: anElement [
 	rightConnect := anElement.
+]
+
+{ #category : 'as yet unclassified' }
+ToWidgetElement >> sliderIndex: aSlider [
+
+	| key |
+	1 to: slidersDic size do: [ :i |
+		key := slidersDic keys at: i.
+		((slidersDic at: key) = aSlider) ifTrue: [ ^ i ] ].
+	^ 0
+]
+
+{ #category : 'accessing' }
+ToWidgetElement >> slidersDic [
+
+	^ slidersDic
+]
+
+{ #category : 'accessing' }
+ToWidgetElement >> slidersDic: aDictionaryOfSlidersWithLabelKey [
+
+	slidersDic := aDictionaryOfSlidersWithLabelKey.
+	self draw.
 ]
 
 { #category : 'accessing' }
