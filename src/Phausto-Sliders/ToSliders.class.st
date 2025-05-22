@@ -6,11 +6,24 @@ Class {
 		'button',
 		'announcer',
 		'minValue',
-		'maxValue'
+		'maxValue',
+		'step'
 	],
 	#category : 'Phausto-Sliders',
 	#package : 'Phausto-Sliders'
 }
+
+{ #category : 'as yet unclassified' }
+ToSliders class >> withAPhControlParam: aPhControlParam [
+
+	| slider |
+	slider := self new
+		          value: aPhControlParam initialValue;
+		          maxValue: aPhControlParam max;
+		          minValue: aPhControlParam value;
+					 step: aPhControlParam step.
+	^ slider
+]
 
 { #category : 'accessing' }
 ToSliders >> announcer [
@@ -51,8 +64,9 @@ ToSliders >> createCircle [
 
 { #category : 'evaluating' }
 ToSliders >> decreaseValue [
+
 	value > minValue ifFalse: [ ^ self ].
-	value := value - 1.
+	value := value - step.
 	self notifyValueChange
 ]
 
@@ -78,18 +92,20 @@ ToSliders >> drawButton [
 ToSliders >> increaseValue [
 
 	value < maxValue ifFalse: [ ^ self ].
-	value := value + 1.
+	value := value + step.
 	self notifyValueChange
 ]
 
 { #category : 'initialization' }
 ToSliders >> initialize [
+
 	super initialize.
 	self layout: BlBasicLayout new.
 	value := 0.
+	step := 1.
 	minValue := 0.
 	maxValue := 100.
-	self drawButton.
+	self drawButton
 ]
 
 { #category : 'accessing' }
@@ -120,6 +136,17 @@ ToSliders >> newRawSkin [
 { #category : 'as yet unclassified' }
 ToSliders >> notifyValueChange [
 	^ self announcer announce: AnnouncerValueChange new.
+]
+
+{ #category : 'accessing' }
+ToSliders >> step [
+	^ step
+]
+
+{ #category : 'accessing' }
+ToSliders >> step: AnIntegerOrFloat [
+
+	step := step
 ]
 
 { #category : 'evaluating' }
