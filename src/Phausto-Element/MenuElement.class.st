@@ -4,8 +4,9 @@ Class {
 	#instVars : [
 		'menuItem'
 	],
-	#category : 'Phausto-Element',
-	#package : 'Phausto-Element'
+	#category : 'Phausto-Element-Menu',
+	#package : 'Phausto-Element',
+	#tag : 'Menu'
 }
 
 { #category : 'as yet unclassified' }

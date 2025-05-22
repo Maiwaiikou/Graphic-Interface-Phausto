@@ -4,8 +4,9 @@ Class {
 	#instVars : [
 		'widget'
 	],
-	#category : 'Phausto-Element',
-	#package : 'Phausto-Element'
+	#category : 'Phausto-Element-Menu',
+	#package : 'Phausto-Element',
+	#tag : 'Menu'
 }
 
 { #category : 'initialization' }

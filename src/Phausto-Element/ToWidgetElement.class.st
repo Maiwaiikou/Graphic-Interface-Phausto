@@ -14,8 +14,9 @@ Class {
 		'lines',
 		'announcer'
 	],
-	#category : 'Phausto-Element',
-	#package : 'Phausto-Element'
+	#category : 'Phausto-Element-Widget',
+	#package : 'Phausto-Element',
+	#tag : 'Widget'
 }
 
 { #category : 'as yet unclassified' }
@@ -143,12 +144,16 @@ ToWidgetElement >> drawBar [
 		offset := evt position - self position ].
 	barElement addEventHandlerOn: BlDragEvent do: [ :evt |
 		evt consumed: true.
-		self position: evt position - offset
-		"(self isConnector:leftConnect) ifTrue: [ leftConnect updateLine. self notifyDrawingLine ].
-		(self isConnector:rightConnect) ifTrue: [ rightConnect updateLine. self notifyDrawingLine ]." ].
-	barElement
-		addEventHandlerOn: BlDragEndEvent
-		do: [ :evt | evt consumed: true ].
+		self position: evt position - offset ].
+	barElement addEventHandlerOn: BlDragEndEvent do: [ :evt |
+		evt consumed: true.
+		(self isConnector: inputConnect) ifTrue: [
+			(inputConnect connectorWhichHaveLine:
+				 inputConnect connectorConnected) updateLine ].
+		(self isConnector: outputConnect) ifTrue: [
+			(outputConnect connectorWhichHaveLine:
+				 outputConnect connectorConnected) updateLine ].
+		self notifyDrawingLine ].
 
 	self addChild: barElement
 ]
@@ -334,12 +339,9 @@ ToWidgetElement >> resetToInit [
 
 	volumeSliders position: 0 @ 0.
 	volumeSliders value: 0.
-	(self isConnector: inputConnect) ifTrue: [
-		inputConnect line: BlElement new.
-		inputConnect resetInit ].
-	(self isConnector: outputConnect) ifTrue: [
-		outputConnect line: BlElement new.
-		outputConnect resetInit ]
+	(self isConnector: inputConnect) ifTrue: [ inputConnect resetInit ].
+	(self isConnector: outputConnect) ifTrue: [ outputConnect resetInit ].
+	self notifyDrawingLine.
 ]
 
 { #category : 'as yet unclassified' }

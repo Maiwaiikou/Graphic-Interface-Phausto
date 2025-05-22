@@ -10,6 +10,13 @@ Class {
 }
 
 { #category : 'code-critics' }
+ManifestPhaustoElement class >> ruleReGuardClauseRuleV1FalsePositive [
+
+	<ignoreForCoverage>
+	^ #(#(#(#RGMethodDefinition #(#ToWidgetElement #resetToInit #false)) #'2025-05-22T10:36:14.244194+02:00') )
+]
+
+{ #category : 'code-critics' }
 ManifestPhaustoElement class >> ruleStringConcatenationRuleV1FalsePositive [
 
 	<ignoreForCoverage>

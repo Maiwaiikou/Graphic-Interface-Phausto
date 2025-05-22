@@ -7,8 +7,9 @@ Class {
 		'line',
 		'connectTo'
 	],
-	#category : 'Phausto-Element',
-	#package : 'Phausto-Element'
+	#category : 'Phausto-Element-Widget',
+	#package : 'Phausto-Element',
+	#tag : 'Widget'
 }
 
 { #category : 'as yet unclassified' }
@@ -22,23 +23,16 @@ Connector >> calcMiddleWith: anInteger and: anotherInteger [
 { #category : 'initialization' }
 Connector >> checkBeforeDisconnect [
 
-	self connectTo ifNotNil: [
-		self isOutputConnect
-			ifTrue: [ self disconnect: connectTo inputConnect ]
-			ifFalse: [
-				self disconnect: connectTo outputConnect ] ]
+	self connectTo ifNotNil: [ self disconnect ]
 ]
 
 { #category : 'as yet unclassified' }
 Connector >> connect: aConnector [
 
-	{
-		self.
-		aConnector } do: [ :c |
-		c checkBeforeDisconnect.
-		c switchColor ].
+	self checkBeforeDisconnect.
+	aConnector checkBeforeDisconnect.
 	self connectTo: aConnector parent.
-	aConnector connectTo: self parent
+	aConnector connectTo: self parent.
 ]
 
 { #category : 'accessing' }
@@ -53,14 +47,30 @@ Connector >> connectTo: aWidget [
 ]
 
 { #category : 'as yet unclassified' }
-Connector >> disconnect: aConnector [
+Connector >> connectorConnected [
+	"Get the correct connector base on if this connector is an output or input"
 
 	connectTo ifNil: [ ^ self ].
-	aConnector background: Color red.
+	self isOutputConnect
+		ifTrue: [ ^ connectTo inputConnect ]
+		ifFalse: [ ^ connectTo outputConnect ]
+]
+
+{ #category : 'as yet unclassified' }
+Connector >> connectorWhichHaveLine: aConnector [
+
+	aConnector line geometry class = BlPolylineGeometry
+		ifTrue: [ ^ aConnector ]
+		ifFalse: [ ^ self ].
+]
+
+{ #category : 'as yet unclassified' }
+Connector >> disconnect [
+
+	| aConnector |
+	aConnector := self connectorConnected.
+	(self connectorWhichHaveLine: aConnector) line: BlElement new.
 	aConnector connectTo: nil.
-	"aConnector line geometry = BlPolylineGeometry
-		ifTrue: [ aConnector line: BlElement new ]
-		ifFalse: [ line := BlElement new ]."
 	connectTo := nil
 ]
 
@@ -85,7 +95,6 @@ Connector >> initializeDrag [
 	| points |
 	self addEventHandlerOn: BlDragStartEvent do: [ :evt |
 		evt consumed: true.
-		self resetInit.
 		points := OrderedCollection new ].
 	self addEventHandlerOn: BlDragEvent do: [ :evt |
 		evt consumed: true.
@@ -120,12 +129,6 @@ Connector >> isOutputConnect: aBoolean [
 	isOutputConnect := aBoolean
 ]
 
-{ #category : 'testing' }
-Connector >> isUsefulSwitchColor [
-
-	^ self background paint color ~= Color green
-]
-
 { #category : 'initialization' }
 Connector >> line [
 	^line
@@ -139,16 +142,8 @@ Connector >> line: aPolyLine [
 { #category : 'initialization' }
 Connector >> resetInit [
 
-	self background: Color red.
-	
-]
-
-{ #category : 'blinking' }
-Connector >> switchColor [
-	self background paint color= Color red ifTrue: [
-		self background: Color lightGreen.
-		^ self ].
-	self background: Color red
+	line := BlElement new.
+	self checkBeforeDisconnect.
 ]
 
 { #category : 'as yet unclassified' }
@@ -158,9 +153,7 @@ Connector >> updateLine [
 	line geometry class = BlPolylineGeometry ifFalse: [ ^ self ].
 	points := OrderedCollection new.
 	first := self positionInSpace.
-	last := isOutputConnect
-		        ifTrue: [ connectTo inputConnect positionInSpace ]
-		        ifFalse: [ connectTo outputConnect positionInSpace ].
+	last := self connectorConnected positionInSpace.
 
 	midX := self calcMiddleWith: first x and: last x.
 	points add: first.
