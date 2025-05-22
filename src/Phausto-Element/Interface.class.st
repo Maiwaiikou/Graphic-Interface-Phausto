@@ -33,11 +33,10 @@ Interface >> drawChildren [
 
 	childrenElements do: [ :elt |
 		self addChild: elt.
-		(elt isKindOf: ToWidgetElement) ifTrue: [
-			(elt isConnector: elt leftConnect) ifTrue: [
-				self addChild: elt leftConnect line ].
-			(elt isConnector: elt rightConnect) ifTrue: [
-				self addChild: elt rightConnect line ] ] ]
+			(elt isConnector: elt inputConnect ) ifTrue: [
+				self addChild: elt inputConnect line ].
+			(elt isConnector: elt outputConnect) ifTrue: [
+				self addChild: elt outputConnect line ] ].
 ]
 
 { #category : 'as yet unclassified' }
@@ -46,9 +45,9 @@ Interface >> drawElement [
 	self removeChildren.
 	self addChild: menu.
 	self addChild: micro.
-	self addChild: micro rightConnect line.
+	self addChild: micro outputConnect line.
 	self addChild: audio.
-	self addChild: audio leftConnect line.
+	self addChild: audio inputConnect line.
 	self drawChildren
 ]
 

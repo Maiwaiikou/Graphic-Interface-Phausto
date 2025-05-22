@@ -12,7 +12,7 @@ Class {
 ToWidgetWithIconElement class >> withAudioIcon [
 
 	| widget |
-	widget := self onlyWithLeftConnector.
+	widget := self onlyWithInputConnector.
 	widget initializeNewIconFromURL:
 		'https://cdn-icons-png.flaticon.com/128/6996/6996058.png'.
 	widget icon constraintsDo: [ :c | c frame horizontal alignRight ].
@@ -22,7 +22,7 @@ ToWidgetWithIconElement class >> withAudioIcon [
 { #category : 'as yet unclassified' }
 ToWidgetWithIconElement class >> withMicroIcon [
 	|widget|
-	widget := self onlyWithRightConnector.
+	widget := self onlyWithOutputConnector.
 	widget initializeNewIconFromURL: 'https://cdn-icons-png.flaticon.com/128/25/25682.png'.
 	widget icon constraintsDo: [ :c |
 		c frame horizontal alignLeft ].
@@ -32,8 +32,8 @@ ToWidgetWithIconElement class >> withMicroIcon [
 { #category : 'drawing' }
 ToWidgetWithIconElement >> draw [
 	self removeChildren.
-	self addChild: leftConnect.
-	self addChild: rightConnect.
+	self addChild: inputConnect.
+	self addChild: outputConnect.
 	self drawIcon.
 ]
 

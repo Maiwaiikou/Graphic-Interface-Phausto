@@ -16,7 +16,7 @@ MenuElement class >> withWidgets [
 				   name: 'Sine Oscillator';
 				   slidersDic: { ('Freq' -> ToSliders new) . ('Something else' -> ToSliders new) } asDictionary).
 			  (ToWidgetElement new name: 'Saw Oscillator').
-			  (ToWidgetElement onlyWithLeftConnector name: 'Tester') }
+			  (ToWidgetElement onlyWithInputConnector name: 'Tester') }
 ]
 
 { #category : 'as yet unclassified' }

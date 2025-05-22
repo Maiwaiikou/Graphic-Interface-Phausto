@@ -9,8 +9,8 @@ Class {
 		'labelVolume',
 		'volumeSliders',
 		'volumeValue',
-		'leftConnect',
-		'rightConnect',
+		'inputConnect',
+		'outputConnect',
 		'lines',
 		'announcer'
 	],
@@ -19,21 +19,27 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-ToWidgetElement class >> onlyWithLeftConnector [
-	|widget|
+ToWidgetElement class >> onlyWithInputConnector [
+
+	| widget |
 	widget := self new.
-	widget rightConnect: BlElement new.
-	widget rightConnect background: BlBackground transparent; border: BlBorder empty.
+	widget outputConnect: BlElement new.
+	widget outputConnect
+		background: BlBackground transparent;
+		border: BlBorder empty.
 	widget draw.
 	^ widget
 ]
 
 { #category : 'as yet unclassified' }
-ToWidgetElement class >> onlyWithRightConnector [
-	|widget|
+ToWidgetElement class >> onlyWithOutputConnector [
+
+	| widget |
 	widget := self new.
-	widget leftConnect: BlElement new.
-	widget leftConnect background: BlBackground transparent; border: BlBorder empty.
+	widget inputConnect: BlElement new.
+	widget inputConnect
+		background: BlBackground transparent;
+		border: BlBorder empty.
 	widget draw.
 	^ widget
 ]
@@ -103,8 +109,8 @@ ToWidgetElement >> draw [
 	self drawBar.
 	"self drawLabelVolume."
 	self drawLabel.
-	self addChild: leftConnect.
-	self addChild: rightConnect
+	self addChild: inputConnect.
+	self addChild: outputConnect.
 ]
 
 { #category : 'drawing' }
@@ -130,8 +136,10 @@ ToWidgetElement >> drawBar [
 		c frame vertical alignTop.
 		c frame horizontal alignCenter ].
 	barElement closeButton newClickAction: [
-		(self isConnector: leftConnect) ifTrue: [ leftConnect checkBeforeDisconnect ].
-		(self isConnector: rightConnect) ifTrue: [ rightConnect checkBeforeDisconnect ].
+		(self isConnector: inputConnect) ifTrue: [
+			inputConnect checkBeforeDisconnect ].
+		(self isConnector: outputConnect) ifTrue: [
+			outputConnect checkBeforeDisconnect ].
 		self resetToInit.
 		self parent childrenElements remove: self.
 		self removeFromParent ].
@@ -184,35 +192,36 @@ ToWidgetElement >> drawLabelVolume [
 { #category : 'drawing' }
 ToWidgetElement >> drawLeftConnect [
 
-	leftConnect := Connector new isLeftConnect: true.
-	leftConnect constraintsDo: [ :c |
+	inputConnect := Connector new isLeftConnect: true.
+	inputConnect constraintsDo: [ :c |
 		c frame horizontal alignLeft.
 		c frame vertical alignCenter.
 		c margin: (BlInsets all: -30) ].
-	leftConnect addEventHandlerOn: BlDropEvent do: [ :evt |
+	inputConnect addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
 		evt gestureSource isRightConnect
 			ifTrue: [
 				self adjustLine: evt gestureSource.
-				leftConnect connect: evt gestureSource ]
+				inputConnect connect: evt gestureSource ]
 			ifFalse: [
 				evt gestureSource line: BlElement new.
-				self notifyDrawingLine] ]
+				self notifyDrawingLine ] ]
 ]
 
 { #category : 'drawing' }
 ToWidgetElement >> drawRightConnect [
 
-	rightConnect := Connector new isRightConnect: true.
-	rightConnect constraintsDo: [ :c |
+	outputConnect := Connector new isRightConnect: true.
+	outputConnect constraintsDo: [ :c |
 		c frame horizontal alignRight.
 		c frame vertical alignCenter ].
-	rightConnect transformDo: [ :t | t translateBy: 30 @ 0 ].
-	rightConnect addEventHandlerOn: BlDropEvent do: [ :evt |
+	outputConnect transformDo: [ :t | t translateBy: 30 @ 0 ].
+	outputConnect addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
 		evt gestureSource isLeftConnect
-			ifTrue: [ self adjustLine: evt gestureSource.
-				rightConnect connect: evt gestureSource. ]
+			ifTrue: [
+				self adjustLine: evt gestureSource.
+				outputConnect connect: evt gestureSource ]
 			ifFalse: [
 				evt gestureSource line: BlElement new.
 				self notifyDrawingLine ] ]
@@ -250,6 +259,18 @@ ToWidgetElement >> initialize [
 			self draw ] ]
 ]
 
+{ #category : 'accessing' }
+ToWidgetElement >> inputConnect [
+
+	^ inputConnect
+]
+
+{ #category : 'accessing' }
+ToWidgetElement >> inputConnect: aConnector [
+
+	inputConnect := aConnector
+]
+
 { #category : 'testing' }
 ToWidgetElement >> isConnector: anElement [
 	^ anElement class = Connector.
@@ -259,16 +280,6 @@ ToWidgetElement >> isConnector: anElement [
 { #category : 'accessing' }
 ToWidgetElement >> labelVolume [
 	^ labelVolume 
-]
-
-{ #category : 'accessing' }
-ToWidgetElement >> leftConnect [
-	^  leftConnect
-]
-
-{ #category : 'accessing' }
-ToWidgetElement >> leftConnect: anElement [
-	leftConnect := anElement.
 ]
 
 { #category : 'accessing' }
@@ -303,6 +314,18 @@ ToWidgetElement >> notifyDrawingLine [
 ]
 
 { #category : 'accessing' }
+ToWidgetElement >> outputConnect [
+
+	^ outputConnect
+]
+
+{ #category : 'accessing' }
+ToWidgetElement >> outputConnect: aConnector [
+
+	outputConnect := aConnector
+]
+
+{ #category : 'accessing' }
 ToWidgetElement >> phaustoSound [
 	^ phaustoSound
 ]
@@ -317,22 +340,12 @@ ToWidgetElement >> resetToInit [
 
 	volumeSliders position: 0 @ 0.
 	volumeSliders value: 0.
-	(self isConnector: leftConnect) ifTrue: [
-		leftConnect line: BlElement new.
-		leftConnect resetInit ].
-	(self isConnector: rightConnect) ifTrue: [
-		rightConnect line: BlElement new.
-		rightConnect resetInit ]
-]
-
-{ #category : 'accessing' }
-ToWidgetElement >> rightConnect [
-	^  rightConnect
-]
-
-{ #category : 'accessing' }
-ToWidgetElement >> rightConnect: anElement [
-	rightConnect := anElement.
+	(self isConnector: inputConnect) ifTrue: [
+		inputConnect line: BlElement new.
+		inputConnect resetInit ].
+	(self isConnector: outputConnect) ifTrue: [
+		outputConnect line: BlElement new.
+		outputConnect resetInit ]
 ]
 
 { #category : 'as yet unclassified' }
