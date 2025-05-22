@@ -26,7 +26,7 @@ Connector >> checkBeforeDisconnect [
 	self connectTo ifNotNil: [ self disconnect ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'connecting' }
 Connector >> connect: aConnector [
 
 	self checkBeforeDisconnect.
@@ -46,7 +46,7 @@ Connector >> connectTo: aWidget [
 	connectTo := aWidget
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 Connector >> connectorConnected [
 	"Get the correct connector base on if this connector is an output or input"
 
@@ -56,7 +56,7 @@ Connector >> connectorConnected [
 		ifFalse: [ ^ connectTo outputConnect ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 Connector >> connectorWhichHaveLine: aConnector [
 
 	aConnector line geometry class = BlPolylineGeometry
@@ -64,7 +64,7 @@ Connector >> connectorWhichHaveLine: aConnector [
 		ifFalse: [ ^ self ].
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'connecting' }
 Connector >> disconnect [
 
 	| aConnector |
@@ -89,7 +89,7 @@ Connector >> initialize [
 	self initializeDrag
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'initialization' }
 Connector >> initializeDrag [
 
 	| points |
@@ -146,7 +146,7 @@ Connector >> resetInit [
 	self checkBeforeDisconnect.
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'connecting' }
 Connector >> updateLine [
 	"When the widget connected or the widget parent position move and there is another widget connected, we edit our visual connexion line to put it visually connect to the correct widget"
 

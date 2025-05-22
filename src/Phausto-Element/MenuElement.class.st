@@ -64,12 +64,22 @@ MenuElement >> createSoundsMenu [
 	self addChild: menu.
 ]
 
+{ #category : 'as yet unclassified' }
+MenuElement >> defaultConstrains [
+
+	self constraintsDo: [ :c |
+		c frame vertical alignTop.
+		c padding: (BlInsets left: parent size x right: parent size x) ]
+]
+
 { #category : 'accessing' }
 MenuElement >> initialize [
+
 	super initialize.
 	self horizontal: true.
+	self width: 500.
 	menuItem := OrderedCollection new.
-	self refreshMenu.
+	self refreshMenu
 ]
 
 { #category : 'accessing' }
@@ -90,8 +100,9 @@ MenuElement >> newMenuEventListener [
 
 { #category : 'as yet unclassified' }
 MenuElement >> refreshMenu [
+
 	self removeChildren.
 	self createFileMenu.
 	self createSoundsMenu.
-	self createSettingMenu.
+	self createSettingMenu
 ]

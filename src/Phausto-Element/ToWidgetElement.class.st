@@ -20,6 +20,32 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
+ToWidgetElement class >> configureForOscillator [
+	"I don't know if currently we could have a list of each oscillator of Phausto"
+
+	| oscillator oscWidgets widget phControlParameter |
+	oscWidgets := OrderedCollection new.
+	oscillator := {
+		              SineOsc new.
+		              SawOsc new}.
+	self halt.
+	oscillator do: [ :osc |
+		widget := self new
+			          name: osc class asString;
+			          phaustoSound: osc.
+	self halt.
+		osc controlParameters keysDo: [ :key |
+			self halt.
+			phControlParameter := osc controlParameters at: key.
+			widget slidersDic
+				at: (osc controlParameters at: key label) asString
+				put: (ToSliders withAPhControlParam: phControlParameter) ].
+		oscWidgets add: widget ].
+	self halt.
+	^ oscWidgets
+]
+
+{ #category : 'as yet unclassified' }
 ToWidgetElement class >> onlyWithInputConnector [
 
 	| widget |
@@ -43,7 +69,7 @@ ToWidgetElement class >> onlyWithOutputConnector [
 ToWidgetElement >> adjustLine: aConnector [
 
 	| points line first last midX |
-	(aConnector line geometry isKindOf: BlPolylineGeometry) ifFalse: [
+	(aConnector line geometry class = BlPolylineGeometry) ifFalse: [
 		^ self ].
 	points := OrderedCollection new.
 	first := aConnector line geometry vertices first.
@@ -344,7 +370,7 @@ ToWidgetElement >> resetToInit [
 	self notifyDrawingLine.
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 ToWidgetElement >> sliderIndex: aSlider [
 
 	| key |
