@@ -24,9 +24,6 @@ ToWidgetElement class >> onlyWithInputConnector [
 	| widget |
 	widget := self new.
 	widget outputConnect: BlElement new.
-	widget outputConnect
-		background: BlBackground transparent;
-		border: BlBorder empty.
 	widget draw.
 	^ widget
 ]
@@ -37,9 +34,6 @@ ToWidgetElement class >> onlyWithOutputConnector [
 	| widget |
 	widget := self new.
 	widget inputConnect: BlElement new.
-	widget inputConnect
-		background: BlBackground transparent;
-		border: BlBorder empty.
 	widget draw.
 	^ widget
 ]

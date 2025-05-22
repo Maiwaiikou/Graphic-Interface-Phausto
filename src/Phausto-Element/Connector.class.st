@@ -72,7 +72,6 @@ Connector >> initialize [
 	isOutputConnect := false.
 	self zIndex: 3.
 	line := BlElement new.
-	self background: Color red.
 	self border: (BlBorder paint: Color black width: 2).
 	self layout: BlFrameLayout new.
 	self geometry: BlCircleGeometry new.
