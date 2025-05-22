@@ -192,14 +192,14 @@ ToWidgetElement >> drawLabelVolume [
 { #category : 'drawing' }
 ToWidgetElement >> drawLeftConnect [
 
-	inputConnect := Connector new isLeftConnect: true.
+	inputConnect := Connector new isInputConnect: true.
 	inputConnect constraintsDo: [ :c |
 		c frame horizontal alignLeft.
 		c frame vertical alignCenter.
 		c margin: (BlInsets all: -30) ].
 	inputConnect addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
-		evt gestureSource isRightConnect
+		evt gestureSource isOutputConnect
 			ifTrue: [
 				self adjustLine: evt gestureSource.
 				inputConnect connect: evt gestureSource ]
@@ -211,14 +211,14 @@ ToWidgetElement >> drawLeftConnect [
 { #category : 'drawing' }
 ToWidgetElement >> drawRightConnect [
 
-	outputConnect := Connector new isRightConnect: true.
+	outputConnect := Connector new isOutputConnect: true.
 	outputConnect constraintsDo: [ :c |
 		c frame horizontal alignRight.
 		c frame vertical alignCenter ].
 	outputConnect transformDo: [ :t | t translateBy: 30 @ 0 ].
 	outputConnect addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
-		evt gestureSource isLeftConnect
+		evt gestureSource isInputConnect
 			ifTrue: [
 				self adjustLine: evt gestureSource.
 				outputConnect connect: evt gestureSource ]

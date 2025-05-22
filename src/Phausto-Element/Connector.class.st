@@ -2,8 +2,8 @@ Class {
 	#name : 'Connector',
 	#superclass : 'BlElement',
 	#instVars : [
-		'isLeftConnect',
-		'isRightConnect',
+		'isInputConnect',
+		'isOutputConnect',
 		'line',
 		'connectTo'
 	],
@@ -23,10 +23,10 @@ Connector >> calcMiddleWith: anInteger and: anotherInteger [
 Connector >> checkBeforeDisconnect [
 
 	self connectTo ifNotNil: [
-		self isRightConnect
-			ifTrue: [ self disconnect: connectTo leftConnect ]
+		self isOutputConnect
+			ifTrue: [ self disconnect: connectTo inputConnect ]
 			ifFalse: [
-				self disconnect: connectTo rightConnect ] ]
+				self disconnect: connectTo outputConnect ] ]
 ]
 
 { #category : 'as yet unclassified' }
@@ -68,8 +68,8 @@ Connector >> disconnect: aConnector [
 Connector >> initialize [
 
 	super initialize.
-	isLeftConnect := false.
-	isRightConnect := false.
+	isInputConnect := false.
+	isOutputConnect := false.
 	self zIndex: 3.
 	line := BlElement new.
 	self background: Color red.
@@ -98,24 +98,27 @@ Connector >> initializeDrag [
 ]
 
 { #category : 'accessing' }
-Connector >> isLeftConnect [
-	^ isLeftConnect 
+Connector >> isInputConnect [
+
+	^ isInputConnect
 ]
 
 { #category : 'accessing' }
-Connector >> isLeftConnect: aBoolean [
-	isLeftConnect := aBoolean.
+Connector >> isInputConnect: aBoolean [
+
+	isInputConnect := aBoolean
 ]
 
 { #category : 'accessing' }
-Connector >> isRightConnect [
+Connector >> isOutputConnect [
 
-	^ isRightConnect
+	^ isOutputConnect
 ]
 
 { #category : 'accessing' }
-Connector >> isRightConnect: aBoolean [
-	isRightConnect := aBoolean.
+Connector >> isOutputConnect: aBoolean [
+
+	isOutputConnect := aBoolean
 ]
 
 { #category : 'testing' }
@@ -152,18 +155,18 @@ Connector >> switchColor [
 { #category : 'as yet unclassified' }
 Connector >> updateLine [
 
-	| newLine points first last midX |
-	(line geometry isKindOf: BlPolylineGeometry) ifFalse: [ ^ self ].
+	| points first last midX |
+	line geometry class = BlPolylineGeometry ifFalse: [ ^ self ].
 	points := OrderedCollection new.
 	first := self positionInSpace.
-	last := isRightConnect
-		        ifTrue: [ connectTo leftConnect positionInSpace ]
-		        ifFalse: [ connectTo rightConnect positionInSpace ].
+	last := isOutputConnect
+		        ifTrue: [ connectTo inputConnect positionInSpace ]
+		        ifFalse: [ connectTo outputConnect positionInSpace ].
 
 	midX := self calcMiddleWith: first x and: last x.
 	points add: first.
 	points add: midX @ first y.
 	points add: midX @ last y.
 	points add: last.
-	line geometry: (BlPolylineGeometry vertices: points).
+	line geometry: (BlPolylineGeometry vertices: points)
 ]
