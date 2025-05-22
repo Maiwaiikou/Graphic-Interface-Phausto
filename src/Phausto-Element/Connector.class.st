@@ -148,17 +148,19 @@ Connector >> resetInit [
 
 { #category : 'as yet unclassified' }
 Connector >> updateLine [
+	"When the widget connected or the widget parent position move and there is another widget connected, we edit our visual connexion line to put it visually connect to the correct widget"
 
-	| points first last midX |
+	| points first last midX sizeBound |
+	sizeBound := self size / 2.
 	line geometry class = BlPolylineGeometry ifFalse: [ ^ self ].
 	points := OrderedCollection new.
 	first := self positionInSpace.
 	last := self connectorConnected positionInSpace.
 
-	midX := self calcMiddleWith: first x and: last x.
-	points add: first.
-	points add: midX @ first y.
-	points add: midX @ last y.
-	points add: last.
+	midX := self calcMiddleWith: (first x + sizeBound x) and: (last x + sizeBound x).
+	points add: (first x + sizeBound x) @ (first y + sizeBound y).
+	points add: midX @ (first y + sizeBound y).
+	points add: midX @ (last y + sizeBound y).
+	points add: (last x + sizeBound x) @ (last y + sizeBound y).
 	line geometry: (BlPolylineGeometry vertices: points)
 ]
