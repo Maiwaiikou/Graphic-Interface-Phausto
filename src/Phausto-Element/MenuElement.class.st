@@ -12,24 +12,25 @@ Class {
 { #category : 'as yet unclassified' }
 MenuElement class >> withWidgets [
 
-	^ self new menuItem: {
-			  (ToWidgetElement new
-				   name: 'Sine Oscillator';
-				   slidersDic: { ('Freq' -> ToSliders new) . ('Something else' -> ToSliders new) } asDictionary).
-			  (ToWidgetElement new name: 'Saw Oscillator').
-			  (ToWidgetElement onlyWithInputConnector name: 'Tester') }
+	^ self new menuItem: ToWidgetElement configureForOscillator.
 ]
 
 { #category : 'as yet unclassified' }
 MenuElement >> createFileMenu [
-	|menu items|
+
+	| menu items  elt |
 	menu := ToMenu new labelText: 'File'.
-	items := { 'New page'. 'Open a file'. 'Save'. 'Save as'. 'Clean'. }.
-	items do: [ :i | 
-		|elt|
-		elt := ToMenuItem new labelText:i.
+	items := { 'New page'. 'Open a file'. 'Save'. 'Save as'.}.
+	items do: [ :i |
+		elt := ToMenuItem new labelText: i.
 		menu addItem: elt ].
-	self addChild: menu.
+	elt := ToMenuItem new labelText: 'Clear'.
+	elt addEventHandlerOn: BlClickEvent do: [
+		self parent resetElements.
+		self parent childrenElements removeAll.
+		self parent drawElement ].
+	menu addItem: elt.
+	self addChild: menu
 ]
 
 { #category : 'as yet unclassified' }
@@ -41,12 +42,6 @@ MenuElement >> createSettingMenu [
 	items do: [ :i |
 		elt := ToMenuItem new labelText: i.
 		menu addItem: elt ].
-	elt := ToMenuItem new labelText: 'Clear'.
-	elt addEventHandlerOn: BlClickEvent do: [
-		self parent resetElements.
-		self parent childrenElements removeAll.
-		self parent drawElement ].
-	menu addItem: elt.
 	self addChild: menu
 ]
 

@@ -51,6 +51,7 @@ Interface >> drawElement [
 
 	self addChild: audio.
 	self addChild: audio inputConnect line.
+
 	self drawChildren
 ]
 
@@ -59,7 +60,7 @@ Interface >> initialize [
 
 	super initialize.
 	childrenElements := OrderedCollection new.
-	self size: 800 @ 600.
+	self size: 1000 @ 600.
 	menu := MenuElement withWidgets.
 	self initializeMicro.
 	self initializeAudio.
@@ -75,24 +76,26 @@ Interface >> initialize [
 Interface >> initializeAudio [
 
 	audio := ToWidgetWithIconElement withAudioIcon.
-	"TODO : Action audio"
+	self flag: #todo.
+	"Audio event action"
 	audio announcer
 		when: LineCurrentlyDrawAnnouncer
 		send: #drawElement
 		to: self.
-	audio position: 400@150.
+	audio position: 930 @ 150
 ]
 
 { #category : 'initialization' }
 Interface >> initializeMicro [
 
 	micro := ToWidgetWithIconElement withMicroIcon.
-	"TODO : Action mic"
+	self flag: #todo.
+	"Mic event action"
 	micro announcer
 		when: LineCurrentlyDrawAnnouncer
 		send: #drawElement
 		to: self.
-	micro position: 0@150.
+	micro position: 0 @ 150
 ]
 
 { #category : 'accessing' }
@@ -118,6 +121,7 @@ Interface >> open [
 	space := BlSpace new.
 	space toTheme: ToWidgetTheme new.
 	space root addChild: self.
+	space extent: 1000@600.
 	space show
 ]
 

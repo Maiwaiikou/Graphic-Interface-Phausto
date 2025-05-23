@@ -6,9 +6,6 @@ Class {
 		'name',
 		'slidersDic',
 		'phaustoSound',
-		'labelVolume',
-		'volumeSliders',
-		'volumeValue',
 		'inputConnect',
 		'outputConnect',
 		'lines',
@@ -19,29 +16,27 @@ Class {
 	#tag : 'Widget'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'configuring' }
 ToWidgetElement class >> configureForOscillator [
 	"I don't know if currently we could have a list of each oscillator of Phausto"
 
-	| oscillator oscWidgets widget phControlParameter |
+	| oscillator oscWidgets widget currentControlParameter phControlParameter |
 	oscWidgets := OrderedCollection new.
 	oscillator := {
-		              SineOsc new.
-		              SawOsc new}.
-	self halt.
+		              SineOsc.
+		              SawOsc. PulseOsc. SquareOsc. TriOsc. LFOSaw. LFOSquare. LFOTri. LFOSawPos. LFOSquarePos. LFOTriPos }.
 	oscillator do: [ :osc |
 		widget := self new
-			          name: osc class asString;
+			          name: osc asString;
 			          phaustoSound: osc.
-	self halt.
-		osc controlParameters keysDo: [ :key |
-			self halt.
-			phControlParameter := osc controlParameters at: key.
+		currentControlParameter := widget phaustoSound controlParameters.
+		currentControlParameter keysDo: [ :key |
+			phControlParameter := currentControlParameter at: key.
 			widget slidersDic
-				at: (osc controlParameters at: key label) asString
+				at: key asString
 				put: (ToSliders withAPhControlParam: phControlParameter) ].
+		widget draw.
 		oscWidgets add: widget ].
-	self halt.
 	^ oscWidgets
 ]
 
@@ -111,27 +106,14 @@ ToWidgetElement >> configuredString: aString [
 	^ aString asRopedText attributes: { (BlTextForegroundAttribute paint: Color black) }
 ]
 
-{ #category : 'accessing' }
-ToWidgetElement >> configuredVolumeSliders [
-	volumeSliders := ToSliders new.
-	volumeSliders announcer when:AnnouncerValueChange send:#draw to: self.
-	volumeSliders constraintsDo: [ :c |
-		c frame horizontal alignCenter.
-		c margin: (BlInsets all:35)].
-	
-	
-	
-]
-
 { #category : 'drawing' }
 ToWidgetElement >> draw [
 
 	self removeChildren.
 	self drawBar.
-	"self drawLabelVolume."
 	self drawLabel.
 	self addChild: inputConnect.
-	self addChild: outputConnect.
+	self addChild: outputConnect
 ]
 
 { #category : 'drawing' }
@@ -202,19 +184,6 @@ ToWidgetElement >> drawLabel [
 ]
 
 { #category : 'drawing' }
-ToWidgetElement >> drawLabelVolume [
-
-	labelVolume := BlTextElement new.
-	labelVolume text:
-		('Volume :' , volumeSliders value asString) asRopedText.
-	labelVolume constraintsDo: [ :c |
-		c frame horizontal alignCenter.
-		c margin: (BlInsets all: 25) ].
-	self addChild: labelVolume.
-	self addChild: volumeSliders
-]
-
-{ #category : 'drawing' }
 ToWidgetElement >> drawLeftConnect [
 
 	inputConnect := Connector new isInputConnect: true.
@@ -272,7 +241,6 @@ ToWidgetElement >> initialize [
 	name := ''.
 	lines := OrderedCollection new.
 	slidersDic := Dictionary new.
-	self configuredVolumeSliders.
 	self layout: BlFrameLayout new.
 	self drawLeftConnect.
 	self drawRightConnect.
@@ -300,11 +268,6 @@ ToWidgetElement >> inputConnect: aConnector [
 ToWidgetElement >> isConnector: anElement [
 	^ anElement class = Connector.
 	
-]
-
-{ #category : 'accessing' }
-ToWidgetElement >> labelVolume [
-	^ labelVolume 
 ]
 
 { #category : 'accessing' }
@@ -356,18 +319,17 @@ ToWidgetElement >> phaustoSound [
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> phaustoSound: aPhaustoSound [
-	phaustoSound := aPhaustoSound stereo asDsp.
+ToWidgetElement >> phaustoSound: aPhaustoSoundClass [
+
+	phaustoSound := aPhaustoSoundClass new
 ]
 
 { #category : 'initialization' }
 ToWidgetElement >> resetToInit [
 
-	volumeSliders position: 0 @ 0.
-	volumeSliders value: 0.
 	(self isConnector: inputConnect) ifTrue: [ inputConnect resetInit ].
 	(self isConnector: outputConnect) ifTrue: [ outputConnect resetInit ].
-	self notifyDrawingLine.
+	self notifyDrawingLine
 ]
 
 { #category : 'accessing' }
@@ -391,14 +353,4 @@ ToWidgetElement >> slidersDic: aDictionaryOfSlidersWithLabelKey [
 
 	slidersDic := aDictionaryOfSlidersWithLabelKey.
 	self draw.
-]
-
-{ #category : 'accessing' }
-ToWidgetElement >> volumeSliders [
-	^ volumeSliders 
-]
-
-{ #category : 'accessing' }
-ToWidgetElement >> volumeValue [
-	^ volumeSliders value 
 ]

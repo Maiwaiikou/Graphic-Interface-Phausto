@@ -156,11 +156,11 @@ ToSliders >> value [
 
 { #category : 'evaluating' }
 ToSliders >> value: anInteger [
-
-	anInteger < 0
+	anInteger ifNil: [ ^self ].
+	(anInteger < 0)
 		ifTrue: [ value := 0 ]
 		ifFalse: [
 			anInteger > 100
-				         ifTrue: [ value := 100 ]
-				         ifFalse: [ value := anInteger ] ].
+				ifTrue: [ value := 100 ]
+				ifFalse: [ value := anInteger ] ]
 ]
