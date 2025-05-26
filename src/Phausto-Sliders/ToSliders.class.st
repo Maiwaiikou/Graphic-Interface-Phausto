@@ -7,7 +7,8 @@ Class {
 		'announcer',
 		'minValue',
 		'maxValue',
-		'step'
+		'step',
+		'callBack'
 	],
 	#category : 'Phausto-Sliders',
 	#package : 'Phausto-Sliders'
@@ -18,7 +19,7 @@ ToSliders class >> withAPhControlParam: aPhControlParam [
 
 	| slider |
 	slider := self new
-		          value: aPhControlParam initialValue;
+		          value: (aPhControlParam initialValue ifNil: [ 0 ]);
 		          maxValue: aPhControlParam max;
 		          minValue: aPhControlParam value;
 					 step: aPhControlParam step.
@@ -28,6 +29,18 @@ ToSliders class >> withAPhControlParam: aPhControlParam [
 { #category : 'accessing' }
 ToSliders >> announcer [
 	^ announcer ifNil: [ announcer := Announcer new ]
+]
+
+{ #category : 'accessing' }
+ToSliders >> callBack [ 
+
+	^ callBack
+]
+
+{ #category : 'accessing' }
+ToSliders >> callBack: aBlock [ 
+
+	callBack := aBlock
 ]
 
 { #category : 'as yet unclassified' }
@@ -135,7 +148,7 @@ ToSliders >> newRawSkin [
 
 { #category : 'as yet unclassified' }
 ToSliders >> notifyValueChange [
-	^ self announcer announce: AnnouncerValueChange new.
+	^ self announcer announce: (AnnouncerValueChange new value: value).
 ]
 
 { #category : 'accessing' }
@@ -156,11 +169,8 @@ ToSliders >> value [
 
 { #category : 'evaluating' }
 ToSliders >> value: anInteger [
-	anInteger ifNil: [ ^self ].
-	(anInteger < 0)
-		ifTrue: [ value := 0 ]
-		ifFalse: [
-			anInteger > 100
-				ifTrue: [ value := 100 ]
-				ifFalse: [ value := anInteger ] ]
+	
+	value := anInteger clampBetween: minValue and: maxValue . 		
+			
+	self callBack ifNotNil: [ :c | c value: value. ]
 ]

@@ -35,7 +35,7 @@ ToWidgetElement class >> configureForOscillator [
 			widget slidersDic
 				at: key asString
 				put: (ToSliders withAPhControlParam: phControlParameter) ].
-		widget draw.
+		widget initializeSliders.
 		oscWidgets add: widget ].
 	^ oscWidgets
 ]
@@ -106,6 +106,18 @@ ToWidgetElement >> configuredString: aString [
 	^ aString asRopedText attributes: { (BlTextForegroundAttribute paint: Color black) }
 ]
 
+{ #category : 'as yet unclassified' }
+ToWidgetElement >> connectSlider: aToSlider toLabel: aTextElement [
+
+	aToSlider callBack: [ :value | aTextElement text: value asRopedText ].
+	aToSlider constraintsDo: [ :c |
+		c frame horizontal alignCenter.
+		c margin: (BlInsets all: 5) ].
+	self addChild: aToSlider 
+
+
+]
+
 { #category : 'drawing' }
 ToWidgetElement >> draw [
 
@@ -145,7 +157,7 @@ ToWidgetElement >> drawBar [
 		(self isConnector: outputConnect) ifTrue: [
 			outputConnect checkBeforeDisconnect ].
 		self resetToInit.
-		self parent childrenElements remove: self.
+		"self parent childrenElements remove: self."
 		self removeFromParent ].
 
 	barElement addEventHandlerOn: BlDragStartEvent do: [ :evt |
@@ -170,11 +182,11 @@ ToWidgetElement >> drawBar [
 { #category : 'drawing' }
 ToWidgetElement >> drawLabel [
 
-	| label key dicSize |
+	| key dicSize |
 	dicSize := slidersDic size.
 	1 to: dicSize do: [ :i |
 		key := slidersDic keys at: i.
-		label := BlTextElement new.
+		label ifNil: [ label := BlTextElement new. ]. 
 		label text:
 			(key , ' : ' , (slidersDic at: key) value asString) asRopedText.
 		label constraintsDo: [ :c |
@@ -228,10 +240,10 @@ ToWidgetElement >> drawSlider: aSlider [
 	| dicSize index |
 	dicSize := slidersDic size.
 	index := self sliderIndex: aSlider.
-	aSlider announcer when: AnnouncerValueChange send: #draw to: self.
+	aSlider announcer when: AnnouncerValueChange send: #drawLabel to: self.
 	aSlider constraintsDo: [ :c |
 		c frame horizontal alignCenter.
-		c margin: (BlInsets all: 40 * dicSize / (dicSize - index + 1)) ].
+		c margin: (BlInsets all: 5) ].
 	self addChild: aSlider
 ]
 
@@ -243,14 +255,59 @@ ToWidgetElement >> initialize [
 	lines := OrderedCollection new.
 	slidersDic := Dictionary new.
 	self layout: BlFrameLayout new.
+	self drawBar.
+"	self initializeSliders."
 	self drawLeftConnect.
 	self drawRightConnect.
-	self draw.
+	"self draw."
 	self addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
 		(self isConnector: evt gestureSource) ifTrue: [
 			evt gestureSource line: BlElement new.
-			self draw ] ]
+			"self draw" ] ]
+]
+
+{ #category : 'initialization' }
+ToWidgetElement >> initializeSliderLabel: aString [ 
+
+	|label valueLabel container |
+	label := BlTextElement new.
+	label text:
+			(aString , ' : ') asRopedText.
+	valueLabel := BlTextElement new.
+	valueLabel text: 0 asRopedText.
+
+	container := BlElement new layout: BlLinearLayout horizontal; constraintsDo: [ :c | 
+		c frame horizontal alignCenter.
+		c margin: (BlInsets all: 5).
+		c vertical fitContent.
+		c horizontal fitContent. ]; addChildren: { label. valueLabel }.
+	
+	self addChild: container. 
+		
+	^ valueLabel.
+]
+
+{ #category : 'initialization' }
+ToWidgetElement >> initializeSliders [ 
+
+	slidersDic keysAndValuesDo: [ :key :value | 
+		|sliderLabel|
+		sliderLabel := self initializeSliderLabel: key.
+		self connectSlider: value toLabel: sliderLabel.
+		].
+	"| key dicSize |
+	dicSize := slidersDic size.
+	1 to: dicSize do: [ :i |
+		key := slidersDic keys at: i.
+		label ifNil: [ label := BlTextElement new. ]. 
+		label text:
+			(key , ' : ' , (slidersDic at: key) value asString) asRopedText.
+		label constraintsDo: [ :c |
+			c frame horizontal alignCenter.
+			c margin: (BlInsets all: 30 * dicSize / (dicSize - i + 1)) ].
+		self addChild: label.
+		self drawSlider: (slidersDic at: key) ]"
 ]
 
 { #category : 'accessing' }
@@ -358,5 +415,5 @@ ToWidgetElement >> slidersDic [
 ToWidgetElement >> slidersDic: aDictionaryOfSlidersWithLabelKey [
 
 	slidersDic := aDictionaryOfSlidersWithLabelKey.
-	self draw.
+	self initializeSliders.
 ]
