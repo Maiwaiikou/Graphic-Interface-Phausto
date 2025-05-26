@@ -16,6 +16,14 @@ MenuElement class >> withWidgets [
 ]
 
 { #category : 'as yet unclassified' }
+MenuElement >> childMenu: aString [
+
+	self children do: [ :aChild |
+		(aChild labelText = aString) ifTrue: [^ aChild ]].
+	^ nil
+]
+
+{ #category : 'as yet unclassified' }
 MenuElement >> createFileMenu [
 
 	| menu items  elt |
@@ -100,4 +108,15 @@ MenuElement >> refreshMenu [
 	self createFileMenu.
 	self createSoundsMenu.
 	self createSettingMenu
+]
+
+{ #category : 'initialization' }
+MenuElement >> resetMenu [
+	menuItem do: [ :item |
+		item enable ].
+]
+
+{ #category : 'as yet unclassified' }
+MenuElement >> subMenuItem: aMenu [
+	^ aMenu itemBar children.
 ]

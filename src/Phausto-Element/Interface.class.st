@@ -127,9 +127,8 @@ Interface >> open [
 
 { #category : 'initialization' }
 Interface >> resetElements [
-
+	menu refreshMenu.
 	micro resetToInit.
 	audio resetToInit.
-	childrenElements do: [ :elt |
-		(elt isKindOf: ToWidgetElement) ifTrue: [ elt resetToInit ] ]
+	childrenElements do: [ :elt | elt resetToInit ].
 ]

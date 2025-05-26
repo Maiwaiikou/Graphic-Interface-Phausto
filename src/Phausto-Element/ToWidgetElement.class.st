@@ -139,6 +139,7 @@ ToWidgetElement >> drawBar [
 		c frame vertical alignTop.
 		c frame horizontal alignCenter ].
 	barElement closeButton newClickAction: [
+		self notifyEnableCreation.
 		(self isConnector: inputConnect) ifTrue: [
 			inputConnect checkBeforeDisconnect ].
 		(self isConnector: outputConnect) ifTrue: [
@@ -247,7 +248,7 @@ ToWidgetElement >> initialize [
 	self draw.
 	self addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
-		(evt gestureSource isKindOf: Connector) ifTrue: [
+		(self isConnector: evt gestureSource) ifTrue: [
 			evt gestureSource line: BlElement new.
 			self draw ] ]
 ]
@@ -299,6 +300,11 @@ ToWidgetElement >> newRawSkin [
 { #category : 'accessing' }
 ToWidgetElement >> notifyDrawingLine [
 	self announcer announce: LineCurrentlyDrawAnnouncer new.
+]
+
+{ #category : 'drawing' }
+ToWidgetElement >> notifyEnableCreation [
+	self announcer announce: EnableCreationAnnouncer.
 ]
 
 { #category : 'accessing' }

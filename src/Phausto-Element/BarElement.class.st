@@ -1,6 +1,6 @@
 Class {
 	#name : 'BarElement',
-	#superclass : 'ToPane',
+	#superclass : 'ToElement',
 	#instVars : [
 		'name',
 		'closeButton',
@@ -46,8 +46,6 @@ BarElement >> drawLabelName [
 BarElement >> initialize [
 
 	super initialize.
-	self horizontal: true.
-	self layout: BlFrameLayout new.
 	name := ''.
 	self drawCloseButton.
 	self drawLabelName
