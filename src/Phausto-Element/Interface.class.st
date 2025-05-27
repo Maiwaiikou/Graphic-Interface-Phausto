@@ -69,13 +69,12 @@ Interface >> drawElement [
 { #category : 'initialization' }
 Interface >> handleAudioConnectedEvent: aWidget [
 
-	| nextConnected dsp tempTest|
+	| nextConnected dsp |
 	nextConnected := (aWidget isConnector: aWidget inputConnect)
 		                 ifTrue: [ aWidget inputConnect connectTo ]
 		                 ifFalse: [ nil ].
 	aWidget phaustoSound ifNotNil: [
-		tempTest := aWidget phaustoSound copy.
-		dsp := tempTest stereo asDsp.
+		dsp := aWidget phaustoSound.
 		dsp init.
 		dsp start.
 		activeDSP add: dsp ].
@@ -86,7 +85,8 @@ Interface >> handleAudioConnectedEvent: aWidget [
 { #category : 'initialization' }
 Interface >> handleAudioDisconnectedEvent [
 
-	activeDSP do: [ :dsp | dsp stop. dsp destroy ]
+	activeDSP do: [ :dsp | dsp stop ].
+	activeDSP removeAll.
 ]
 
 { #category : 'initialization' }

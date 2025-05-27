@@ -24,12 +24,21 @@ ToWidgetElement class >> configureForOscillator [
 	oscWidgets := OrderedCollection new.
 	oscillator := {
 		              SineOsc.
-		              SawOsc. PulseOsc. SquareOsc. TriOsc. LFOSaw. LFOSquare. LFOTri. LFOSawPos. LFOSquarePos. LFOTriPos }.
+		              SawOsc.
+		              PulseOsc.
+		              SquareOsc.
+		              TriOsc.
+		              LFOSaw.
+		              LFOSquare.
+		              LFOTri.
+		              LFOSawPos.
+		              LFOSquarePos.
+		              LFOTriPos }.
 	oscillator do: [ :osc |
 		widget := self new
 			          name: osc asString;
 			          phaustoSound: osc.
-		currentControlParameter := widget phaustoSound controlParameters.
+		currentControlParameter := osc new controlParameters.
 		currentControlParameter keysDo: [ :key |
 			phControlParameter := currentControlParameter at: key.
 			widget slidersDic
@@ -346,7 +355,7 @@ ToWidgetElement >> phaustoSound [
 { #category : 'accessing' }
 ToWidgetElement >> phaustoSound: aPhaustoSoundClass [
 
-	phaustoSound := aPhaustoSoundClass new
+	phaustoSound := aPhaustoSoundClass new asDsp.
 ]
 
 { #category : 'initialization' }
