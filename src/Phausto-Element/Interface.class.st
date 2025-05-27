@@ -55,14 +55,10 @@ Interface >> drawElement [
 
 	self removeChildren.
 	self addChild: menu.
-	menu defaultConstrains.
-
 	self addChild: micro.
 	self addChild: micro outputConnect line.
-
 	self addChild: audio.
 	self addChild: audio inputConnect line.
-
 	self drawChildren
 ]
 
@@ -90,13 +86,20 @@ Interface >> handleAudioDisconnectedEvent [
 ]
 
 { #category : 'initialization' }
+Interface >> handleAudioDisconnectedEventFor: anActiveDSP [
+
+	anActiveDSP stop.
+	activeDSP removeChild: anActiveDSP.
+]
+
+{ #category : 'initialization' }
 Interface >> initialize [
 
 	super initialize.
 	childrenElements := OrderedCollection new.
 	activeDSP := OrderedCollection new.
 	self size: 1000 @ 600.
-	menu := MenuElement withWidgets.
+	self initializeMenu.
 	self initializeMicro.
 	self initializeAudio.
 	self addEventHandlerOn: BlDropEvent do: [ :evt |
@@ -123,7 +126,15 @@ Interface >> initializeAudio [
 		when: LineCurrentlyDrawAnnouncer
 		send: #drawElement
 		to: self.
-	audio position: 930 @ 150
+	audio position: 930 @ 150.
+]
+
+{ #category : 'initialization' }
+Interface >> initializeMenu [
+
+	menu := MenuElement withWidgets.
+	self addChild: menu.
+	menu defaultConstrains.
 ]
 
 { #category : 'initialization' }
@@ -136,7 +147,7 @@ Interface >> initializeMicro [
 		when: LineCurrentlyDrawAnnouncer
 		send: #drawElement
 		to: self.
-	micro position: 0 @ 150
+	micro position: 0 @ 150.
 ]
 
 { #category : 'accessing' }

@@ -35,7 +35,7 @@ ToWidgetElement class >> configureForOscillator [
 		              LFOSquarePos.
 		              LFOTriPos }.
 	oscillator do: [ :osc |
-		widget := self new
+		widget := (self typeOfWidget: (osc new))
 			          name: osc asString;
 			          phaustoSound: osc.
 		currentControlParameter := osc new controlParameters.
@@ -67,6 +67,14 @@ ToWidgetElement class >> onlyWithOutputConnector [
 	widget removeChild: widget inputConnect.
 	widget inputConnect: BlElement new.
 	^ widget
+]
+
+{ #category : 'as yet unclassified' }
+ToWidgetElement class >> typeOfWidget: aPhaustoElement [
+	
+	(aPhaustoElement numberOfInputs = 0) ifTrue: [ ^ self onlyWithOutputConnector ].
+	(aPhaustoElement numberOfOutputs = 0) ifTrue: [ ^ self onlyWithInputConnector ].
+	^ self new.
 ]
 
 { #category : 'drawing' }
