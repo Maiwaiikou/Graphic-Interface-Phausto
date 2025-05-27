@@ -45,8 +45,8 @@ ToWidgetElement class >> onlyWithInputConnector [
 
 	| widget |
 	widget := self new.
+	widget removeChild: widget outputConnect.
 	widget outputConnect: BlElement new.
-	widget draw.
 	^ widget
 ]
 
@@ -55,12 +55,12 @@ ToWidgetElement class >> onlyWithOutputConnector [
 
 	| widget |
 	widget := self new.
+	widget removeChild: widget inputConnect.
 	widget inputConnect: BlElement new.
-	widget draw.
 	^ widget
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'drawing' }
 ToWidgetElement >> adjustLine: aConnector [
 
 	| points line first last midX |
@@ -106,7 +106,7 @@ ToWidgetElement >> configuredString: aString [
 	^ aString asRopedText attributes: { (BlTextForegroundAttribute paint: Color black) }
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'initialization' }
 ToWidgetElement >> connectSlider: aToSlider toLabel: aTextElement [
 
 	aToSlider callBack: [ :value | aTextElement text: value asRopedText ].
@@ -116,16 +116,6 @@ ToWidgetElement >> connectSlider: aToSlider toLabel: aTextElement [
 	self addChild: aToSlider 
 
 
-]
-
-{ #category : 'drawing' }
-ToWidgetElement >> draw [
-
-	self removeChildren.
-	self drawBar.
-	self drawLabel.
-	self addChild: inputConnect.
-	self addChild: outputConnect
 ]
 
 { #category : 'drawing' }
@@ -141,8 +131,28 @@ ToWidgetElement >> drawALine: points atConnector: aConnector [
 	self notifyDrawingLine
 ]
 
-{ #category : 'drawing' }
-ToWidgetElement >> drawBar [
+{ #category : 'initialization' }
+ToWidgetElement >> initialize [
+
+	super initialize.
+	name := ''.
+	lines := OrderedCollection new.
+	slidersDic := Dictionary new.
+	self layout: BlFrameLayout new.
+	self initializeBar.
+"	self initializeSliders."
+	self initializeInputConnect.
+	self initializeOutputConnect.
+	"self draw."
+	self addEventHandlerOn: BlDropEvent do: [ :evt |
+		evt consumed: true.
+		(self isConnector: evt gestureSource) ifTrue: [
+			evt gestureSource line: BlElement new.
+			self notifyDrawingLine ] ]
+]
+
+{ #category : 'initialization' }
+ToWidgetElement >> initializeBar [
 
 	| offset |
 	barElement := BarElement new name: self name.
@@ -157,7 +167,7 @@ ToWidgetElement >> drawBar [
 		(self isConnector: outputConnect) ifTrue: [
 			outputConnect checkBeforeDisconnect ].
 		self resetToInit.
-		"self parent childrenElements remove: self."
+		self parent childrenElements remove: self.
 		self removeFromParent ].
 
 	barElement addEventHandlerOn: BlDragStartEvent do: [ :evt |
@@ -179,25 +189,8 @@ ToWidgetElement >> drawBar [
 	self addChild: barElement
 ]
 
-{ #category : 'drawing' }
-ToWidgetElement >> drawLabel [
-
-	| key dicSize |
-	dicSize := slidersDic size.
-	1 to: dicSize do: [ :i |
-		key := slidersDic keys at: i.
-		label ifNil: [ label := BlTextElement new. ]. 
-		label text:
-			(key , ' : ' , (slidersDic at: key) value asString) asRopedText.
-		label constraintsDo: [ :c |
-			c frame horizontal alignCenter.
-			c margin: (BlInsets all: 30 * dicSize / (dicSize - i + 1)) ].
-		self addChild: label.
-		self drawSlider: (slidersDic at: key) ]
-]
-
-{ #category : 'drawing' }
-ToWidgetElement >> drawLeftConnect [
+{ #category : 'initialization' }
+ToWidgetElement >> initializeInputConnect [
 
 	inputConnect := Connector new isInputConnect: true.
 	inputConnect constraintsDo: [ :c |
@@ -212,11 +205,12 @@ ToWidgetElement >> drawLeftConnect [
 				inputConnect connect: evt gestureSource ]
 			ifFalse: [
 				evt gestureSource line: BlElement new.
-				self notifyDrawingLine ] ]
+				self notifyDrawingLine ] ].
+	self addChild: inputConnect.
 ]
 
-{ #category : 'drawing' }
-ToWidgetElement >> drawRightConnect [
+{ #category : 'initialization' }
+ToWidgetElement >> initializeOutputConnect [
 
 	outputConnect := Connector new isOutputConnect: true.
 	outputConnect constraintsDo: [ :c |
@@ -231,40 +225,8 @@ ToWidgetElement >> drawRightConnect [
 				outputConnect connect: evt gestureSource ]
 			ifFalse: [
 				evt gestureSource line: BlElement new.
-				self notifyDrawingLine ] ]
-]
-
-{ #category : 'accessing' }
-ToWidgetElement >> drawSlider: aSlider [
-
-	| dicSize index |
-	dicSize := slidersDic size.
-	index := self sliderIndex: aSlider.
-	aSlider announcer when: AnnouncerValueChange send: #drawLabel to: self.
-	aSlider constraintsDo: [ :c |
-		c frame horizontal alignCenter.
-		c margin: (BlInsets all: 5) ].
-	self addChild: aSlider
-]
-
-{ #category : 'initialization' }
-ToWidgetElement >> initialize [
-
-	super initialize.
-	name := ''.
-	lines := OrderedCollection new.
-	slidersDic := Dictionary new.
-	self layout: BlFrameLayout new.
-	self drawBar.
-"	self initializeSliders."
-	self drawLeftConnect.
-	self drawRightConnect.
-	"self draw."
-	self addEventHandlerOn: BlDropEvent do: [ :evt |
-		evt consumed: true.
-		(self isConnector: evt gestureSource) ifTrue: [
-			evt gestureSource line: BlElement new.
-			"self draw" ] ]
+				self notifyDrawingLine ] ].
+	self addChild: outputConnect.
 ]
 
 { #category : 'initialization' }
@@ -296,18 +258,6 @@ ToWidgetElement >> initializeSliders [
 		sliderLabel := self initializeSliderLabel: key.
 		self connectSlider: value toLabel: sliderLabel.
 		].
-	"| key dicSize |
-	dicSize := slidersDic size.
-	1 to: dicSize do: [ :i |
-		key := slidersDic keys at: i.
-		label ifNil: [ label := BlTextElement new. ]. 
-		label text:
-			(key , ' : ' , (slidersDic at: key) value asString) asRopedText.
-		label constraintsDo: [ :c |
-			c frame horizontal alignCenter.
-			c margin: (BlInsets all: 30 * dicSize / (dicSize - i + 1)) ].
-		self addChild: label.
-		self drawSlider: (slidersDic at: key) ]"
 ]
 
 { #category : 'accessing' }
@@ -346,7 +296,7 @@ ToWidgetElement >> name [
 { #category : 'accessing' }
 ToWidgetElement >> name: aString [
 	name := aString.
-	self draw.
+	barElement name: aString.
 ]
 
 { #category : 'instance creation' }
