@@ -19,6 +19,7 @@ ToWidgetElementSkin >> installSkinEvent: anEvent [
 			size: 300 @ 20;
 			background: (elt valueOfTokenNamed: #'bar-background');
 			border: (BlBorder paint: Color black width: 1).
+		elt slidersContainer size: 200@150.
 		elt inputConnect background: ((elt isConnector: elt inputConnect)
 				 ifTrue: [ elt valueOfTokenNamed: #'input-connect-background' ]
 				 ifFalse: [ Color transparent ]).

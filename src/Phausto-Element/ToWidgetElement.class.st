@@ -8,8 +8,8 @@ Class {
 		'phaustoSound',
 		'inputConnect',
 		'outputConnect',
-		'lines',
-		'announcer'
+		'announcer',
+		'slidersContainer'
 	],
 	#category : 'Phausto-Element-Widget',
 	#package : 'Phausto-Element',
@@ -113,7 +113,7 @@ ToWidgetElement >> connectSlider: aToSlider toLabel: aTextElement [
 	aToSlider constraintsDo: [ :c |
 		c frame horizontal alignCenter.
 		c margin: (BlInsets all: 5) ].
-	self addChild: aToSlider 
+	slidersContainer addChild: aToSlider 
 
 
 ]
@@ -136,14 +136,12 @@ ToWidgetElement >> initialize [
 
 	super initialize.
 	name := ''.
-	lines := OrderedCollection new.
 	slidersDic := Dictionary new.
 	self layout: BlFrameLayout new.
 	self initializeBar.
-"	self initializeSliders."
 	self initializeInputConnect.
 	self initializeOutputConnect.
-	"self draw."
+	self initializeSlidersContainer.
 	self addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
 		(self isConnector: evt gestureSource) ifTrue: [
@@ -245,7 +243,7 @@ ToWidgetElement >> initializeSliderLabel: aString [
 		c vertical fitContent.
 		c horizontal fitContent. ]; addChildren: { label. valueLabel }.
 	
-	self addChild: container. 
+	slidersContainer addChild: container. 
 		
 	^ valueLabel.
 ]
@@ -258,6 +256,18 @@ ToWidgetElement >> initializeSliders [
 		sliderLabel := self initializeSliderLabel: key.
 		self connectSlider: value toLabel: sliderLabel.
 		].
+]
+
+{ #category : 'initialization' }
+ToWidgetElement >> initializeSlidersContainer [
+
+	slidersContainer := BlElement new.
+	slidersContainer layout: BlLinearLayout new.
+	slidersContainer layout beVertical.
+	slidersContainer constraintsDo: [ :c |
+		c frame vertical alignCenter.
+		c frame horizontal alignCenter ].
+	self addChild: slidersContainer.
 ]
 
 { #category : 'accessing' }
@@ -276,16 +286,6 @@ ToWidgetElement >> inputConnect: aConnector [
 ToWidgetElement >> isConnector: anElement [
 	^ anElement class = Connector.
 	
-]
-
-{ #category : 'accessing' }
-ToWidgetElement >> lines [
-	^ lines
-]
-
-{ #category : 'accessing' }
-ToWidgetElement >> lines: aCollectionOfBlPolygeon [
-	lines := aCollectionOfBlPolygeon.
 ]
 
 { #category : 'accessing' }
@@ -353,6 +353,11 @@ ToWidgetElement >> sliderIndex: aSlider [
 		key := slidersDic keys at: i.
 		((slidersDic at: key) = aSlider) ifTrue: [ ^ i ] ].
 	^ 0
+]
+
+{ #category : 'accessing' }
+ToWidgetElement >> slidersContainer [
+	^ slidersContainer
 ]
 
 { #category : 'accessing' }
