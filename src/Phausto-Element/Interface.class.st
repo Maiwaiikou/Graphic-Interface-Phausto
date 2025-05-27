@@ -6,11 +6,22 @@ Class {
 		'childrenElements',
 		'micro',
 		'audio',
-		'lines'
+		'activeDSP'
 	],
 	#category : 'Phausto-Element',
 	#package : 'Phausto-Element'
 }
+
+{ #category : 'accessing' }
+Interface >> activeDSP [
+	^ activeDSP
+]
+
+{ #category : 'accessing' }
+Interface >> activeDSP: aCollectionOfDSP [
+
+	activeDSP := aCollectionOfDSP
+]
 
 { #category : 'accessing' }
 Interface >> audio [
@@ -56,10 +67,34 @@ Interface >> drawElement [
 ]
 
 { #category : 'initialization' }
+Interface >> handleAudioConnectedEvent: aWidget [
+
+	| nextConnected dsp tempTest|
+	nextConnected := (aWidget isConnector: aWidget inputConnect)
+		                 ifTrue: [ aWidget inputConnect connectTo ]
+		                 ifFalse: [ nil ].
+	aWidget phaustoSound ifNotNil: [
+		tempTest := aWidget phaustoSound copy.
+		dsp := tempTest stereo asDsp.
+		dsp init.
+		dsp start.
+		activeDSP add: dsp ].
+	nextConnected ifNotNil: [
+		self handleAudioConnectedEvent: nextConnected ]
+]
+
+{ #category : 'initialization' }
+Interface >> handleAudioDisconnectedEvent [
+
+	activeDSP do: [ :dsp | dsp stop. dsp destroy ]
+]
+
+{ #category : 'initialization' }
 Interface >> initialize [
 
 	super initialize.
 	childrenElements := OrderedCollection new.
+	activeDSP := OrderedCollection new.
 	self size: 1000 @ 600.
 	menu := MenuElement withWidgets.
 	self initializeMicro.
@@ -76,8 +111,14 @@ Interface >> initialize [
 Interface >> initializeAudio [
 
 	audio := ToWidgetWithIconElement withAudioIcon.
-	self flag: #todo.
-	"Audio event action"
+	audio announcer
+		when: ConnectionAnnouncer
+		do: [ self handleAudioConnectedEvent: audio ]
+		for: audio.
+	audio announcer
+		when: DisconnectionAnnouncer
+		send: #handleAudioDisconnectedEvent
+		to: self.
 	audio announcer
 		when: LineCurrentlyDrawAnnouncer
 		send: #drawElement

@@ -38,7 +38,7 @@ ToWidgetWithIconElement >> draw [
 	self drawIcon.
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'drawing' }
 ToWidgetWithIconElement >> drawIcon [
 	icon constraintsDo: [ :c |
 		c frame vertical alignCenter ].

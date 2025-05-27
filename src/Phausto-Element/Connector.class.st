@@ -43,7 +43,11 @@ Connector >> connectTo [
 { #category : 'accessing' }
 Connector >> connectTo: aWidget [
 
-	connectTo := aWidget
+	connectTo := aWidget.
+	aWidget ifNil: [
+		parent notifyDisconnection.
+		^ self ].
+	parent notifyConnection
 ]
 
 { #category : 'accessing' }
@@ -71,7 +75,7 @@ Connector >> disconnect [
 	aConnector := self connectorConnected.
 	(self connectorWhichHaveLine: aConnector) line: BlElement new.
 	aConnector connectTo: nil.
-	connectTo := nil
+	self connectTo: nil
 ]
 
 { #category : 'initialization' }
@@ -95,6 +99,7 @@ Connector >> initializeDrag [
 	| points |
 	self addEventHandlerOn: BlDragStartEvent do: [ :evt |
 		evt consumed: true.
+		self checkBeforeDisconnect.
 		points := OrderedCollection new ].
 	self addEventHandlerOn: BlDragEvent do: [ :evt |
 		evt consumed: true.

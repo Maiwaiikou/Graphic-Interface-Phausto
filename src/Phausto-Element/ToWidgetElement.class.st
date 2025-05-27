@@ -304,6 +304,18 @@ ToWidgetElement >> newRawSkin [
 	^ ToWidgetElementSkin new
 ]
 
+{ #category : 'as yet unclassified' }
+ToWidgetElement >> notifyConnection [
+
+	self announcer announce: ConnectionAnnouncer new
+]
+
+{ #category : 'as yet unclassified' }
+ToWidgetElement >> notifyDisconnection [
+
+	self announcer announce: DisconnectionAnnouncer new
+]
+
 { #category : 'accessing' }
 ToWidgetElement >> notifyDrawingLine [
 	self announcer announce: LineCurrentlyDrawAnnouncer new.
