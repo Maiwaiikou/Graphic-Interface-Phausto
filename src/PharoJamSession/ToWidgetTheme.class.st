@@ -1,9 +1,9 @@
 Class {
 	#name : 'ToWidgetTheme',
 	#superclass : 'ToRawTheme',
-	#category : 'Phausto-Element-Style',
-	#package : 'Phausto-Element',
-	#tag : 'Style'
+	#category : 'PharoJamSession-UIElementStyle',
+	#package : 'PharoJamSession',
+	#tag : 'UIElementStyle'
 }
 
 { #category : 'accessing' }

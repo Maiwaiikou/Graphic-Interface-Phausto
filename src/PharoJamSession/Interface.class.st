@@ -8,8 +8,9 @@ Class {
 		'audio',
 		'activeDSP'
 	],
-	#category : 'Phausto-Element',
-	#package : 'Phausto-Element'
+	#category : 'PharoJamSession-UIElement',
+	#package : 'PharoJamSession',
+	#tag : 'UIElement'
 }
 
 { #category : 'accessing' }

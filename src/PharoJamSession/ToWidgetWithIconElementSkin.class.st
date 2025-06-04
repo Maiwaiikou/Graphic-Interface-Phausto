@@ -1,9 +1,9 @@
 Class {
 	#name : 'ToWidgetWithIconElementSkin',
 	#superclass : 'ToRawSkin',
-	#category : 'Phausto-Element-Style',
-	#package : 'Phausto-Element',
-	#tag : 'Style'
+	#category : 'PharoJamSession-UIElementStyle',
+	#package : 'PharoJamSession',
+	#tag : 'UIElementStyle'
 }
 
 { #category : 'as yet unclassified' }

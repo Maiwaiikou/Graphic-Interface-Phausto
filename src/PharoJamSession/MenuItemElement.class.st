@@ -4,9 +4,9 @@ Class {
 	#instVars : [
 		'widget'
 	],
-	#category : 'Phausto-Element-Menu',
-	#package : 'Phausto-Element',
-	#tag : 'Menu'
+	#category : 'PharoJamSession-UIElement',
+	#package : 'PharoJamSession',
+	#tag : 'UIElement'
 }
 
 { #category : 'initialization' }

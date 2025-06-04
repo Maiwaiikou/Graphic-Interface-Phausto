@@ -10,9 +10,9 @@ Class {
 		'step',
 		'callBack'
 	],
-	#category : 'Phausto-Element-Sliders',
-	#package : 'Phausto-Element',
-	#tag : 'Sliders'
+	#category : 'PharoJamSession-UIElement',
+	#package : 'PharoJamSession',
+	#tag : 'UIElement'
 }
 
 { #category : 'as yet unclassified' }

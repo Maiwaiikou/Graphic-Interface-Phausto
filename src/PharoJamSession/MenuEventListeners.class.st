@@ -4,9 +4,9 @@ Class {
 	#instVars : [
 		'menu'
 	],
-	#category : 'Phausto-Element-Menu',
-	#package : 'Phausto-Element',
-	#tag : 'Menu'
+	#category : 'PharoJamSession-UIElement',
+	#package : 'PharoJamSession',
+	#tag : 'UIElement'
 }
 
 { #category : 'mouse handlers' }

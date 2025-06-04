@@ -7,9 +7,9 @@ Class {
 		'line',
 		'connectTo'
 	],
-	#category : 'Phausto-Element-Widget',
-	#package : 'Phausto-Element',
-	#tag : 'Widget'
+	#category : 'PharoJamSession-UIElement',
+	#package : 'PharoJamSession',
+	#tag : 'UIElement'
 }
 
 { #category : 'as yet unclassified' }
