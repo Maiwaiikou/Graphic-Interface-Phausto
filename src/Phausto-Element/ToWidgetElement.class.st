@@ -17,25 +17,12 @@ Class {
 }
 
 { #category : 'configuring' }
-ToWidgetElement class >> configureForOscillator [
-	"I don't know if currently we could have a list of each oscillator of Phausto"
+ToWidgetElement class >> configureFor: anArrayOfClassName [
 
-	| oscillator oscWidgets widget currentControlParameter phControlParameter |
-	oscWidgets := OrderedCollection new.
-	oscillator := {
-		              SineOsc.
-		              SawOsc.
-		              PulseOsc.
-		              SquareOsc.
-		              TriOsc.
-		              LFOSaw.
-		              LFOSquare.
-		              LFOTri.
-		              LFOSawPos.
-		              LFOSquarePos.
-		              LFOTriPos }.
-	oscillator do: [ :osc |
-		widget := (self typeOfWidget: (osc new))
+	| widgetsList widget currentControlParameter phControlParameter |
+	widgetsList := OrderedCollection new.
+	anArrayOfClassName do: [ :osc |
+		widget := (self typeOfWidget: osc new)
 			          name: osc asString;
 			          phaustoSound: osc.
 		currentControlParameter := osc new controlParameters.
@@ -45,8 +32,27 @@ ToWidgetElement class >> configureForOscillator [
 				at: key asString
 				put: (ToSliders withAPhControlParam: phControlParameter) ].
 		widget initializeSliders.
-		oscWidgets add: widget ].
-	^ oscWidgets
+		widgetsList add: widget ].
+	^ widgetsList
+]
+
+{ #category : 'configuring' }
+ToWidgetElement class >> configureWithoutSoundFor: anArrayOfClassName [
+
+	| widgetsList widget currentControlParameter phControlParameter |
+	widgetsList := OrderedCollection new.
+	anArrayOfClassName do: [ :className |
+		widget := (self typeOfWidget: className new)
+			          name: className asString.
+		currentControlParameter := className new controlParameters.
+		currentControlParameter keysDo: [ :key |
+			phControlParameter := currentControlParameter at: key.
+			widget slidersDic
+				at: key asString
+				put: (ToSliders withAPhControlParam: phControlParameter) ].
+		widget initializeSliders.
+		widgetsList add: widget ].
+	^ widgetsList
 ]
 
 { #category : 'as yet unclassified' }
@@ -75,6 +81,28 @@ ToWidgetElement class >> typeOfWidget: aPhaustoElement [
 	(aPhaustoElement numberOfInputs = 0) ifTrue: [ ^ self onlyWithOutputConnector ].
 	(aPhaustoElement numberOfOutputs = 0) ifTrue: [ ^ self onlyWithInputConnector ].
 	^ self new.
+]
+
+{ #category : 'as yet unclassified' }
+ToWidgetElement class >> widgetsEffects [
+
+	| oscillators |
+	oscillators := OrderedCollection new.
+	Saturators subclasses do: [ :subClass |
+		subClass hasSubclasses
+			ifTrue: [ oscillators addAll: subClass subclasses ]
+			ifFalse: [ oscillators add: subClass ] ].
+	^ self configureWithoutSoundFor: oscillators
+]
+
+{ #category : 'as yet unclassified' }
+ToWidgetElement class >> widgetsOscillator [
+
+	| oscillators |
+	oscillators := OrderedCollection new.
+	Oscillator subclasses do: [ :subClass |
+			subClass hasSubclasses ifTrue: [oscillators addAll: subClass subclasses] ifFalse: [ oscillators add: subClass ] ].
+	^ self configureFor: oscillators
 ]
 
 { #category : 'drawing' }
@@ -321,13 +349,13 @@ ToWidgetElement >> newRawSkin [
 	^ ToWidgetElementSkin new
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'announcer connection' }
 ToWidgetElement >> notifyConnection [
 
 	self announcer announce: ConnectionAnnouncer new
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'announcer connection' }
 ToWidgetElement >> notifyDisconnection [
 
 	self announcer announce: DisconnectionAnnouncer new

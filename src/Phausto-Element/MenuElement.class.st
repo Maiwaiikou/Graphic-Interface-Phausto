@@ -12,7 +12,7 @@ Class {
 { #category : 'as yet unclassified' }
 MenuElement class >> withWidgets [
 
-	^ self new menuItem: ToWidgetElement configureForOscillator.
+	^ self new menuItem: ToWidgetElement widgetsOscillator.
 ]
 
 { #category : 'as yet unclassified' }
@@ -23,7 +23,7 @@ MenuElement >> childMenu: aString [
 	^ nil
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 MenuElement >> createFileMenu [
 
 	| menu items  elt |
@@ -41,7 +41,7 @@ MenuElement >> createFileMenu [
 	self addChild: menu
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 MenuElement >> createSettingMenu [
 
 	| menu items elt |
@@ -53,7 +53,7 @@ MenuElement >> createSettingMenu [
 	self addChild: menu
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 MenuElement >> createSoundsMenu [
 	|menu aMenuEventListener|
 	aMenuEventListener := self newMenuEventListener menu:self.
