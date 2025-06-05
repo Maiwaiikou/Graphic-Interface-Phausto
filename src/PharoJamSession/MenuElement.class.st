@@ -1,19 +1,10 @@
 Class {
 	#name : 'MenuElement',
 	#superclass : 'ToMenuPane',
-	#instVars : [
-		'menuItem'
-	],
 	#category : 'PharoJamSession-UIElement',
 	#package : 'PharoJamSession',
 	#tag : 'UIElement'
 }
-
-{ #category : 'as yet unclassified' }
-MenuElement class >> withWidgets [
-
-	^ self new menuItem: ToWidgetElement widgetsOscillator.
-]
 
 { #category : 'as yet unclassified' }
 MenuElement >> childMenu: aString [
@@ -21,6 +12,21 @@ MenuElement >> childMenu: aString [
 	self children do: [ :aChild |
 		(aChild labelText = aString) ifTrue: [^ aChild ]].
 	^ nil
+]
+
+{ #category : 'as yet unclassified' }
+MenuElement >> createEffectsMenu [
+	| menu aMenuEventListener |
+	aMenuEventListener := self newMenuEventListener menu: self.
+	menu := ToMenu new labelText: 'Effects'.
+	ToWidgetElement widgetsEffects do: [ :i |
+		| elt |
+		i atRandomPos.
+		elt := MenuItemElement new widget: i.
+		elt addEventHandler: aMenuEventListener.
+		menu addItem: elt ].
+	^ menu
+	
 ]
 
 { #category : 'instance creation' }
@@ -41,6 +47,21 @@ MenuElement >> createFileMenu [
 	self addChild: menu
 ]
 
+{ #category : 'as yet unclassified' }
+MenuElement >> createOscillatorMenu [
+
+	| menu aMenuEventListener |
+	aMenuEventListener := self newMenuEventListener menu: self.
+	menu := ToMenu new labelText: 'Oscillators'.
+	ToWidgetElement widgetsOscillator do: [ :i |
+		| elt |
+		i atRandomPos.
+		elt := MenuItemElement new widget: i.
+		elt addEventHandler: aMenuEventListener.
+		menu addItem: elt ].
+	^ menu
+]
+
 { #category : 'instance creation' }
 MenuElement >> createSettingMenu [
 
@@ -55,16 +76,29 @@ MenuElement >> createSettingMenu [
 
 { #category : 'instance creation' }
 MenuElement >> createSoundsMenu [
-	|menu aMenuEventListener|
-	aMenuEventListener := self newMenuEventListener menu:self.
+
+	| menu aMenuEventListener |
+	aMenuEventListener := self newMenuEventListener menu: self.
 	menu := ToMenu new labelText: 'Sounds'.
-	menuItem do: [ :i | 
-		|elt|
+	menu addItem: self createEffectsMenu.
+	menu addItem: self createOscillatorMenu.
+	menu addItem: self createSynthsMenu.
+	self addChild: menu
+]
+
+{ #category : 'as yet unclassified' }
+MenuElement >> createSynthsMenu [
+	| menu aMenuEventListener |
+	aMenuEventListener := self newMenuEventListener menu: self.
+	menu := ToMenu new labelText: 'Synths'.
+	ToWidgetElement widgetsSynths do: [ :i |
+		| elt |
 		i atRandomPos.
-		elt := MenuItemElement new widget:i.
+		elt := MenuItemElement new widget: i.
 		elt addEventHandler: aMenuEventListener.
 		menu addItem: elt ].
-	self addChild: menu.
+	^ menu
+	
 ]
 
 { #category : 'as yet unclassified' }
@@ -81,19 +115,7 @@ MenuElement >> initialize [
 	super initialize.
 	self horizontal: true.
 	self width: 500.
-	menuItem := OrderedCollection new.
 	self refreshMenu
-]
-
-{ #category : 'accessing' }
-MenuElement >> menuItem [
-	^ menuItem
-]
-
-{ #category : 'accessing' }
-MenuElement >> menuItem: aCollectionOfMenuItemElement [
-	menuItem := aCollectionOfMenuItemElement.
-	self refreshMenu.
 ]
 
 { #category : 'instance creation' }
@@ -108,12 +130,6 @@ MenuElement >> refreshMenu [
 	self createFileMenu.
 	self createSoundsMenu.
 	self createSettingMenu
-]
-
-{ #category : 'initialization' }
-MenuElement >> resetMenu [
-	menuItem do: [ :item |
-		item enable ].
 ]
 
 { #category : 'as yet unclassified' }

@@ -133,7 +133,7 @@ Interface >> initializeAudio [
 { #category : 'initialization' }
 Interface >> initializeMenu [
 
-	menu := MenuElement withWidgets.
+	menu := MenuElement new.
 	self addChild: menu.
 	menu defaultConstrains.
 ]

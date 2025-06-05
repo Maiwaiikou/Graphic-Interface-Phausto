@@ -105,6 +105,18 @@ ToWidgetElement class >> widgetsOscillator [
 	^ self configureFor: oscillators
 ]
 
+{ #category : 'as yet unclassified' }
+ToWidgetElement class >> widgetsSynths [
+
+	| synthsList |
+	synthsList := OrderedCollection new.
+	Synths subclasses do: [ :subClass |
+		subClass hasSubclasses
+			ifTrue: [ synthsList addAll: subClass subclasses ]
+			ifFalse: [ synthsList add: subClass ] ].
+	^ self configureWithoutSoundFor: synthsList
+]
+
 { #category : 'drawing' }
 ToWidgetElement >> adjustLine: aConnector [
 
@@ -144,6 +156,18 @@ ToWidgetElement >> atRandomPos [
 { #category : 'accessing' }
 ToWidgetElement >> barElement [
 	^ barElement
+]
+
+{ #category : 'initialize-release' }
+ToWidgetElement >> close [
+	self notifyEnableCreation.
+		(self isConnector: inputConnect) ifTrue: [
+			inputConnect checkBeforeDisconnect ].
+		(self isConnector: outputConnect) ifTrue: [
+			outputConnect checkBeforeDisconnect ].
+		self resetToInit.
+		self parent childrenElements remove: self.
+		self removeFromParent
 ]
 
 { #category : 'accessing' }
@@ -204,14 +228,8 @@ ToWidgetElement >> initializeBar [
 		c frame vertical alignTop.
 		c frame horizontal alignCenter ].
 	barElement closeButton newClickAction: [
-		self notifyEnableCreation.
-		(self isConnector: inputConnect) ifTrue: [
-			inputConnect checkBeforeDisconnect ].
-		(self isConnector: outputConnect) ifTrue: [
-			outputConnect checkBeforeDisconnect ].
-		self resetToInit.
-		self parent childrenElements remove: self.
-		self removeFromParent ].
+		self close.
+		].
 
 	barElement addEventHandlerOn: BlDragStartEvent do: [ :evt |
 		evt consumed: true.
