@@ -62,55 +62,46 @@ ToWidgetElement class >> configureWithoutSoundFor: anArrayOfClassName [
 ToWidgetElement class >> exampleWidgetWithInputConnector [
 
 	<example>
-	| space interface |
-	space := BlSpace new.
-	space toTheme: ToWidgetTheme new.
-	interface := BlElement new size: 500@500.
-	interface addChild: (self onlyWithInputConnector name: 'Beautiful widget').
-	space root addChild: interface.
-	space show
+	| interface |
+	interface := Interface new clear.
+	interface addChildElement: (self onlyWithInputConnector name: 'Beautiful widget' ).
+	interface open
 ]
 
 { #category : 'examples' }
 ToWidgetElement class >> exampleWidgetWithOutputConnector [
 
 	<example>
-	| space interface |
-	space := BlSpace new.
-	space toTheme: ToWidgetTheme new.
-	interface := BlElement new size: 500@500.
-	interface addChild: (self onlyWithOutputConnector name: 'Beautiful widget').
-	space root addChild: interface.
-	space show
+	| interface |
+	interface := Interface new clear.
+	interface addChildElement: (self onlyWithOutputConnector name: 'Beautiful widget' ).
+	interface open
 ]
 
 { #category : 'examples' }
 ToWidgetElement class >> exampleWidgetWithSliders [
 
 	<example>
-	| space interface |
-	space := BlSpace new.
-	space toTheme: ToWidgetTheme new.
-	interface := BlElement new size: 500@500.
-	interface addChild: (self new name: 'Beautiful widget'; slidersDic: {'Beauty' -> ToSliders new} asDictionary).
-	space root addChild: interface.
-	space show
+	| interface |
+	interface := Interface new clear.
+	interface addChildElement: (self new
+			 name: 'Beautiful widget';
+			 slidersDic: { ('Beauty' -> ToSliders new) } asDictionary).
+	interface open.
 ]
 
 { #category : 'examples' }
 ToWidgetElement class >> exampleWidgetWithTwoConnectors [
 
 	<example>
-	| space interface |
-	space := BlSpace new.
-	space toTheme: ToWidgetTheme new.
-	interface := BlElement new size: 500@500.
-	interface addChild: (self new name: 'Beautiful widget').
-	space root addChild: interface.
-	space show
+	| interface |
+	interface := Interface new clear.
+	interface addChildElement: (self new
+			 name: 'Beautiful widget').
+	interface open
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'configuring' }
 ToWidgetElement class >> onlyWithInputConnector [
 
 	| widget |
@@ -120,7 +111,7 @@ ToWidgetElement class >> onlyWithInputConnector [
 	^ widget
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'configuring' }
 ToWidgetElement class >> onlyWithOutputConnector [
 
 	| widget |
@@ -130,7 +121,7 @@ ToWidgetElement class >> onlyWithOutputConnector [
 	^ widget
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'configuring' }
 ToWidgetElement class >> typeOfWidget: aPhaustoElement [
 	
 	(aPhaustoElement numberOfInputs = 0) ifTrue: [ ^ self onlyWithOutputConnector ].
@@ -138,7 +129,7 @@ ToWidgetElement class >> typeOfWidget: aPhaustoElement [
 	^ self new.
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'widgets list' }
 ToWidgetElement class >> widgetsEffects [
 
 	| oscillators |
@@ -150,7 +141,7 @@ ToWidgetElement class >> widgetsEffects [
 	^ self configureWithoutSoundFor: oscillators
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'widgets list' }
 ToWidgetElement class >> widgetsOscillator [
 
 	| oscillators |
@@ -160,7 +151,7 @@ ToWidgetElement class >> widgetsOscillator [
 	^ self configureFor: oscillators
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'widgets list' }
 ToWidgetElement class >> widgetsSynths [
 
 	| synthsList |
@@ -215,14 +206,15 @@ ToWidgetElement >> barElement [
 
 { #category : 'initialize-release' }
 ToWidgetElement >> close [
+
 	self notifyEnableCreation.
-		(self isConnector: inputConnect) ifTrue: [
-			inputConnect checkBeforeDisconnect ].
-		(self isConnector: outputConnect) ifTrue: [
-			outputConnect checkBeforeDisconnect ].
-		self resetToInit.
-		"self parent childrenElements remove: self."
-		self removeFromParent
+	(self isConnector: inputConnect) ifTrue: [
+		inputConnect checkBeforeDisconnect ].
+	(self isConnector: outputConnect) ifTrue: [
+		outputConnect checkBeforeDisconnect ].
+	self resetToInit.
+	self parent childrenElements remove: self ifAbsent: [].
+	self removeFromParent
 ]
 
 { #category : 'accessing' }

@@ -12,6 +12,17 @@ Class {
 	#tag : 'UIElement'
 }
 
+{ #category : 'examples' }
+ToWidgetWithIconElement class >> exampleWidgetWithAIcon [
+
+	<example>
+	| interface |
+	interface := Interface new clear.
+	interface addChildElement: (self new initializeNewIconFromURL:
+			 'https://i.ebayimg.com/images/g/kE8AAOSwpzJhwRn~/s-l400.png').
+	interface open
+]
+
 { #category : 'as yet unclassified' }
 ToWidgetWithIconElement class >> withAudioIcon [
 

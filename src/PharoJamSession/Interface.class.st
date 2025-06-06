@@ -29,6 +29,13 @@ Interface >> activeDSP: aCollectionOfDSP [
 ]
 
 { #category : 'accessing' }
+Interface >> addChildElement: aWidget [
+
+	childrenElements add: aWidget.
+	self drawElement
+]
+
+{ #category : 'accessing' }
 Interface >> audio [
 	^ audio
 ]
@@ -42,6 +49,11 @@ Interface >> childrenElements [
 Interface >> childrenElements: aCollectionOfElements [
 	childrenElements := aCollectionOfElements.
 	self drawElement.
+]
+
+{ #category : 'accessing' }
+Interface >> clear [
+	self removeChildren.
 ]
 
 { #category : 'drawing' }
@@ -58,11 +70,12 @@ Interface >> drawChildren [
 { #category : 'drawing' }
 Interface >> drawElement [
 
-	self removeChildren.
-	self addChild: menu.
-	self addChild: micro.
+	self removeElementExcept: {
+			menu.
+			micro.
+			audio }.
+
 	self addChild: micro outputConnect line.
-	self addChild: audio.
 	self addChild: audio inputConnect line.
 	self drawChildren
 ]
@@ -132,6 +145,7 @@ Interface >> initializeAudio [
 		send: #drawElement
 		to: self.
 	audio position: 930 @ 150.
+	self addChild: audio.
 ]
 
 { #category : 'initialization' }
@@ -153,6 +167,7 @@ Interface >> initializeMicro [
 		send: #drawElement
 		to: self.
 	micro position: 0 @ 150.
+	self addChild: micro.
 ]
 
 { #category : 'accessing' }
@@ -180,6 +195,15 @@ Interface >> open [
 	space root addChild: self.
 	space extent: 1000@600.
 	space show
+]
+
+{ #category : 'removing' }
+Interface >> removeElementExcept: aListOfElementToNotDelete [
+	|childrenCopy|
+	childrenCopy := children copy.
+	childrenCopy do: [ : item | 
+		(aListOfElementToNotDelete includes: item)ifFalse: [ self removeChild: item ]. 
+		]
 ]
 
 { #category : 'initialization' }
