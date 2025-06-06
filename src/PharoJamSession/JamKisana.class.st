@@ -4,17 +4,11 @@
 "
 Class {
 	#name : 'JamKisana',
-	#superclass : 'UnitGenerator',
+	#superclass : 'JamInstrument',
 	#category : 'PharoJamSession-Instrument',
 	#package : 'PharoJamSession',
 	#tag : 'Instrument'
 }
-
-{ #category : 'converting' }
-JamKisana >> asBox [ 
-
-^ PhBox new fromString: self code
-]
 
 { #category : 'accessing' }
 JamKisana >> code [ 
@@ -86,12 +80,6 @@ string(coef, freq, t60, level, trig) = no.noise*level
 	};
 
     process = kisana;'.
-]
-
-{ #category : 'initialization' }
-JamKisana >> initialize [ 
-super initialize .
-self initializeControlParameters .
 ]
 
 { #category : 'initialization' }
