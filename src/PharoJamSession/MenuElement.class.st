@@ -1,3 +1,7 @@
+"
+I'm the menu of the interface compose with functionnalities such as Export, Save and help functionnalities.
+I'm also compose with many MenuItemElement, each of them handle the creation of a widget song.
+"
 Class {
 	#name : 'MenuElement',
 	#superclass : 'ToMenuPane',

@@ -1,3 +1,6 @@
+"
+I'm just a little event to permitt the creation of widget when someone click on the MenuItemElement.
+"
 Class {
 	#name : 'MenuEventListeners',
 	#superclass : 'BlEventListener',

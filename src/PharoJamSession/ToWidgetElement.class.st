@@ -1,3 +1,6 @@
+"
+I'm the main caracter of the PharoJamSession, i'm compose of a BarElement who can move me in the interface, with at least one Cconnector and maximum 2 to link my attribut phaustoSound to another widget and with a slider container which regroup sliders of each parameter of my phaustoSound. 
+"
 Class {
 	#name : 'ToWidgetElement',
 	#superclass : 'ToElement',
@@ -53,6 +56,58 @@ ToWidgetElement class >> configureWithoutSoundFor: anArrayOfClassName [
 		widget initializeSliders.
 		widgetsList add: widget ].
 	^ widgetsList
+]
+
+{ #category : 'examples' }
+ToWidgetElement class >> exampleWidgetWithInputConnector [
+
+	<example>
+	| space interface |
+	space := BlSpace new.
+	space toTheme: ToWidgetTheme new.
+	interface := BlElement new size: 500@500.
+	interface addChild: (self onlyWithInputConnector name: 'Beautiful widget').
+	space root addChild: interface.
+	space show
+]
+
+{ #category : 'examples' }
+ToWidgetElement class >> exampleWidgetWithOutputConnector [
+
+	<example>
+	| space interface |
+	space := BlSpace new.
+	space toTheme: ToWidgetTheme new.
+	interface := BlElement new size: 500@500.
+	interface addChild: (self onlyWithOutputConnector name: 'Beautiful widget').
+	space root addChild: interface.
+	space show
+]
+
+{ #category : 'examples' }
+ToWidgetElement class >> exampleWidgetWithSliders [
+
+	<example>
+	| space interface |
+	space := BlSpace new.
+	space toTheme: ToWidgetTheme new.
+	interface := BlElement new size: 500@500.
+	interface addChild: (self new name: 'Beautiful widget'; slidersDic: {'Beauty' -> ToSliders new} asDictionary).
+	space root addChild: interface.
+	space show
+]
+
+{ #category : 'examples' }
+ToWidgetElement class >> exampleWidgetWithTwoConnectors [
+
+	<example>
+	| space interface |
+	space := BlSpace new.
+	space toTheme: ToWidgetTheme new.
+	interface := BlElement new size: 500@500.
+	interface addChild: (self new name: 'Beautiful widget').
+	space root addChild: interface.
+	space show
 ]
 
 { #category : 'as yet unclassified' }
@@ -166,7 +221,7 @@ ToWidgetElement >> close [
 		(self isConnector: outputConnect) ifTrue: [
 			outputConnect checkBeforeDisconnect ].
 		self resetToInit.
-		self parent childrenElements remove: self.
+		"self parent childrenElements remove: self."
 		self removeFromParent
 ]
 
@@ -227,17 +282,23 @@ ToWidgetElement >> initializeBar [
 	barElement constraintsDo: [ :c |
 		c frame vertical alignTop.
 		c frame horizontal alignCenter ].
-	barElement closeButton newClickAction: [
-		self close.
-		].
+	barElement closeButton newClickAction: [ self close ].
+	self initializeDragWidgetEventOn: barElement.
 
-	barElement addEventHandlerOn: BlDragStartEvent do: [ :evt |
+	self addChild: barElement
+]
+
+{ #category : 'initialization' }
+ToWidgetElement >> initializeDragWidgetEventOn: anElement [
+
+	| offset |
+	anElement addEventHandlerOn: BlDragStartEvent do: [ :evt |
 		evt consumed: true.
 		offset := evt position - self position ].
-	barElement addEventHandlerOn: BlDragEvent do: [ :evt |
+	anElement addEventHandlerOn: BlDragEvent do: [ :evt |
 		evt consumed: true.
 		self position: evt position - offset ].
-	barElement addEventHandlerOn: BlDragEndEvent do: [ :evt |
+	anElement addEventHandlerOn: BlDragEndEvent do: [ :evt |
 		evt consumed: true.
 		(self isConnector: inputConnect) ifTrue: [
 			(inputConnect connectorWhichHaveLine:
@@ -245,9 +306,7 @@ ToWidgetElement >> initializeBar [
 		(self isConnector: outputConnect) ifTrue: [
 			(outputConnect connectorWhichHaveLine:
 				 outputConnect connectorConnected) updateLine ].
-		self notifyDrawingLine ].
-
-	self addChild: barElement
+		self notifyDrawingLine ]
 ]
 
 { #category : 'initialization' }

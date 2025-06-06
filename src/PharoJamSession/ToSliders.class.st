@@ -1,3 +1,6 @@
+"
+I'm a basic graphic slider who use drag and drop to edit my value by a defined step. I can show my value to other element when their call my callback method (which change when my value is increase or decrease).
+"
 Class {
 	#name : 'ToSliders',
 	#superclass : 'ToElement',
@@ -81,6 +84,7 @@ ToSliders >> decreaseValue [
 
 	value > minValue ifFalse: [ ^ self ].
 	value := value - step.
+	self callBack.
 ]
 
 { #category : 'accessing' }
@@ -106,6 +110,7 @@ ToSliders >> increaseValue [
 
 	value < maxValue ifFalse: [ ^ self ].
 	value := value + step.
+	self callBack.
 ]
 
 { #category : 'initialization' }

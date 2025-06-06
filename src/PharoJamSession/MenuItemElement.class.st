@@ -1,3 +1,6 @@
+"
+I'm a ToMenuItemElement which have a attribut widget to it creation when someone click on me.
+"
 Class {
 	#name : 'MenuItemElement',
 	#superclass : 'ToMenuItem',

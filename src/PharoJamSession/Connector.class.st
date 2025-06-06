@@ -1,3 +1,7 @@
+"
+I'm a connector use with widget to link to widgets together by create a line between them.
+I must be an input or output connector before been link to another connector 
+"
 Class {
 	#name : 'Connector',
 	#superclass : 'BlElement',

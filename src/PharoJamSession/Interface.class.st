@@ -1,9 +1,13 @@
+"
+The interface which regroup all UIElement of the PharoJamSession compose with widgets and a menu.
+"
 Class {
 	#name : 'Interface',
 	#superclass : 'BlElement',
 	#instVars : [
 		'menu',
 		'childrenElements',
+		'widgetsLines',
 		'micro',
 		'audio',
 		'activeDSP'

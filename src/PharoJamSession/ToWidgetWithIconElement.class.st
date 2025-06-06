@@ -1,3 +1,6 @@
+"
+I'm a sort of ToWidgetElement but I don't have phaustoSound so I don't have any sliders, I only have an icon at the middle and connectors. As my parent, I can be drag and drop.
+"
 Class {
 	#name : 'ToWidgetWithIconElement',
 	#superclass : 'ToWidgetElement',
@@ -57,8 +60,10 @@ ToWidgetWithIconElement >> icon: anElement [
 
 { #category : 'initialization' }
 ToWidgetWithIconElement >> initialize [
+
 	icon := BlElement new.
 	super initialize.
+	self initializeDragWidgetEventOn: self.
 ]
 
 { #category : 'initialization' }

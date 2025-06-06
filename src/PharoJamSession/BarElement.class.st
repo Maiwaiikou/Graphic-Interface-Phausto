@@ -1,3 +1,6 @@
+"
+I'm a menu item bar with 2 subelements, a close button and a label name
+"
 Class {
 	#name : 'BarElement',
 	#superclass : 'ToElement',
