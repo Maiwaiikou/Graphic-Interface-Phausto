@@ -7,6 +7,12 @@ Class {
 }
 
 { #category : 'tests' }
+JamInstrumentTests >> testJamBlowWhistleBottleAsDsp [
+
+	self assert: JamBlowWhistleBottle new asDsp isNull equals: false
+]
+
+{ #category : 'tests' }
 JamInstrumentTests >> testJamKisanaAsDsp [
 
 self assert: JamKisana new asDsp isNull equals: false
@@ -16,4 +22,10 @@ self assert: JamKisana new asDsp isNull equals: false
 JamInstrumentTests >> testJamSoftHarpAsDsp [
 
 	self assert: JamSoftHarp new asDsp isNull equals: false
+]
+
+{ #category : 'tests' }
+JamInstrumentTests >> testJamTuneBar6AsDsp [
+
+	self assert: JamTuneBar6 new asDsp isNull equals: false
 ]
