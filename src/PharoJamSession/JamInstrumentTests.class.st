@@ -23,3 +23,9 @@ JamInstrumentTests >> testJamSoftHarpAsDsp [
 
 	self assert: JamSoftHarp new asDsp isNull equals: false
 ]
+
+{ #category : 'tests' }
+JamInstrumentTests >> testJamTuneBar6AsDsp [
+
+	self assert: JamTuneBar6 new asDsp isNull equals: false
+]
