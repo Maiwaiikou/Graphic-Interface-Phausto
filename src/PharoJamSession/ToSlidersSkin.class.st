@@ -8,11 +8,14 @@ Class {
 
 { #category : 'event handling' }
 ToSlidersSkin >> installSkinEvent: anEvent [
+
 	super installSkinEvent: anEvent.
 	anEvent elementDo: [ :elt |
-		elt size: 170@20.
-		elt border: (BlBorder paint: Color black width: 1).
-		elt geometry: (BlRoundedRectangleGeometry cornerRadius: 10).
-		elt background: Color lightOrange.
-		]
+		elt size: 200 @ 20.
+		elt background: Color transparent.
+		elt sliderBar geometry:
+			(BlRoundedRectangleGeometry cornerRadius: 10).
+	   elt sliderBar border: (BlBorder paint: Color black width: 1).
+		elt sliderBar background: Color lightRed.
+		elt sliderBar size: 170 @ elt barThickness ]
 ]

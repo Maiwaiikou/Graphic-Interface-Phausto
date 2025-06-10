@@ -225,8 +225,7 @@ ToWidgetElement >> configuredString: aString [
 { #category : 'initialization' }
 ToWidgetElement >> connectSlider: aToSlider toLabel: aTextElement [
 
-	aToSlider callBack: [ :value |
-		aTextElement text: value asRopedText ].
+	aToSlider callBack: [ :value | aTextElement text: (value round:2) asRopedText ].
 	aToSlider constraintsDo: [ :c |
 		c frame horizontal alignCenter.
 		c margin: (BlInsets all: 5) ].
