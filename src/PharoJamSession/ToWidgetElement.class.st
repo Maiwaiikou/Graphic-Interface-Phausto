@@ -167,7 +167,7 @@ ToWidgetElement class >> widgetsSynths [
 ToWidgetElement >> adjustLine: aConnector [
 
 	| points line first last midX |
-	(aConnector line geometry class = BlPolylineGeometry) ifFalse: [
+	aConnector line geometry class = BlPolylineGeometry ifFalse: [
 		^ self ].
 	points := OrderedCollection new.
 	first := aConnector line geometry vertices first.
@@ -178,7 +178,7 @@ ToWidgetElement >> adjustLine: aConnector [
 	points add: midX @ last y.
 	points add: last.
 	line := BlElement new.
-	line geometry: (BlPolylineGeometry vertices: points).
+	line geometry: (BlBezierCurveGeometry controlPoints: points).
 	line outskirts: BlOutskirts centered.
 	line border: (BlBorder paint: Color black width: 2).
 	aConnector line: line.
@@ -225,13 +225,12 @@ ToWidgetElement >> configuredString: aString [
 { #category : 'initialization' }
 ToWidgetElement >> connectSlider: aToSlider toLabel: aTextElement [
 
-	aToSlider callBack: [ :value | aTextElement text: value asRopedText ].
+	aToSlider callBack: [ :value |
+		aTextElement text: value asRopedText ].
 	aToSlider constraintsDo: [ :c |
 		c frame horizontal alignCenter.
 		c margin: (BlInsets all: 5) ].
-	slidersContainer addChild: aToSlider 
-
-
+	slidersContainer addChild: aToSlider
 ]
 
 { #category : 'drawing' }

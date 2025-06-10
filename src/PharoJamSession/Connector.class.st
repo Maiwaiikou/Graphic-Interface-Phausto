@@ -67,9 +67,9 @@ Connector >> connectorConnected [
 { #category : 'accessing' }
 Connector >> connectorWhichHaveLine: aConnector [
 
-	aConnector line geometry class = BlPolylineGeometry
+	aConnector line geometry class = BlBezierCurveGeometry
 		ifTrue: [ ^ aConnector ]
-		ifFalse: [ ^ self ].
+		ifFalse: [ ^ self ]
 ]
 
 { #category : 'connecting' }
@@ -159,17 +159,23 @@ Connector >> resetInit [
 Connector >> updateLine [
 	"When the widget connected or the widget parent position move and there is another widget connected, we edit our visual connexion line to put it visually connect to the correct widget"
 
-	| points first last midX sizeBound |
+	| points first last midX sizeBound connectedWithLine |
 	sizeBound := self size / 2.
-	line geometry class = BlPolylineGeometry ifFalse: [ ^ self ].
+	
+	connectTo ifNil: [ ^ self ].
+	connectedWithLine := self connectorWhichHaveLine:
+		                     self connectorConnected.
 	points := OrderedCollection new.
 	first := self positionInSpace.
 	last := self connectorConnected positionInSpace.
 
-	midX := self calcMiddleWith: (first x + sizeBound x) and: (last x + sizeBound x).
-	points add: (first x + sizeBound x) @ (first y + sizeBound y).
+	midX := self
+		        calcMiddleWith: first x + sizeBound x
+		        and: last x + sizeBound x.
+	points add: first x + sizeBound x @ (first y + sizeBound y).
 	points add: midX @ (first y + sizeBound y).
 	points add: midX @ (last y + sizeBound y).
-	points add: (last x + sizeBound x) @ (last y + sizeBound y).
-	line geometry: (BlPolylineGeometry vertices: points)
+	points add: last x + sizeBound x @ (last y + sizeBound y).
+	connectedWithLine line geometry:
+		(BlBezierCurveGeometry controlPoints: points)
 ]
