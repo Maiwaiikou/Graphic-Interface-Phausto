@@ -6,6 +6,7 @@ Class {
 	#superclass : 'ToElement',
 	#instVars : [
 		'value',
+		'possibleValues',
 		'button',
 		'announcer',
 		'minValue',
@@ -14,7 +15,8 @@ Class {
 		'callBack',
 		'sliderBar',
 		'barThickness',
-		'barMargin'
+		'barMargin',
+		'offset'
 	],
 	#category : 'PharoJamSession-UIElement',
 	#package : 'PharoJamSession',
@@ -25,12 +27,12 @@ Class {
 ToSliders class >> withAPhControlParam: aPhControlParam [
 
 	| slider |
-	slider := self new
-		          value: (aPhControlParam initialValue ifNil: [ 0 ]).
-	aPhControlParam max ifNotNil:[ :max | slider maxValue: max].
-	aPhControlParam value ifNotNil:[ :min | slider minValue: min].
-	aPhControlParam step ifNotNil:[ :step | slider step: step].
-	
+	slider := self new.
+	aPhControlParam initialValue ifNotNil: [ :max | slider value: 0 ].
+	aPhControlParam max ifNotNil: [ :max | slider maxValue: max ].
+	aPhControlParam min ifNotNil: [ :min | slider minValue: min ].
+	aPhControlParam step ifNotNil: [ :step | slider step: step ].
+
 	^ slider
 ]
 
@@ -61,6 +63,11 @@ ToSliders >> barThickness: anInteger [
 ]
 
 { #category : 'accessing' }
+ToSliders >> button [
+	^ button
+]
+
+{ #category : 'accessing' }
 ToSliders >> callBack [ 
 
 	^ callBack
@@ -72,35 +79,15 @@ ToSliders >> callBack: aBlock [
 	callBack := aBlock
 ]
 
-{ #category : 'as yet unclassified' }
-ToSliders >> checkBounds: aPosition [
-
-	| slidPosInSpace |
-	slidPosInSpace := sliderBar positionInSpace x.
-
-	^ aPosition
-		  between: slidPosInSpace + barMargin
-		  and: slidPosInSpace + sliderBar size x
-]
-
-{ #category : 'as yet unclassified' }
-ToSliders >> checkMoveInBounds: aPosition [
-
-	(aPosition < (self positionInSpace + button position x) and:
-		 (aPosition isDivisibleBy: 2))
-		ifTrue: [ self decreaseValue ]
-		ifFalse: [ self increaseValue ]
-]
-
 { #category : 'accessing' }
 ToSliders >> createCircle [
 
 	| circle |
 	circle := BlElement new
-		          background: Color white;
 		          border: (BlBorder paint: Color black width: 1);
 		          layout: BlFrameLayout new;
 		          geometry: BlCircleGeometry new;
+		          transformDo: [ :t | t translateBy: -10 @ 0 ];
 		          size: 20 @ 20.
 	^ circle
 ]
@@ -111,6 +98,18 @@ ToSliders >> decreaseValue [
 	value > minValue ifFalse: [ ^ self ].
 	self value: value - step.
 	self callBack
+]
+
+{ #category : 'initialization' }
+ToSliders >> handleMoveEvent: aPosition [
+
+	| newPosX |
+	newPosX := aPosition x.
+	newPosX < sliderBar position x ifTrue: [
+		newPosX := sliderBar position x ].
+	newPosX > (sliderBar position + sliderBar size) x ifTrue: [
+		newPosX := (sliderBar position + sliderBar size) x ].
+	button position: newPosX @ 0
 ]
 
 { #category : 'slider - api' }
@@ -127,11 +126,13 @@ ToSliders >> initialize [
 	super initialize.
 	self layout: BlBasicLayout new.
 	value := 0.
-	step := 0.01.
+	step := 1.
 	minValue := 0.
 	maxValue := 100.
 	barMargin := 10.
 	barThickness := 5.
+	offset := 0 asPoint.
+	self updatePossibleValues.
 	self initializeSliderBar.
 	self initializeButton
 ]
@@ -139,19 +140,28 @@ ToSliders >> initialize [
 { #category : 'initialization' }
 ToSliders >> initializeButton [
 
-	| offset |
 	button := self createCircle.
 	button position: barMargin @ 0.
+	
+	"All event which edit value or move the button"
+	
+	self flag: #TODO.
+	"Handle MouseDown and Drag at the same time"
 	button addEventHandlerOn: BlDragStartEvent do: [ :evt |
 		evt consumed: true.
-		offset := evt position - button position ].
+		offset := evt position - self position ].
 	button addEventHandlerOn: BlDragEvent do: [ :evt |
 		evt consumed: true.
-		(self checkBounds: evt position x) ifTrue: [
-			self flag: #ToFix.
-			self valueEditor: evt position x.
-			button position: (evt position - offset) x @ 0 ] ].
-	self flag: #ToAddClickEvent.
+		self handleMoveEvent: evt position - offset.
+		self updateValueAt: button position ].
+	self addEventHandlerOn: BlMouseDownEvent do: [ :evt |
+		evt consumed: true.
+		"offset := evt position - self position."
+		self handleMoveEvent: evt position - self positionInSpace ].
+	self addEventHandlerOn: BlMouseUpEvent do: [ :evt |
+		evt consumed: true.
+		self updateValueAt: button position ].
+
 	self addChild: button
 ]
 
@@ -172,7 +182,9 @@ ToSliders >> maxValue [
 
 { #category : 'slider - api' }
 ToSliders >> maxValue: anInteger [
+
 	maxValue := anInteger.
+	self updatePossibleValues.
 ]
 
 { #category : 'slider - api' }
@@ -182,12 +194,40 @@ ToSliders >> minValue [
 
 { #category : 'slider - api' }
 ToSliders >> minValue: anInteger [
+
 	minValue := anInteger.
+	self updatePossibleValues.
+]
+
+{ #category : 'accessing' }
+ToSliders >> nearestValue: anIntegerOrAFloat [
+	
+	|val currentMin tmp|
+	val := possibleValues first.
+	currentMin := (anIntegerOrAFloat - val) abs.
+	possibleValues do: [ :v |
+		tmp := (anIntegerOrAFloat - v) abs.
+		tmp < currentMin ifTrue: [ 
+			currentMin := tmp.
+			val := v.
+			 ] ].
+	^ val.
 ]
 
 { #category : 'instance creation' }
 ToSliders >> newRawSkin [
 	^ ToSlidersSkin new
+]
+
+{ #category : 'accessing' }
+ToSliders >> possibleValues [
+	^ possibleValues
+]
+
+{ #category : 'accessing' }
+ToSliders >> possibleValues: anOrderedCollection [
+
+	possibleValues := anOrderedCollection new.
 ]
 
 { #category : 'accessing' }
@@ -207,9 +247,30 @@ ToSliders >> step [
 ]
 
 { #category : 'slider - api' }
-ToSliders >> step: AnIntegerOrFloat [
+ToSliders >> step: anIntegerOrFloat [
 
-	step := step
+	step := anIntegerOrFloat.
+	self updatePossibleValues.
+]
+
+{ #category : 'accessing' }
+ToSliders >> updatePossibleValues [
+
+	possibleValues := (minValue to: maxValue by: step)
+		                  asOrderedCollection
+]
+
+{ #category : 'accessing' }
+ToSliders >> updateValueAt: aPoint [
+	| length valueDiff valProd coeff |
+	length := (aPoint - sliderBar position) x.
+	valProd := minValue.
+	length = 0
+		ifFalse: [
+			valueDiff := maxValue - minValue.
+			coeff := (sliderBar size x) / length.
+			valProd := minValue + (valueDiff / coeff) ].
+	self value: (self nearestValue: valProd).
 ]
 
 { #category : 'accessing' }
@@ -223,12 +284,4 @@ ToSliders >> value: anInteger [
 	value := anInteger clampBetween: minValue and: maxValue.
 
 	self callBack ifNotNil: [ :c | c value: value ]
-]
-
-{ #category : 'as yet unclassified' }
-ToSliders >> valueEditor: aPosition [
-
-	(aPosition < (self positionInSpace + button position x))
-		ifTrue: [ self decreaseValue ]
-		ifFalse: [ self increaseValue ]
 ]
