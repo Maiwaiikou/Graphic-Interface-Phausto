@@ -59,6 +59,36 @@ ToWidgetElement class >> configureWithoutSoundFor: anArrayOfClassName [
 ]
 
 { #category : 'examples' }
+ToWidgetElement class >> exampleWidgetWithDifferentTheme [
+
+	<example>
+	| interface theme |
+	interface := Interface new clear.
+	theme := ToRawTheme new.
+	theme addTokenProperty:
+		(ToTokenProperty name: #'widget-background' value: Color white).
+	theme addTokenProperty:
+		(ToTokenProperty name: #'bar-background' value: Color blue).
+	theme addTokenProperty:
+		(ToTokenProperty name: #'input-connect-background' value: Color pink).
+	theme addTokenProperty: (ToTokenProperty
+			 name: #'output-connect-background'
+			 value: Color purple).
+	theme addTokenProperty: (ToTokenProperty
+			 name: #'output-connect-background'
+			 value: Color purple).
+	theme addTokenProperty:
+		(ToTokenProperty name: #'slider-background' value: Color red).
+	theme addTokenProperty:
+		(ToTokenProperty name: #'button-background' value: Color lightGray).
+	interface theme: theme.
+	interface addChildElement: (self new
+			 name: 'WindowsXp';
+			 slidersDic: { ('Bug Counter' -> ToSliders new) } asDictionary).
+	interface open
+]
+
+{ #category : 'examples' }
 ToWidgetElement class >> exampleWidgetWithInputConnector [
 
 	<example>
@@ -139,6 +169,18 @@ ToWidgetElement class >> widgetsEffects [
 			ifTrue: [ oscillators addAll: subClass subclasses ]
 			ifFalse: [ oscillators add: subClass ] ].
 	^ self configureWithoutSoundFor: oscillators
+]
+
+{ #category : 'widgets list' }
+ToWidgetElement class >> widgetsInstruments [
+
+	| instList |
+	instList := OrderedCollection new.
+	JamInstrument subclasses do: [ :subClass |
+		subClass hasSubclasses
+			ifTrue: [ instList addAll: subClass subclasses ]
+			ifFalse: [ instList add: subClass ] ].
+	^ self configureWithoutSoundFor: instList.
 ]
 
 { #category : 'widgets list' }
@@ -225,8 +267,7 @@ ToWidgetElement >> configuredString: aString [
 { #category : 'initialization' }
 ToWidgetElement >> connectSlider: aToSlider toLabel: aTextElement [
 
-	aToSlider callBack: [ :value |
-		aTextElement text: value asRopedText ].
+	aToSlider callBack: [ :value | aTextElement text: (value round:2) asRopedText ].
 	aToSlider constraintsDo: [ :c |
 		c frame horizontal alignCenter.
 		c margin: (BlInsets all: 5) ].
@@ -257,6 +298,9 @@ ToWidgetElement >> initialize [
 	self initializeInputConnect.
 	self initializeOutputConnect.
 	self initializeSlidersContainer.
+	self constraintsDo: [ :c |
+		c vertical fitContent.
+		c horizontal fitContent ].
 	self addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
 		(self isConnector: evt gestureSource) ifTrue: [
@@ -267,10 +311,10 @@ ToWidgetElement >> initialize [
 { #category : 'initialization' }
 ToWidgetElement >> initializeBar [
 
-	| offset |
 	barElement := BarElement new name: self name.
 	barElement border: (BlBorder paint: Color black width: 1).
 	barElement constraintsDo: [ :c |
+		c vertical fitContent.
 		c frame vertical alignTop.
 		c frame horizontal alignCenter ].
 	barElement closeButton newClickAction: [ self close ].
@@ -341,24 +385,28 @@ ToWidgetElement >> initializeOutputConnect [
 ]
 
 { #category : 'initialization' }
-ToWidgetElement >> initializeSliderLabel: aString [ 
+ToWidgetElement >> initializeSliderLabel: aString [
 
-	|label valueLabel container |
+	| label valueLabel container |
 	label := BlTextElement new.
-	label text:
-			(aString , ' : ') asRopedText.
+	label text: (aString , ':  ') asRopedText.
 	valueLabel := BlTextElement new.
 	valueLabel text: 0 asRopedText.
 
-	container := BlElement new layout: BlLinearLayout horizontal; constraintsDo: [ :c | 
-		c frame horizontal alignCenter.
-		c margin: (BlInsets all: 5).
-		c vertical fitContent.
-		c horizontal fitContent. ]; addChildren: { label. valueLabel }.
-	
-	slidersContainer addChild: container. 
-		
-	^ valueLabel.
+	container := BlElement new
+		             layout: BlLinearLayout horizontal;
+		             constraintsDo: [ :c |
+			             c frame horizontal alignCenter.
+			             c margin: (BlInsets all: 5).
+			             c vertical fitContent.
+			             c horizontal fitContent ];
+		             addChildren: {
+				             label.
+				             valueLabel }.
+
+	slidersContainer addChild: container.
+
+	^ valueLabel
 ]
 
 { #category : 'initialization' }
