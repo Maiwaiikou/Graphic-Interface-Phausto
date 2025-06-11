@@ -172,6 +172,18 @@ ToWidgetElement class >> widgetsEffects [
 ]
 
 { #category : 'widgets list' }
+ToWidgetElement class >> widgetsInstruments [
+
+	| instList |
+	instList := OrderedCollection new.
+	JamInstrument subclasses do: [ :subClass |
+		subClass hasSubclasses
+			ifTrue: [ instList addAll: subClass subclasses ]
+			ifFalse: [ instList add: subClass ] ].
+	^ self configureWithoutSoundFor: instList.
+]
+
+{ #category : 'widgets list' }
 ToWidgetElement class >> widgetsOscillator [
 
 	| oscillators |

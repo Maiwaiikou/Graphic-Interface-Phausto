@@ -52,6 +52,21 @@ MenuElement >> createFileMenu [
 ]
 
 { #category : 'as yet unclassified' }
+MenuElement >> createInstrumentMenu [
+
+	| menu aMenuEventListener |
+	aMenuEventListener := self newMenuEventListener menu: self.
+	menu := ToMenu new labelText: 'Instrument'.
+	ToWidgetElement widgetsInstruments do: [ :i |
+		| elt |
+		i atRandomPos.
+		elt := MenuItemElement new widget: i.
+		elt addEventHandler: aMenuEventListener.
+		menu addItem: elt ].
+	^ menu
+]
+
+{ #category : 'as yet unclassified' }
 MenuElement >> createOscillatorMenu [
 
 	| menu aMenuEventListener |
@@ -87,6 +102,7 @@ MenuElement >> createSoundsMenu [
 	menu addItem: self createEffectsMenu.
 	menu addItem: self createOscillatorMenu.
 	menu addItem: self createSynthsMenu.
+	menu addItem: self createInstrumentMenu.
 	self addChild: menu
 ]
 
