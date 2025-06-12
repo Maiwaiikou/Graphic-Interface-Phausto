@@ -10,15 +10,14 @@ Class {
 ToWidgetElementSkin >> installSkinEvent: anEvent [
 
 	super installSkinEvent: anEvent.
-	anEvent elementDo: [ :elt | elt size: 300 @ 200.
+	anEvent elementDo: [ :elt |
 		elt border: (BlBorder paint: Color black width: 1).
 		elt background: (elt valueOfTokenNamed: #'widget-background').
 		elt geometry: (BlRoundedRectangleGeometry cornerRadius: 5).
 		elt barElement
-			size: 300 @ 20;
 			background: (elt valueOfTokenNamed: #'bar-background');
-			border: (BlBorder paint: Color black width: 1).
-		elt slidersContainer size: 200 @ 150.
+			border: (BlBorder paint: Color black width: 1);
+			size: 300 @ 20.
 		elt inputConnect background: ((elt isConnector: elt inputConnect)
 				 ifTrue: [ elt valueOfTokenNamed: #'input-connect-background' ]
 				 ifFalse: [ Color transparent ]).

@@ -351,7 +351,7 @@ ToWidgetElement >> initializeInputConnect [
 	inputConnect constraintsDo: [ :c |
 		c frame horizontal alignLeft.
 		c frame vertical alignCenter.
-		c margin: (BlInsets all: -30) ].
+		c margin: (BlInsets all: -30).].
 	inputConnect addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
 		evt gestureSource isOutputConnect
@@ -361,7 +361,7 @@ ToWidgetElement >> initializeInputConnect [
 			ifFalse: [
 				evt gestureSource line: BlElement new.
 				self notifyDrawingLine ] ].
-	self addChild: inputConnect.
+	self addChild: inputConnect
 ]
 
 { #category : 'initialization' }
@@ -370,7 +370,7 @@ ToWidgetElement >> initializeOutputConnect [
 	outputConnect := Connector new isOutputConnect: true.
 	outputConnect constraintsDo: [ :c |
 		c frame horizontal alignRight.
-		c frame vertical alignCenter ].
+		c frame vertical alignCenter. ].
 	outputConnect transformDo: [ :t | t translateBy: 30 @ 0 ].
 	outputConnect addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
@@ -381,7 +381,7 @@ ToWidgetElement >> initializeOutputConnect [
 			ifFalse: [
 				evt gestureSource line: BlElement new.
 				self notifyDrawingLine ] ].
-	self addChild: outputConnect.
+	self addChild: outputConnect
 ]
 
 { #category : 'initialization' }
@@ -426,9 +426,12 @@ ToWidgetElement >> initializeSlidersContainer [
 	slidersContainer layout: BlLinearLayout new.
 	slidersContainer layout beVertical.
 	slidersContainer constraintsDo: [ :c |
+		c margin: (BlInsets top: 25).
+		c vertical fitContent.
+		c horizontal fitContent.
 		c frame vertical alignCenter.
 		c frame horizontal alignCenter ].
-	self addChild: slidersContainer.
+	self addChild: slidersContainer
 ]
 
 { #category : 'accessing' }
