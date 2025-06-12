@@ -59,3 +59,8 @@ JamEchoDelay >> initializeControlParameters [
 		add: delay;
 		add: intensity .
 ]
+
+{ #category : 'connecting' }
+JamEchoDelay >> patchedWith: anInput [ 
+	^ anInput asBox connectTo: self.
+]
