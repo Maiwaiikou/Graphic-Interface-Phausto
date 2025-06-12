@@ -10,7 +10,8 @@ Class {
 		'widgetsLines',
 		'micro',
 		'audio',
-		'activeDSP'
+		'activeDSP',
+		'theme'
 	],
 	#category : 'PharoJamSession-UIElement',
 	#package : 'PharoJamSession',
@@ -117,6 +118,7 @@ Interface >> initialize [
 	childrenElements := OrderedCollection new.
 	activeDSP := OrderedCollection new.
 	self size: 1000 @ 600.
+	self initializeDefaultTheme.
 	self initializeMenu.
 	self initializeMicro.
 	self initializeAudio.
@@ -146,6 +148,11 @@ Interface >> initializeAudio [
 		to: self.
 	audio position: 930 @ 150.
 	self addChild: audio.
+]
+
+{ #category : 'initialization' }
+Interface >> initializeDefaultTheme [
+	theme := ToWidgetTheme new
 ]
 
 { #category : 'initialization' }
@@ -191,9 +198,9 @@ Interface >> open [
 
 	| space |
 	space := BlSpace new.
-	space toTheme: ToWidgetTheme new.
+	space toTheme: theme.
 	space root addChild: self.
-	space extent: 1000@600.
+	space extent: 1000 @ 600.
 	space show
 ]
 
@@ -212,4 +219,15 @@ Interface >> resetElements [
 	micro resetToInit.
 	audio resetToInit.
 	childrenElements do: [ :elt | elt resetToInit ].
+]
+
+{ #category : 'accessing' }
+Interface >> theme [
+	^ theme
+]
+
+{ #category : 'accessing' }
+Interface >> theme: aTheme [
+
+	theme := aTheme
 ]
