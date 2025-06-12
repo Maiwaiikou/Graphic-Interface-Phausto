@@ -99,6 +99,20 @@ ToWidgetElement class >> exampleWidgetWithInputConnector [
 ]
 
 { #category : 'examples' }
+ToWidgetElement class >> exampleWidgetWithMultipleSliders [
+
+	<example>
+	| interface dict |
+	dict := OrderedDictionary new.
+	'abcdefghijklmnopqstuvwxyz' do: [ :c | dict at: (c asString) put: ToSliders new ].
+	interface := Interface new clear.
+	interface addChildElement: (self new
+			 name: 'Beautiful widget';
+			 slidersDic: dict).
+	interface open
+]
+
+{ #category : 'examples' }
 ToWidgetElement class >> exampleWidgetWithOutputConnector [
 
 	<example>
