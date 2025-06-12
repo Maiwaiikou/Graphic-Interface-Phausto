@@ -10,7 +10,6 @@ BaselineOfPharoJamSession >> baseline: spec [
 
 	<baseline>
 	spec for: #common do: [
-		spec package: 'PharoJamSession'.
 		spec
 			baseline: 'Bloc'
 			with: [ spec repository: 'github://pharo-graphics/Bloc:v2.4.0/src' ].
@@ -22,6 +21,6 @@ BaselineOfPharoJamSession >> baseline: spec [
 			baseline: 'Phausto'
 			with: [ spec repository: 'github://lucretiomsp/phausto:main' ].
 		spec
-			package: 'PharoJamSession' with: [ spec requires: #('Bloc' 'Toplo' 'Phausto') ]
-		]
+			package: 'PharoJamSession'
+			with: [ spec requires: #( 'Bloc' 'Toplo' 'Phausto' ) ] ]
 ]
