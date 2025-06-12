@@ -20,5 +20,8 @@ BaselineOfPharoJamSession >> baseline: spec [
 			spec repository: 'github://pharo-graphics/Toplo:v0.5.0/src' ].
 		spec
 			baseline: 'Phausto'
-			with: [ spec repository: 'github://lucretiomsp/phausto:main' ] ]
+			with: [ spec repository: 'github://lucretiomsp/phausto:main' ].
+		spec
+			package: 'PharoJamSession' with: [ spec requires: #('Bloc' 'Toplo' 'Phausto') ]
+		]
 ]
