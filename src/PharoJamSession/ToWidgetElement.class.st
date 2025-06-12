@@ -180,7 +180,7 @@ ToWidgetElement class >> widgetsInstruments [
 		subClass hasSubclasses
 			ifTrue: [ instList addAll: subClass subclasses ]
 			ifFalse: [ instList add: subClass ] ].
-	^ self configureWithoutSoundFor: instList.
+	^ self configureFor: instList
 ]
 
 { #category : 'widgets list' }
