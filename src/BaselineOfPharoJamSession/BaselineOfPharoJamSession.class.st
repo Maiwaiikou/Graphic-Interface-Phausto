@@ -15,9 +15,9 @@ BaselineOfPharoJamSession >> baseline: spec [
 			with: [
 			spec repository: 'github://pharo-graphics/Toplo:v0.5.0/src' ].
 		spec
-			baseline: 'Phausto'
-			with: [ spec repository: 'github://lucretiomsp/phausto:main' ].
+			baseline: 'CoypuIDE'
+			with: [ spec repository: 'github://pharo-graphics/CoypuIDE/' ].
 		spec
 			package: 'PharoJamSession'
-			with: [ spec requires: #( 'Toplo' 'Phausto' ) ] ]
+			with: [ spec requires: #( 'Toplo' 'CoypuIDE' ) ] ]
 ]
