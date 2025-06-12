@@ -19,5 +19,5 @@ BaselineOfPharoJamSession >> baseline: spec [
 			with: [ spec repository: 'github://lucretiomsp/phausto:main' ].
 		spec
 			package: 'PharoJamSession'
-			with: [ spec requires: #( 'Bloc' 'Toplo' 'Phausto' ) ] ]
+			with: [ spec requires: #( 'Toplo' 'Phausto' ) ] ]
 ]
