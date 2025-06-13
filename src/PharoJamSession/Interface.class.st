@@ -165,10 +165,10 @@ Interface >> initializeMenu [
 
 { #category : 'initialization' }
 Interface >> initializeMicro [
-
-	micro := ToWidgetWithIconElement withMicroIcon.
-	self flag: #todo.
-	"Mic event action"
+	|mic effect|
+	mic := Wire new.
+	effect := JamEchoDelay new.
+	micro := ToWidgetWithIconElement withMicroIcon phaustoSound: ((mic => effect) stereo asDsp).
 	micro announcer
 		when: LineCurrentlyDrawAnnouncer
 		send: #drawElement
