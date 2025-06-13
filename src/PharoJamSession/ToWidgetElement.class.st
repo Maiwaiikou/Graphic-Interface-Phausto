@@ -371,8 +371,8 @@ ToWidgetElement >> initializeDragWidgetEventOn: anElement [
 	anElement addEventHandlerOn: BlDragEndEvent do: [ :evt |
 		evt consumed: true.
 		(self isConnector: inputConnect) ifTrue: [
-			(inputConnect connectorWhichHaveLine:
-				 inputConnect connectorConnected) updateLine ].
+			inputConnect "connectorWhichHaveLine:
+				 inputConnect connectorConnected)" updateLine ].
 		(self isConnector: outputConnect) ifTrue: [
 			(outputConnect connectorWhichHaveLine:
 				 outputConnect connectorConnected) updateLine ].
@@ -382,18 +382,17 @@ ToWidgetElement >> initializeDragWidgetEventOn: anElement [
 { #category : 'initialization' }
 ToWidgetElement >> initializeInputConnect [
 
-	inputConnect := Connector new isInputConnect: true.
+	inputConnect := InputConnector new.
 	inputConnect constraintsDo: [ :c |
 		c frame horizontal alignLeft.
 		c frame vertical alignCenter.
-		c margin: (BlInsets all: -30).].
+		c margin: (BlInsets all: -30) ].
 	inputConnect addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
 		evt gestureSource isOutputConnect
 			ifTrue: [
 				inputConnect connect: evt gestureSource.
-				self adjustLine: evt gestureSource.
-			 ]
+				self adjustLine: evt gestureSource ]
 			ifFalse: [
 				evt gestureSource line: BlElement new.
 				self notifyDrawingLine ] ].
@@ -406,13 +405,13 @@ ToWidgetElement >> initializeOutputConnect [
 	outputConnect := Connector new isOutputConnect: true.
 	outputConnect constraintsDo: [ :c |
 		c frame horizontal alignRight.
-		c frame vertical alignCenter. ].
+		c frame vertical alignCenter ].
 	outputConnect transformDo: [ :t | t translateBy: 30 @ 0 ].
 	outputConnect addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
 		evt gestureSource isInputConnect
 			ifTrue: [
-				self adjustLine: evt gestureSource.
+				self adjustLine: outputConnect.
 				outputConnect connect: evt gestureSource ]
 			ifFalse: [
 				evt gestureSource line: BlElement new.
@@ -484,8 +483,8 @@ ToWidgetElement >> inputConnect: aConnector [
 
 { #category : 'testing' }
 ToWidgetElement >> isConnector: anElement [
-	^ anElement class = Connector.
-	
+	self flag: #ToCHANGE.
+	^ anElement isKindOf: Connector
 ]
 
 { #category : 'accessing' }

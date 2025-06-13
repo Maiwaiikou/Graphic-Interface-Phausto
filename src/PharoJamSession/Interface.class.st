@@ -82,6 +82,12 @@ Interface >> drawElement [
 ]
 
 { #category : 'initialization' }
+Interface >> handleAudioConnectedEvent [
+
+	audio inputConnect connectTo do: [ :widget | self handleWidgetsConnected: widget ].
+]
+
+{ #category : 'initialization' }
 Interface >> handleAudioConnectedEvent: aWidget [
 
 	| nextConnected dsp |
@@ -112,6 +118,22 @@ Interface >> handleAudioDisconnectedEventFor: anActiveDSP [
 ]
 
 { #category : 'initialization' }
+Interface >> handleWidgetsConnected: aWidget [
+
+	| nextConnected dsp |
+	nextConnected := (aWidget isConnector: aWidget inputConnect)
+		                 ifTrue: [ aWidget inputConnect connectTo ]
+		                 ifFalse: [ nil ].
+	aWidget phaustoSound ifNotNil: [
+		dsp := aWidget phaustoSound.
+		dsp init.
+		dsp start.
+		activeDSP add: dsp ].
+	nextConnected ifNotNil: [
+		self handleAudioConnectedEvent: nextConnected ]
+]
+
+{ #category : 'initialization' }
 Interface >> initialize [
 
 	super initialize.
@@ -124,7 +146,8 @@ Interface >> initialize [
 	self initializeAudio.
 	self addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
-		evt gestureSource class = Connector ifTrue: [
+		self flag:#ToChange.
+		(evt gestureSource isKindOf: Connector) ifTrue: [
 			evt gestureSource line: BlElement new.
 			self drawElement ] ].
 	self drawElement
@@ -136,8 +159,8 @@ Interface >> initializeAudio [
 	audio := ToWidgetWithIconElement withAudioIcon.
 	audio announcer
 		when: ConnectionAnnouncer
-		do: [ self handleAudioConnectedEvent: audio ]
-		for: audio.
+		send: #handleAudioConnectedEvent
+		to: self.
 	audio announcer
 		when: DisconnectionAnnouncer
 		send: #handleAudioDisconnectedEvent
@@ -147,7 +170,7 @@ Interface >> initializeAudio [
 		send: #drawElement
 		to: self.
 	audio position: 930 @ 150.
-	self addChild: audio.
+	self addChild: audio
 ]
 
 { #category : 'initialization' }

@@ -114,6 +114,11 @@ Connector >> initializeDrag [
 		do: [ :evt | evt consumed: true ]
 ]
 
+{ #category : 'testing' }
+Connector >> isConnector [
+	^ true
+]
+
 { #category : 'accessing' }
 Connector >> isInputConnect [
 
@@ -161,10 +166,10 @@ Connector >> updateLine [
 
 	| points first last midX sizeBound connectedWithLine |
 	sizeBound := self size / 2.
-	
+
 	connectTo ifNil: [ ^ self ].
-	connectedWithLine := self connectorWhichHaveLine:
-		                     self connectorConnected.
+	"connectedWithLine := self connectorWhichHaveLine:
+		                     self connectorConnected."
 	points := OrderedCollection new.
 	first := self positionInSpace.
 	last := self connectorConnected positionInSpace.
@@ -176,6 +181,6 @@ Connector >> updateLine [
 	points add: midX @ (first y + sizeBound y).
 	points add: midX @ (last y + sizeBound y).
 	points add: last x + sizeBound x @ (last y + sizeBound y).
-	connectedWithLine line geometry:
+	line geometry:
 		(BlBezierCurveGeometry controlPoints: points)
 ]
