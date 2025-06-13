@@ -27,7 +27,7 @@ ToWidgetElement class >> configureFor: anArrayOfClassName [
 	anArrayOfClassName do: [ :osc |
 		widget := (self typeOfWidget: osc new)
 			          name: osc asString;
-			          phaustoSound: osc.
+			          phaustoSound: (osc new stereo asDsp).
 		currentControlParameter := osc new controlParameters.
 		currentControlParameter keysDo: [ :key |
 			phControlParameter := currentControlParameter at: key.
@@ -370,8 +370,9 @@ ToWidgetElement >> initializeInputConnect [
 		evt consumed: true.
 		evt gestureSource isOutputConnect
 			ifTrue: [
+				inputConnect connect: evt gestureSource.
 				self adjustLine: evt gestureSource.
-				inputConnect connect: evt gestureSource ]
+			 ]
 			ifFalse: [
 				evt gestureSource line: BlElement new.
 				self notifyDrawingLine ] ].
@@ -522,9 +523,9 @@ ToWidgetElement >> phaustoSound [
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> phaustoSound: aPhaustoSoundClass [
+ToWidgetElement >> phaustoSound: aPhaustoSoundAsDsp [
 
-	phaustoSound := aPhaustoSoundClass new asDsp.
+	phaustoSound := aPhaustoSoundAsDsp.
 ]
 
 { #category : 'initialization' }
