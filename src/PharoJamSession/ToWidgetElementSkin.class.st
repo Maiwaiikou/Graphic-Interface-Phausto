@@ -23,5 +23,13 @@ ToWidgetElementSkin >> installSkinEvent: anEvent [
 				 ifFalse: [ Color transparent ]).
 		elt outputConnect background: ((elt isConnector: elt outputConnect)
 				 ifTrue: [ elt valueOfTokenNamed: #'output-connect-background' ]
-				 ifFalse: [ Color transparent ]) ]
+				 ifFalse: [ Color transparent ]).
+
+		elt configuredAttributes: {
+				(BlTextForegroundAttribute paint:
+					 (elt valueOfTokenNamed: #'labels-text-color')).
+				(BlFontSizeAttribute size:
+					 (elt valueOfTokenNamed: #'labels-text-size')) }.
+		elt slidersLabels do: [ :label |
+			label text attributes: elt configuredAttributes ] ]
 ]

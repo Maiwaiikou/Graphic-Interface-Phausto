@@ -8,6 +8,8 @@ Class {
 		'barElement',
 		'name',
 		'slidersDic',
+		'slidersLabels',
+		'configuredAttributes',
 		'phaustoSound',
 		'inputConnect',
 		'outputConnect',
@@ -81,6 +83,8 @@ ToWidgetElement class >> exampleWidgetWithDifferentTheme [
 		(ToTokenProperty name: #'slider-background' value: Color red).
 	theme addTokenProperty:
 		(ToTokenProperty name: #'button-background' value: Color lightGray).
+	theme addTokenProperty:(ToTokenProperty name: #'labels-text-color' value: Color magenta).
+	theme addTokenProperty: (ToTokenProperty name: #'labels-text-size' value: 20).
 	interface theme: theme.
 	interface addChildElement: (self new
 			 name: 'WindowsXp';
@@ -274,14 +278,29 @@ ToWidgetElement >> close [
 ]
 
 { #category : 'accessing' }
+ToWidgetElement >> configuredAttributes [
+	^ configuredAttributes
+]
+
+{ #category : 'accessing' }
+ToWidgetElement >> configuredAttributes: anOrderedCollection [
+	"Attributes are defined in the theme and save for configure the label value which change everytime"
+	configuredAttributes := anOrderedCollection
+]
+
+{ #category : 'accessing' }
 ToWidgetElement >> configuredString: aString [
-	^ aString asRopedText attributes: { (BlTextForegroundAttribute paint: Color black) }
+	|stringRoped|
+	stringRoped := aString asRopedText.
+	configuredAttributes ifNotEmpty: [ stringRoped attributes: configuredAttributes].
+	^ stringRoped.
 ]
 
 { #category : 'initialization' }
 ToWidgetElement >> connectSlider: aToSlider toLabel: aTextElement [
 
-	aToSlider callBack: [ :value | aTextElement text: (value round:2) asRopedText ].
+	aToSlider callBack: [ :value |
+		aTextElement text: (self configuredString: ((value round: 2) asString)) ].
 	aToSlider constraintsDo: [ :c |
 		c frame horizontal alignCenter.
 		c margin: (BlInsets all: 5) ].
@@ -307,6 +326,8 @@ ToWidgetElement >> initialize [
 	super initialize.
 	name := ''.
 	slidersDic := Dictionary new.
+	slidersLabels := OrderedCollection new.
+	configuredAttributes := OrderedCollection new.
 	self layout: BlFrameLayout new.
 	self initializeBar.
 	self initializeInputConnect.
@@ -407,7 +428,7 @@ ToWidgetElement >> initializeSliderLabel: aString [
 	label text: (aString , ':  ') asRopedText.
 	valueLabel := BlTextElement new.
 	valueLabel text: 0 asRopedText.
-
+	slidersLabels addAll: { label. valueLabel }.
 	container := BlElement new
 		             layout: BlLinearLayout horizontal;
 		             constraintsDo: [ :c |
@@ -562,4 +583,14 @@ ToWidgetElement >> slidersDic: aDictionaryOfSlidersWithLabelKey [
 
 	slidersDic := aDictionaryOfSlidersWithLabelKey.
 	self initializeSliders.
+]
+
+{ #category : 'accessing' }
+ToWidgetElement >> slidersLabels [
+	^ slidersLabels
+]
+
+{ #category : 'accessing' }
+ToWidgetElement >> slidersLabels: anOrderedCollection [
+	slidersLabels := anOrderedCollection.
 ]
