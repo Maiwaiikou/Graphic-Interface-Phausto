@@ -27,7 +27,7 @@ ToWidgetElement class >> configureFor: anArrayOfClassName [
 	anArrayOfClassName do: [ :osc |
 		widget := (self typeOfWidget: osc new)
 			          name: osc asString;
-			          phaustoSound: (osc new stereo asDsp).
+			          phaustoSound: osc.
 		currentControlParameter := osc new controlParameters.
 		currentControlParameter keysDo: [ :key |
 			phControlParameter := currentControlParameter at: key.
@@ -522,9 +522,9 @@ ToWidgetElement >> phaustoSound [
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> phaustoSound: aPhaustoSoundAsDsp [
+ToWidgetElement >> phaustoSound: aPhaustoSoundClass [
 
-	phaustoSound := aPhaustoSoundAsDsp.
+	phaustoSound := aPhaustoSoundClass new asDsp.
 ]
 
 { #category : 'initialization' }
