@@ -16,10 +16,11 @@ InputConnector >> checkBeforeDisconnect [
 { #category : 'accessing' }
 InputConnector >> connectTo: aWidget [
 
-	connectTo add: aWidget.
+	(connectTo includes: aWidget) ifTrue: [ ^self ].
 	aWidget ifNil: [
 		parent notifyDisconnection.
 		^ self ].
+	connectTo add: aWidget.
 	parent notifyConnection
 ]
 
