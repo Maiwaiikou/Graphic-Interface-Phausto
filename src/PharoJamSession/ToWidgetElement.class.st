@@ -227,8 +227,8 @@ ToWidgetElement class >> widgetsSynths [
 ToWidgetElement >> adjustLine: aConnector [
 
 	| points line first last midX |
-	aConnector line geometry class = BlPolylineGeometry ifFalse: [
-		^ self ].
+	"aConnector line geometry class = BlPolylineGeometry ifFalse: [
+		^ self ]."
 	points := OrderedCollection new.
 	first := aConnector line geometry vertices first.
 	last := aConnector line geometry vertices last.
@@ -411,8 +411,10 @@ ToWidgetElement >> initializeOutputConnect [
 		evt consumed: true.
 		evt gestureSource isInputConnect
 			ifTrue: [
-				self adjustLine: outputConnect.
-				outputConnect connect: evt gestureSource ]
+				outputConnect connect: evt gestureSource.
+				outputConnect line: evt gestureSource line.
+				evt gestureSource line: BlElement new.
+				self adjustLine: outputConnect. ]
 			ifFalse: [
 				evt gestureSource line: BlElement new.
 				self notifyDrawingLine ] ].
