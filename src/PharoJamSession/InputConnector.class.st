@@ -1,3 +1,6 @@
+"
+I'm a inputConnector, i'm different of a basic connector because I can have multiple connexion on myself (For example: I'm the audio widget who needs to handle each song to play at the same time).
+"
 Class {
 	#name : 'InputConnector',
 	#superclass : 'Connector',

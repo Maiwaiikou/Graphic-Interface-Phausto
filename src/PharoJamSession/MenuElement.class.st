@@ -44,6 +44,7 @@ MenuElement >> createFileMenu [
 		menu addItem: elt ].
 	elt := ToMenuItem new labelText: 'Clear'.
 	elt addEventHandlerOn: BlClickEvent do: [
+		self parent disconnectedEachDsp.
 		self parent resetElements.
 		self parent childrenElements removeAll.
 		self parent drawElement ].

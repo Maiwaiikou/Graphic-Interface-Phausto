@@ -7,7 +7,6 @@ Class {
 	#instVars : [
 		'menu',
 		'childrenElements',
-		'widgetsLines',
 		'micro',
 		'audio',
 		'activeDSP',
@@ -57,6 +56,20 @@ Interface >> clear [
 	self removeChildren.
 ]
 
+{ #category : 'initialization' }
+Interface >> disableDsp: anActiveDSP [
+
+	anActiveDSP stop.
+	activeDSP remove: anActiveDSP.
+]
+
+{ #category : 'initialization' }
+Interface >> disconnectedEachDsp [
+
+	activeDSP do: [ :dsp | dsp stop ].
+	activeDSP removeAll.
+]
+
 { #category : 'drawing' }
 Interface >> drawChildren [
 
@@ -83,7 +96,7 @@ Interface >> drawElement [
 
 { #category : 'initialization' }
 Interface >> handleAudioConnectedEvent [
-	self handleAudioDisconnectedEvent.
+	self disconnectedEachDsp.
 	audio inputConnect connectTo do: [ :widget | self handleWidgetsConnected: widget ].
 ]
 
@@ -106,15 +119,8 @@ Interface >> handleAudioConnectedEvent: aWidget [
 { #category : 'initialization' }
 Interface >> handleAudioDisconnectedEvent [
 
-	activeDSP do: [ :dsp | dsp stop ].
-	activeDSP removeAll.
-]
-
-{ #category : 'initialization' }
-Interface >> handleAudioDisconnectedEventFor: anActiveDSP [
-
-	anActiveDSP stop.
-	activeDSP removeChild: anActiveDSP.
+	audio inputConnect connectTo do: [ :widget |
+		self handleWidgetsDisconnected: widget ]
 ]
 
 { #category : 'initialization' }
@@ -123,14 +129,29 @@ Interface >> handleWidgetsConnected: aWidget [
 	| nextConnected dsp |
 	nextConnected := (aWidget isConnector: aWidget inputConnect)
 		                 ifTrue: [ aWidget inputConnect connectTo ]
-		                 ifFalse: [ nil ].
+		                 ifFalse: [ OrderedCollection new ].
 	aWidget phaustoSound ifNotNil: [
 		dsp := aWidget phaustoSound.
 		dsp init.
 		dsp start.
 		activeDSP add: dsp ].
-	nextConnected ifNotNil: [
-		self handleAudioConnectedEvent: nextConnected ]
+	nextConnected do: [ :each |
+		self handleAudioConnectedEvent: each ]
+]
+
+{ #category : 'initialization' }
+Interface >> handleWidgetsDisconnected: aWidget [
+
+	| nextConnected |
+	nextConnected := (aWidget isConnector: aWidget inputConnect)
+		                 ifTrue: [ aWidget inputConnect connectTo ]
+		                 ifFalse: [ "OrderedCollection new" ].
+	((aWidget isConnectedTo: audio) not and:
+		 [activeDSP includes: aWidget phaustoSound]) traceCr.
+	((aWidget isConnectedTo: audio) not and:
+		 [activeDSP includes: aWidget phaustoSound]) ifTrue: [
+		self disableDsp: aWidget phaustoSound ].
+	"nextConnected do: [ :each | self handleWidgetsDisconnected: each ]"
 ]
 
 { #category : 'initialization' }

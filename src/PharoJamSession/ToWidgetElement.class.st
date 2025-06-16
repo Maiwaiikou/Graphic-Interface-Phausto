@@ -371,11 +371,9 @@ ToWidgetElement >> initializeDragWidgetEventOn: anElement [
 	anElement addEventHandlerOn: BlDragEndEvent do: [ :evt |
 		evt consumed: true.
 		(self isConnector: inputConnect) ifTrue: [
-			inputConnect "connectorWhichHaveLine:
-				 inputConnect connectorConnected)" updateLine ].
+			inputConnect updateLine ].
 		(self isConnector: outputConnect) ifTrue: [
-			(outputConnect connectorWhichHaveLine:
-				 outputConnect connectorConnected) updateLine ].
+			outputConnect updateLine ].
 		self notifyDrawingLine ]
 ]
 
@@ -481,6 +479,15 @@ ToWidgetElement >> inputConnect [
 ToWidgetElement >> inputConnect: aConnector [
 
 	inputConnect := aConnector
+]
+
+{ #category : 'testing' }
+ToWidgetElement >> isConnectedTo: aWidget [
+	aWidget ifNil: [ ^false. ].
+	(outputConnect connectTo ~= aWidget and:
+		 outputConnect connectTo isNotNil) ifTrue: [
+		^ outputConnect connectTo isConnectedTo: aWidget ].
+	^ outputConnect connectTo = aWidget
 ]
 
 { #category : 'testing' }
