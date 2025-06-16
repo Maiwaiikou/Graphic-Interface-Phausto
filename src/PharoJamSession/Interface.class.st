@@ -83,7 +83,7 @@ Interface >> drawElement [
 
 { #category : 'initialization' }
 Interface >> handleAudioConnectedEvent [
-
+	self handleAudioDisconnectedEvent.
 	audio inputConnect connectTo do: [ :widget | self handleWidgetsConnected: widget ].
 ]
 
