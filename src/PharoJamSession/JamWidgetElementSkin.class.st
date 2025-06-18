@@ -1,5 +1,5 @@
 Class {
-	#name : 'ToWidgetElementSkin',
+	#name : 'JamWidgetElementSkin',
 	#superclass : 'ToRawSkin',
 	#category : 'PharoJamSession-UIElementStyle',
 	#package : 'PharoJamSession',
@@ -7,7 +7,7 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-ToWidgetElementSkin >> installSkinEvent: anEvent [
+JamWidgetElementSkin >> installSkinEvent: anEvent [
 
 	super installSkinEvent: anEvent.
 	anEvent elementDo: [ :elt |
@@ -16,7 +16,7 @@ ToWidgetElementSkin >> installSkinEvent: anEvent [
 		elt geometry: (BlRoundedRectangleGeometry cornerRadius: 5).
 		elt barElement
 			background: (elt valueOfTokenNamed: #'bar-background');
-			border: (BlBorder paint: Color black width: 1);
+			border: (elt valueOfTokenNamed: #'bar-border');
 			size: 300 @ 20.
 		elt inputConnect background: ((elt isConnector: elt inputConnect)
 				 ifTrue: [ elt valueOfTokenNamed: #'input-connect-background' ]

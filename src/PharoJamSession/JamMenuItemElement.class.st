@@ -2,7 +2,7 @@
 I'm a ToMenuItemElement which have a attribut widget to it creation when someone click on me.
 "
 Class {
-	#name : 'MenuItemElement',
+	#name : 'JamMenuItemElement',
 	#superclass : 'ToMenuItem',
 	#instVars : [
 		'widget'
@@ -13,17 +13,17 @@ Class {
 }
 
 { #category : 'initialization' }
-MenuItemElement >> resetLabelText [
+JamMenuItemElement >> resetLabelText [
 	self labelText: widget name
 ]
 
 { #category : 'initialization' }
-MenuItemElement >> widget [
+JamMenuItemElement >> widget [
 	^widget
 ]
 
 { #category : 'initialization' }
-MenuItemElement >> widget: aWidget [
+JamMenuItemElement >> widget: aWidget [
 	widget := aWidget.
 	self resetLabelText.
 ]

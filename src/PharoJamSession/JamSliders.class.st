@@ -2,7 +2,7 @@
 I'm a basic graphic slider who use drag and drop to edit my value by a defined step. I can show my value to other element when their call my callback method (which change when my value is increase or decrease).
 "
 Class {
-	#name : 'ToSliders',
+	#name : 'JamSliders',
 	#superclass : 'ToElement',
 	#instVars : [
 		'value',
@@ -24,7 +24,7 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-ToSliders class >> withAPhControlParam: aPhControlParam [
+JamSliders class >> withAPhControlParam: aPhControlParam [
 
 	| slider |
 	slider := self new.
@@ -37,50 +37,50 @@ ToSliders class >> withAPhControlParam: aPhControlParam [
 ]
 
 { #category : 'accessing' }
-ToSliders >> announcer [
+JamSliders >> announcer [
 	^ announcer ifNil: [ announcer := Announcer new ]
 ]
 
 { #category : 'accessing' }
-ToSliders >> barMargin [
+JamSliders >> barMargin [
 	^ barMargin
 ]
 
 { #category : 'accessing' }
-ToSliders >> barMargin: anInteger [
+JamSliders >> barMargin: anInteger [
 
 	barMargin := anInteger.
 ]
 
 { #category : 'accessing' }
-ToSliders >> barThickness [
+JamSliders >> barThickness [
 	^ barThickness
 ]
 
 { #category : 'accessing' }
-ToSliders >> barThickness: anInteger [
+JamSliders >> barThickness: anInteger [
 	barThickness := anInteger 
 ]
 
 { #category : 'accessing' }
-ToSliders >> button [
+JamSliders >> button [
 	^ button
 ]
 
 { #category : 'accessing' }
-ToSliders >> callBack [ 
+JamSliders >> callBack [ 
 
 	^ callBack
 ]
 
 { #category : 'accessing' }
-ToSliders >> callBack: aBlock [ 
+JamSliders >> callBack: aBlock [ 
 
 	callBack := aBlock
 ]
 
 { #category : 'accessing' }
-ToSliders >> createCircle [
+JamSliders >> createCircle [
 
 	| circle |
 	circle := BlElement new
@@ -93,7 +93,7 @@ ToSliders >> createCircle [
 ]
 
 { #category : 'slider - api' }
-ToSliders >> decreaseValue [
+JamSliders >> decreaseValue [
 
 	value > minValue ifFalse: [ ^ self ].
 	self value: value - step.
@@ -101,7 +101,7 @@ ToSliders >> decreaseValue [
 ]
 
 { #category : 'initialization' }
-ToSliders >> handleMoveEvent: aPosition [
+JamSliders >> handleMoveEvent: aPosition [
 
 	| newPosX |
 	newPosX := aPosition x.
@@ -113,7 +113,7 @@ ToSliders >> handleMoveEvent: aPosition [
 ]
 
 { #category : 'slider - api' }
-ToSliders >> increaseValue [
+JamSliders >> increaseValue [
 
 	value < maxValue ifFalse: [ ^ self ].
 	self value: value + step.
@@ -121,7 +121,7 @@ ToSliders >> increaseValue [
 ]
 
 { #category : 'initialization' }
-ToSliders >> initialize [
+JamSliders >> initialize [
 
 	super initialize.
 	self layout: BlBasicLayout new.
@@ -138,7 +138,7 @@ ToSliders >> initialize [
 ]
 
 { #category : 'initialization' }
-ToSliders >> initializeButton [
+JamSliders >> initializeButton [
 
 	button := self createCircle.
 	button position: barMargin @ 0.
@@ -166,7 +166,7 @@ ToSliders >> initializeButton [
 ]
 
 { #category : 'initialization' }
-ToSliders >> initializeSliderBar [
+JamSliders >> initializeSliderBar [
 
 	| pos |
 	sliderBar := BlElement new.
@@ -176,31 +176,31 @@ ToSliders >> initializeSliderBar [
 ]
 
 { #category : 'slider - api' }
-ToSliders >> maxValue [
+JamSliders >> maxValue [
 	^ maxValue
 ]
 
 { #category : 'slider - api' }
-ToSliders >> maxValue: anInteger [
+JamSliders >> maxValue: anInteger [
 
 	maxValue := anInteger.
 	self updatePossibleValues.
 ]
 
 { #category : 'slider - api' }
-ToSliders >> minValue [
+JamSliders >> minValue [
 	^ minValue
 ]
 
 { #category : 'slider - api' }
-ToSliders >> minValue: anInteger [
+JamSliders >> minValue: anInteger [
 
 	minValue := anInteger.
 	self updatePossibleValues.
 ]
 
 { #category : 'accessing' }
-ToSliders >> nearestValue: anIntegerOrAFloat [
+JamSliders >> nearestValue: anIntegerOrAFloat [
 	
 	|val currentMin tmp|
 	val := possibleValues first.
@@ -215,53 +215,53 @@ ToSliders >> nearestValue: anIntegerOrAFloat [
 ]
 
 { #category : 'instance creation' }
-ToSliders >> newRawSkin [
-	^ ToSlidersSkin new
+JamSliders >> newRawSkin [
+	^ JamSlidersSkin new
 ]
 
 { #category : 'accessing' }
-ToSliders >> possibleValues [
+JamSliders >> possibleValues [
 	^ possibleValues
 ]
 
 { #category : 'accessing' }
-ToSliders >> possibleValues: anOrderedCollection [
+JamSliders >> possibleValues: anOrderedCollection [
 
 	possibleValues := anOrderedCollection new.
 ]
 
 { #category : 'accessing' }
-ToSliders >> sliderBar [
+JamSliders >> sliderBar [
 	^ sliderBar
 ]
 
 { #category : 'accessing' }
-ToSliders >> sliderBar: aBlElement [
+JamSliders >> sliderBar: aBlElement [
 
 	sliderBar := aBlElement
 ]
 
 { #category : 'slider - api' }
-ToSliders >> step [
+JamSliders >> step [
 	^ step
 ]
 
 { #category : 'slider - api' }
-ToSliders >> step: anIntegerOrFloat [
+JamSliders >> step: anIntegerOrFloat [
 
 	step := anIntegerOrFloat.
 	self updatePossibleValues.
 ]
 
 { #category : 'accessing' }
-ToSliders >> updatePossibleValues [
+JamSliders >> updatePossibleValues [
 
 	possibleValues := (minValue to: maxValue by: step)
 		                  asOrderedCollection
 ]
 
 { #category : 'accessing' }
-ToSliders >> updateValueAt: aPoint [
+JamSliders >> updateValueAt: aPoint [
 	| length valueDiff valProd coeff |
 	length := (aPoint - sliderBar position) x.
 	valProd := minValue.
@@ -274,12 +274,12 @@ ToSliders >> updateValueAt: aPoint [
 ]
 
 { #category : 'accessing' }
-ToSliders >> value [
+JamSliders >> value [
 	^ value
 ]
 
 { #category : 'accessing' }
-ToSliders >> value: anInteger [
+JamSliders >> value: anInteger [
 
 	value := anInteger clampBetween: minValue and: maxValue.
 

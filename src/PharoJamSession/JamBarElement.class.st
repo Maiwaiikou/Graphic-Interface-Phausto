@@ -2,7 +2,7 @@
 I'm a menu item bar with 2 subelements, a close button and a label name
 "
 Class {
-	#name : 'BarElement',
+	#name : 'JamBarElement',
 	#superclass : 'ToElement',
 	#instVars : [
 		'name',
@@ -15,17 +15,17 @@ Class {
 }
 
 { #category : 'accessing' }
-BarElement >> closeButton [
+JamBarElement >> closeButton [
 	^ closeButton
 ]
 
 { #category : 'accessing' }
-BarElement >> closeButton: aButton [
+JamBarElement >> closeButton: aButton [
 	closeButton := aButton.
 ]
 
 { #category : 'initialization' }
-BarElement >> drawCloseButton [
+JamBarElement >> drawCloseButton [
 	closeButton := ToIconicRemoveButton new.
 	closeButton constraintsDo: [ :c |
 		c frame vertical alignCenter.
@@ -35,7 +35,7 @@ BarElement >> drawCloseButton [
 ]
 
 { #category : 'initialization' }
-BarElement >> drawLabelName [
+JamBarElement >> drawLabelName [
 	labelName := ToLabel new.
 	labelName text: name.
 	labelName constraintsDo: [ :c |
@@ -46,7 +46,7 @@ BarElement >> drawLabelName [
 ]
 
 { #category : 'initialization' }
-BarElement >> initialize [
+JamBarElement >> initialize [
 
 	super initialize.
 	name := ''.
@@ -55,17 +55,17 @@ BarElement >> initialize [
 ]
 
 { #category : 'accessing' }
-BarElement >> labelName [
+JamBarElement >> labelName [
 	^ labelName
 ]
 
 { #category : 'accessing' }
-BarElement >> name [
+JamBarElement >> name [
 	^ name
 ]
 
 { #category : 'accessing' }
-BarElement >> name: aString [
+JamBarElement >> name: aString [
 	name := aString.
 	self removeChild: labelName.
 	self drawLabelName.

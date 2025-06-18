@@ -2,7 +2,7 @@
 I'm the main caracter of the PharoJamSession, i'm compose of a BarElement who can move me in the interface, with at least one Cconnector and maximum 2 to link my attribut phaustoSound to another widget and with a slider container which regroup sliders of each parameter of my phaustoSound. 
 "
 Class {
-	#name : 'ToWidgetElement',
+	#name : 'JamWidgetElement',
 	#superclass : 'ToElement',
 	#instVars : [
 		'barElement',
@@ -22,7 +22,7 @@ Class {
 }
 
 { #category : 'configuring' }
-ToWidgetElement class >> configureFor: anArrayOfClassName [
+JamWidgetElement class >> configureFor: anArrayOfClassName [
 
 	| widgetsList widget currentControlParameter phControlParameter |
 	widgetsList := OrderedCollection new.
@@ -35,14 +35,14 @@ ToWidgetElement class >> configureFor: anArrayOfClassName [
 			phControlParameter := currentControlParameter at: key.
 			widget slidersDic
 				at: key asString
-				put: (ToSliders withAPhControlParam: phControlParameter) ].
+				put: (JamSliders withAPhControlParam: phControlParameter) ].
 		widget initializeSliders.
 		widgetsList add: widget ].
 	^ widgetsList
 ]
 
 { #category : 'configuring' }
-ToWidgetElement class >> configureWithoutSoundFor: anArrayOfClassName [
+JamWidgetElement class >> configureWithoutSoundFor: anArrayOfClassName [
 
 	| widgetsList widget currentControlParameter phControlParameter |
 	widgetsList := OrderedCollection new.
@@ -54,62 +54,69 @@ ToWidgetElement class >> configureWithoutSoundFor: anArrayOfClassName [
 			phControlParameter := currentControlParameter at: key.
 			widget slidersDic
 				at: key asString
-				put: (ToSliders withAPhControlParam: phControlParameter) ].
+				put: (JamSliders withAPhControlParam: phControlParameter) ].
 		widget initializeSliders.
 		widgetsList add: widget ].
 	^ widgetsList
 ]
 
 { #category : 'examples' }
-ToWidgetElement class >> exampleWidgetWithDifferentTheme [
+JamWidgetElement class >> exampleWidgetWithDifferentTheme [
 
 	<example>
 	| interface theme |
-	interface := Interface new clear.
+	interface := JamPlayground new clear.
 	theme := ToRawTheme new.
-	theme addTokenProperty:
-		(ToTokenProperty name: #'widget-background' value: Color white).
-	theme addTokenProperty:
-		(ToTokenProperty name: #'bar-background' value: Color blue).
-	theme addTokenProperty:
-		(ToTokenProperty name: #'input-connect-background' value: Color pink).
-	theme addTokenProperty: (ToTokenProperty
-			 name: #'output-connect-background'
-			 value: Color purple).
-	theme addTokenProperty: (ToTokenProperty
-			 name: #'output-connect-background'
-			 value: Color purple).
-	theme addTokenProperty:
-		(ToTokenProperty name: #'slider-background' value: Color red).
-	theme addTokenProperty:
-		(ToTokenProperty name: #'button-background' value: Color lightGray).
-	theme addTokenProperty:(ToTokenProperty name: #'labels-text-color' value: Color magenta).
-	theme addTokenProperty: (ToTokenProperty name: #'labels-text-size' value: 20).
+	theme addTokenProperties: {
+			(ToTokenProperty name: #'widget-background' value: Color white).
+			(ToTokenProperty name: #'bar-background' value: (Color blue alpha: 0.5)).
+			(ToTokenProperty
+				 name: #'input-connect-background'
+				 value: Color pink).
+			(ToTokenProperty
+				 name: #'output-connect-background'
+				 value: Color purple).
+			(ToTokenProperty
+				 name: #'output-connect-background'
+				 value: Color purple).
+			(ToTokenProperty name: #'slider-background' value: Color red).
+			(ToTokenProperty name: #'button-background' value: Color lightGray).
+			(ToTokenProperty name: #'labels-text-color' value: Color magenta).
+			(ToTokenProperty name: #'labels-text-size' value: 20).
+			(ToTokenProperty
+				 name: #'menuPane-background'
+				 value: Color palePeach).
+			(ToTokenProperty name: #'menuPane-height' value: 25).
+			(ToTokenProperty name: #'menu-interspace' value: 15).
+			(ToTokenProperty
+				 name: #'JSPlayground-background'
+				 value: Color transparent).
+			(ToTokenProperty name:#'bar-border' value: (BlBorder paint: Color transparent width: 1))}.
 	interface theme: theme.
 	interface addChildElement: (self new
 			 name: 'WindowsXp';
-			 slidersDic: { ('Bug Counter' -> ToSliders new) } asDictionary).
+			 slidersDic: { ('Bug Counter' -> JamSliders new) } asDictionary).
 	interface open
 ]
 
 { #category : 'examples' }
-ToWidgetElement class >> exampleWidgetWithInputConnector [
+JamWidgetElement class >> exampleWidgetWithInputConnector [
 
 	<example>
 	| interface |
-	interface := Interface new clear.
+	interface := JamPlayground new clear.
 	interface addChildElement: (self onlyWithInputConnector name: 'Beautiful widget' ).
 	interface open
 ]
 
 { #category : 'examples' }
-ToWidgetElement class >> exampleWidgetWithMultipleSliders [
+JamWidgetElement class >> exampleWidgetWithMultipleSliders [
 
 	<example>
 	| interface dict |
 	dict := OrderedDictionary new.
-	'abcdefghijklmnopqstuvwxyz' do: [ :c | dict at: (c asString) put: ToSliders new ].
-	interface := Interface new clear.
+	'abcdefghijklmnopqstuvwxyz' do: [ :c | dict at: (c asString) put: JamSliders new ].
+	interface := JamPlayground new clear.
 	interface addChildElement: (self new
 			 name: 'Beautiful widget';
 			 slidersDic: dict).
@@ -117,40 +124,40 @@ ToWidgetElement class >> exampleWidgetWithMultipleSliders [
 ]
 
 { #category : 'examples' }
-ToWidgetElement class >> exampleWidgetWithOutputConnector [
+JamWidgetElement class >> exampleWidgetWithOutputConnector [
 
 	<example>
 	| interface |
-	interface := Interface new clear.
+	interface := JamPlayground new clear.
 	interface addChildElement: (self onlyWithOutputConnector name: 'Beautiful widget' ).
 	interface open
 ]
 
 { #category : 'examples' }
-ToWidgetElement class >> exampleWidgetWithSliders [
+JamWidgetElement class >> exampleWidgetWithSliders [
 
 	<example>
 	| interface |
-	interface := Interface new clear.
+	interface := JamPlayground new clear.
 	interface addChildElement: (self new
 			 name: 'Beautiful widget';
-			 slidersDic: { ('Beauty' -> ToSliders new) } asDictionary).
+			 slidersDic: { ('Beauty' -> JamSliders new) } asDictionary).
 	interface open.
 ]
 
 { #category : 'examples' }
-ToWidgetElement class >> exampleWidgetWithTwoConnectors [
+JamWidgetElement class >> exampleWidgetWithTwoConnectors [
 
 	<example>
 	| interface |
-	interface := Interface new clear.
+	interface := JamPlayground new clear.
 	interface addChildElement: (self new
 			 name: 'Beautiful widget').
 	interface open
 ]
 
 { #category : 'configuring' }
-ToWidgetElement class >> onlyWithInputConnector [
+JamWidgetElement class >> onlyWithInputConnector [
 
 	| widget |
 	widget := self new.
@@ -160,7 +167,7 @@ ToWidgetElement class >> onlyWithInputConnector [
 ]
 
 { #category : 'configuring' }
-ToWidgetElement class >> onlyWithOutputConnector [
+JamWidgetElement class >> onlyWithOutputConnector [
 
 	| widget |
 	widget := self new.
@@ -170,7 +177,7 @@ ToWidgetElement class >> onlyWithOutputConnector [
 ]
 
 { #category : 'configuring' }
-ToWidgetElement class >> typeOfWidget: aPhaustoElement [
+JamWidgetElement class >> typeOfWidget: aPhaustoElement [
 	
 	(aPhaustoElement numberOfInputs = 0) ifTrue: [ ^ self onlyWithOutputConnector ].
 	(aPhaustoElement numberOfOutputs = 0) ifTrue: [ ^ self onlyWithInputConnector ].
@@ -178,7 +185,7 @@ ToWidgetElement class >> typeOfWidget: aPhaustoElement [
 ]
 
 { #category : 'widgets list' }
-ToWidgetElement class >> widgetsEffects [
+JamWidgetElement class >> widgetsEffects [
 
 	| oscillators |
 	oscillators := OrderedCollection new.
@@ -190,7 +197,7 @@ ToWidgetElement class >> widgetsEffects [
 ]
 
 { #category : 'widgets list' }
-ToWidgetElement class >> widgetsInstruments [
+JamWidgetElement class >> widgetsInstruments [
 
 	| instList |
 	instList := OrderedCollection new.
@@ -202,7 +209,7 @@ ToWidgetElement class >> widgetsInstruments [
 ]
 
 { #category : 'widgets list' }
-ToWidgetElement class >> widgetsOscillator [
+JamWidgetElement class >> widgetsOscillator [
 
 	| oscillators |
 	oscillators := OrderedCollection new.
@@ -212,7 +219,7 @@ ToWidgetElement class >> widgetsOscillator [
 ]
 
 { #category : 'widgets list' }
-ToWidgetElement class >> widgetsSynths [
+JamWidgetElement class >> widgetsSynths [
 
 	| synthsList |
 	synthsList := OrderedCollection new.
@@ -224,7 +231,7 @@ ToWidgetElement class >> widgetsSynths [
 ]
 
 { #category : 'drawing' }
-ToWidgetElement >> adjustLine: aConnector [
+JamWidgetElement >> adjustLine: aConnector [
 
 	| points line first last midX |
 	aConnector line geometry class = BlPolylineGeometry ifFalse: [
@@ -246,12 +253,12 @@ ToWidgetElement >> adjustLine: aConnector [
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> announcer [
+JamWidgetElement >> announcer [
 	^ announcer ifNil: [ announcer := Announcer new. ]
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> atRandomPos [
+JamWidgetElement >> atRandomPos [
 
 	| x y |
 	x := (1 to: 600) atRandom.
@@ -260,12 +267,12 @@ ToWidgetElement >> atRandomPos [
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> barElement [
+JamWidgetElement >> barElement [
 	^ barElement
 ]
 
 { #category : 'initialize-release' }
-ToWidgetElement >> close [
+JamWidgetElement >> close [
 
 	self notifyEnableCreation.
 	(self isConnector: inputConnect) ifTrue: [
@@ -278,18 +285,18 @@ ToWidgetElement >> close [
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> configuredAttributes [
+JamWidgetElement >> configuredAttributes [
 	^ configuredAttributes
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> configuredAttributes: anOrderedCollection [
+JamWidgetElement >> configuredAttributes: anOrderedCollection [
 	"Attributes are defined in the theme and save for configure the label value which change everytime"
 	configuredAttributes := anOrderedCollection
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> configuredString: aString [
+JamWidgetElement >> configuredString: aString [
 	|stringRoped|
 	stringRoped := aString asRopedText.
 	configuredAttributes ifNotEmpty: [ stringRoped attributes: configuredAttributes].
@@ -297,7 +304,7 @@ ToWidgetElement >> configuredString: aString [
 ]
 
 { #category : 'initialization' }
-ToWidgetElement >> connectSlider: aToSlider toLabel: aTextElement [
+JamWidgetElement >> connectSlider: aToSlider toLabel: aTextElement [
 
 	aToSlider callBack: [ :value |
 		aTextElement text: (self configuredString: ((value round: 2) asString)) ].
@@ -308,7 +315,7 @@ ToWidgetElement >> connectSlider: aToSlider toLabel: aTextElement [
 ]
 
 { #category : 'drawing' }
-ToWidgetElement >> drawALine: points atConnector: aConnector [
+JamWidgetElement >> drawALine: points atConnector: aConnector [
 
 	| newline |
 	newline := BlElement new.
@@ -321,7 +328,7 @@ ToWidgetElement >> drawALine: points atConnector: aConnector [
 ]
 
 { #category : 'initialization' }
-ToWidgetElement >> initialize [
+JamWidgetElement >> initialize [
 
 	super initialize.
 	name := ''.
@@ -344,9 +351,9 @@ ToWidgetElement >> initialize [
 ]
 
 { #category : 'initialization' }
-ToWidgetElement >> initializeBar [
+JamWidgetElement >> initializeBar [
 
-	barElement := BarElement new name: self name.
+	barElement := JamBarElement new name: self name.
 	barElement border: (BlBorder paint: Color black width: 1).
 	barElement constraintsDo: [ :c |
 		c vertical fitContent.
@@ -359,7 +366,7 @@ ToWidgetElement >> initializeBar [
 ]
 
 { #category : 'initialization' }
-ToWidgetElement >> initializeDragWidgetEventOn: anElement [
+JamWidgetElement >> initializeDragWidgetEventOn: anElement [
 
 	| offset |
 	anElement addEventHandlerOn: BlDragStartEvent do: [ :evt |
@@ -380,9 +387,9 @@ ToWidgetElement >> initializeDragWidgetEventOn: anElement [
 ]
 
 { #category : 'initialization' }
-ToWidgetElement >> initializeInputConnect [
+JamWidgetElement >> initializeInputConnect [
 
-	inputConnect := Connector new isInputConnect: true.
+	inputConnect := JamConnector new isInputConnect: true.
 	inputConnect constraintsDo: [ :c |
 		c frame horizontal alignLeft.
 		c frame vertical alignCenter.
@@ -401,9 +408,9 @@ ToWidgetElement >> initializeInputConnect [
 ]
 
 { #category : 'initialization' }
-ToWidgetElement >> initializeOutputConnect [
+JamWidgetElement >> initializeOutputConnect [
 
-	outputConnect := Connector new isOutputConnect: true.
+	outputConnect := JamConnector new isOutputConnect: true.
 	outputConnect constraintsDo: [ :c |
 		c frame horizontal alignRight.
 		c frame vertical alignCenter. ].
@@ -421,7 +428,7 @@ ToWidgetElement >> initializeOutputConnect [
 ]
 
 { #category : 'initialization' }
-ToWidgetElement >> initializeSliderLabel: aString [
+JamWidgetElement >> initializeSliderLabel: aString [
 
 	| label valueLabel container |
 	label := BlTextElement new.
@@ -446,7 +453,7 @@ ToWidgetElement >> initializeSliderLabel: aString [
 ]
 
 { #category : 'initialization' }
-ToWidgetElement >> initializeSliders [ 
+JamWidgetElement >> initializeSliders [ 
 
 	slidersDic keysAndValuesDo: [ :key :value | 
 		|sliderLabel|
@@ -456,7 +463,7 @@ ToWidgetElement >> initializeSliders [
 ]
 
 { #category : 'initialization' }
-ToWidgetElement >> initializeSlidersContainer [
+JamWidgetElement >> initializeSlidersContainer [
 
 	slidersContainer := BlElement new.
 	slidersContainer layout: BlLinearLayout new.
@@ -471,86 +478,86 @@ ToWidgetElement >> initializeSlidersContainer [
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> inputConnect [
+JamWidgetElement >> inputConnect [
 
 	^ inputConnect
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> inputConnect: aConnector [
+JamWidgetElement >> inputConnect: aConnector [
 
 	inputConnect := aConnector
 ]
 
 { #category : 'testing' }
-ToWidgetElement >> isConnector: anElement [
-	^ anElement class = Connector.
+JamWidgetElement >> isConnector: anElement [
+	^ anElement class = JamConnector.
 	
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> name [
+JamWidgetElement >> name [
 	^ name
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> name: aString [
+JamWidgetElement >> name: aString [
 	name := aString.
 	barElement name: aString.
 ]
 
 { #category : 'instance creation' }
-ToWidgetElement >> newRawSkin [
-	^ ToWidgetElementSkin new
+JamWidgetElement >> newRawSkin [
+	^ JamWidgetElementSkin new
 ]
 
 { #category : 'announcer connection' }
-ToWidgetElement >> notifyConnection [
+JamWidgetElement >> notifyConnection [
 
 	self announcer announce: ConnectionAnnouncer new
 ]
 
 { #category : 'announcer connection' }
-ToWidgetElement >> notifyDisconnection [
+JamWidgetElement >> notifyDisconnection [
 
 	self announcer announce: DisconnectionAnnouncer new
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> notifyDrawingLine [
+JamWidgetElement >> notifyDrawingLine [
 	self announcer announce: LineCurrentlyDrawAnnouncer new.
 ]
 
 { #category : 'drawing' }
-ToWidgetElement >> notifyEnableCreation [
+JamWidgetElement >> notifyEnableCreation [
 	self announcer announce: EnableCreationAnnouncer.
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> outputConnect [
+JamWidgetElement >> outputConnect [
 
 	^ outputConnect
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> outputConnect: aConnector [
+JamWidgetElement >> outputConnect: aConnector [
 
 	outputConnect := aConnector
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> phaustoSound [
+JamWidgetElement >> phaustoSound [
 	^ phaustoSound
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> phaustoSound: aPhaustoSoundAsDsp [
+JamWidgetElement >> phaustoSound: aPhaustoSoundAsDsp [
 
 	phaustoSound := aPhaustoSoundAsDsp.
 ]
 
 { #category : 'initialization' }
-ToWidgetElement >> resetToInit [
+JamWidgetElement >> resetToInit [
 
 	(self isConnector: inputConnect) ifTrue: [ inputConnect resetInit ].
 	(self isConnector: outputConnect) ifTrue: [ outputConnect resetInit ].
@@ -558,7 +565,7 @@ ToWidgetElement >> resetToInit [
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> sliderIndex: aSlider [
+JamWidgetElement >> sliderIndex: aSlider [
 
 	| key |
 	1 to: slidersDic size do: [ :i |
@@ -568,29 +575,29 @@ ToWidgetElement >> sliderIndex: aSlider [
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> slidersContainer [
+JamWidgetElement >> slidersContainer [
 	^ slidersContainer
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> slidersDic [
+JamWidgetElement >> slidersDic [
 
 	^ slidersDic
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> slidersDic: aDictionaryOfSlidersWithLabelKey [
+JamWidgetElement >> slidersDic: aDictionaryOfSlidersWithLabelKey [
 
 	slidersDic := aDictionaryOfSlidersWithLabelKey.
 	self initializeSliders.
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> slidersLabels [
+JamWidgetElement >> slidersLabels [
 	^ slidersLabels
 ]
 
 { #category : 'accessing' }
-ToWidgetElement >> slidersLabels: anOrderedCollection [
+JamWidgetElement >> slidersLabels: anOrderedCollection [
 	slidersLabels := anOrderedCollection.
 ]

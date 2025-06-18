@@ -1,5 +1,5 @@
 Class {
-	#name : 'ToSlidersSkin',
+	#name : 'JamSlidersSkin',
 	#superclass : 'ToRawSkin',
 	#category : 'PharoJamSession-UIElementStyle',
 	#package : 'PharoJamSession',
@@ -7,7 +7,7 @@ Class {
 }
 
 { #category : 'event handling' }
-ToSlidersSkin >> installSkinEvent: anEvent [
+JamSlidersSkin >> installSkinEvent: anEvent [
 
 	super installSkinEvent: anEvent.
 	anEvent elementDo: [ :elt |

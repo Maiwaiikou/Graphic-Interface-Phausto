@@ -2,7 +2,7 @@
 I'm just a little event to permitt the creation of widget when someone click on the MenuItemElement.
 "
 Class {
-	#name : 'MenuEventListeners',
+	#name : 'JamMenuEventListeners',
 	#superclass : 'BlEventListener',
 	#instVars : [
 		'menu'
@@ -13,7 +13,7 @@ Class {
 }
 
 { #category : 'mouse handlers' }
-MenuEventListeners >> clickEvent: anEvent [
+JamMenuEventListeners >> clickEvent: anEvent [
 
 	menu parent addChildElement: anEvent currentTarget widget.
 	anEvent currentTarget widget announcer
@@ -29,11 +29,11 @@ MenuEventListeners >> clickEvent: anEvent [
 ]
 
 { #category : 'accessing' }
-MenuEventListeners >> menu [
+JamMenuEventListeners >> menu [
 	^ menu
 ]
 
 { #category : 'accessing' }
-MenuEventListeners >> menu: aMenuElement [
+JamMenuEventListeners >> menu: aMenuElement [
 	menu := aMenuElement.
 ]

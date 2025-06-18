@@ -2,16 +2,16 @@
 The interface which regroup all UIElement of the PharoJamSession compose with widgets and a menu.
 "
 Class {
-	#name : 'Interface',
-	#superclass : 'BlElement',
+	#name : 'JamPlayground',
+	#superclass : 'ToElement',
 	#instVars : [
 		'menu',
 		'childrenElements',
-		'widgetsLines',
 		'micro',
 		'audio',
 		'activeDSP',
-		'theme'
+		'theme',
+		'sizeElt'
 	],
 	#category : 'PharoJamSession-UIElement',
 	#package : 'PharoJamSession',
@@ -19,46 +19,46 @@ Class {
 }
 
 { #category : 'accessing' }
-Interface >> activeDSP [
+JamPlayground >> activeDSP [
 	^ activeDSP
 ]
 
 { #category : 'accessing' }
-Interface >> activeDSP: aCollectionOfDSP [
+JamPlayground >> activeDSP: aCollectionOfDSP [
 
 	activeDSP := aCollectionOfDSP
 ]
 
 { #category : 'accessing' }
-Interface >> addChildElement: aWidget [
+JamPlayground >> addChildElement: aWidget [
 
 	childrenElements add: aWidget.
 	self drawElement
 ]
 
 { #category : 'accessing' }
-Interface >> audio [
+JamPlayground >> audio [
 	^ audio
 ]
 
 { #category : 'accessing' }
-Interface >> childrenElements [
+JamPlayground >> childrenElements [
 	^ childrenElements
 ]
 
 { #category : 'accessing' }
-Interface >> childrenElements: aCollectionOfElements [
+JamPlayground >> childrenElements: aCollectionOfElements [
 	childrenElements := aCollectionOfElements.
 	self drawElement.
 ]
 
 { #category : 'accessing' }
-Interface >> clear [
+JamPlayground >> clear [
 	self removeChildren.
 ]
 
 { #category : 'drawing' }
-Interface >> drawChildren [
+JamPlayground >> drawChildren [
 
 	childrenElements do: [ :elt |
 		self addChild: elt.
@@ -69,7 +69,7 @@ Interface >> drawChildren [
 ]
 
 { #category : 'drawing' }
-Interface >> drawElement [
+JamPlayground >> drawElement [
 
 	self removeElementExcept: {
 			menu.
@@ -81,8 +81,8 @@ Interface >> drawElement [
 	self drawChildren
 ]
 
-{ #category : 'initialization' }
-Interface >> handleAudioConnectedEvent: aWidget [
+{ #category : 'element events handling' }
+JamPlayground >> handleAudioConnectedEvent: aWidget [
 
 	| nextConnected dsp |
 	nextConnected := (aWidget isConnector: aWidget inputConnect)
@@ -97,43 +97,45 @@ Interface >> handleAudioConnectedEvent: aWidget [
 		self handleAudioConnectedEvent: nextConnected ]
 ]
 
-{ #category : 'initialization' }
-Interface >> handleAudioDisconnectedEvent [
+{ #category : 'element events handling' }
+JamPlayground >> handleAudioDisconnectedEvent [
 
 	activeDSP do: [ :dsp | dsp stop ].
 	activeDSP removeAll.
 ]
 
-{ #category : 'initialization' }
-Interface >> handleAudioDisconnectedEventFor: anActiveDSP [
+{ #category : 'element events handling' }
+JamPlayground >> handleAudioDisconnectedEventFor: anActiveDSP [
 
 	anActiveDSP stop.
 	activeDSP removeChild: anActiveDSP.
 ]
 
 { #category : 'initialization' }
-Interface >> initialize [
+JamPlayground >> initialize [
 
 	super initialize.
 	childrenElements := OrderedCollection new.
 	activeDSP := OrderedCollection new.
-	self size: 1000 @ 600.
+	self layout: BlBasicLayout new.
+	sizeElt := 1200 @ 600.
+	self size: sizeElt.
 	self initializeDefaultTheme.
 	self initializeMenu.
 	self initializeMicro.
 	self initializeAudio.
 	self addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
-		evt gestureSource class = Connector ifTrue: [
+		evt gestureSource class = JamConnector ifTrue: [
 			evt gestureSource line: BlElement new.
 			self drawElement ] ].
 	self drawElement
 ]
 
 { #category : 'initialization' }
-Interface >> initializeAudio [
+JamPlayground >> initializeAudio [
 
-	audio := ToWidgetWithIconElement withAudioIcon.
+	audio := JamWidgetWithIconElement withAudioIcon.
 	audio announcer
 		when: ConnectionAnnouncer
 		do: [ self handleAudioConnectedEvent: audio ]
@@ -146,29 +148,35 @@ Interface >> initializeAudio [
 		when: LineCurrentlyDrawAnnouncer
 		send: #drawElement
 		to: self.
-	audio position: 930 @ 150.
-	self addChild: audio.
+	audio position: 1130 @ 150.
+	self addChild: audio
 ]
 
 { #category : 'initialization' }
-Interface >> initializeDefaultTheme [
-	theme := ToWidgetTheme new
+JamPlayground >> initializeDefaultTheme [
+
+	theme := JamTheme new
 ]
 
 { #category : 'initialization' }
-Interface >> initializeMenu [
+JamPlayground >> initializeMenu [
 
-	menu := MenuElement new.
-	self addChild: menu.
-	menu defaultConstrains.
+	menu := JamMenuElement new.
+	menu constraintsDo: [ :c |
+		c vertical fitContent.
+		c frame vertical alignTop.
+		c frame horizontal alignCenter ].
+	menu width: sizeElt x.
+	self addChild: menu
+	"menu defaultConstrains"
 ]
 
 { #category : 'initialization' }
-Interface >> initializeMicro [
+JamPlayground >> initializeMicro [
 	|mic effect|
 	mic := Wire new.
 	effect := JamEchoDelay new.
-	micro := ToWidgetWithIconElement withMicroIcon phaustoSound: ((mic => effect) stereo asDsp).
+	micro := JamWidgetWithIconElement withMicroIcon phaustoSound: ((mic => effect) stereo asDsp).
 	"Mic event action"
 	micro announcer
 		when: LineCurrentlyDrawAnnouncer
@@ -179,34 +187,40 @@ Interface >> initializeMicro [
 ]
 
 { #category : 'accessing' }
-Interface >> menu [
+JamPlayground >> menu [
 	^ menu
 ]
 
 { #category : 'accessing' }
-Interface >> menu: aMenuElement [
+JamPlayground >> menu: aMenuElement [
 	menu := aMenuElement.
 	self drawElement.
 ]
 
 { #category : 'accessing' }
-Interface >> micro [
+JamPlayground >> micro [
 	^ micro
 ]
 
 { #category : 'instance creation' }
-Interface >> open [
+JamPlayground >> newRawSkin [
+	^ JamPlaygroundSkin new
+]
+
+{ #category : 'instance creation' }
+JamPlayground >> open [
 
 	| space |
+	self installRawStyle.
 	space := BlSpace new.
 	space toTheme: theme.
 	space root addChild: self.
-	space extent: 1000 @ 600.
+	space extent: sizeElt.
 	space show
 ]
 
 { #category : 'removing' }
-Interface >> removeElementExcept: aListOfElementToNotDelete [
+JamPlayground >> removeElementExcept: aListOfElementToNotDelete [
 	|childrenCopy|
 	childrenCopy := children copy.
 	childrenCopy do: [ : item | 
@@ -215,20 +229,31 @@ Interface >> removeElementExcept: aListOfElementToNotDelete [
 ]
 
 { #category : 'initialization' }
-Interface >> resetElements [
+JamPlayground >> resetElements [
 	menu refreshMenu.
 	micro resetToInit.
 	audio resetToInit.
 	childrenElements do: [ :elt | elt resetToInit ].
 ]
 
+{ #category : 'initialization' }
+JamPlayground >> sizeElt [
+	^ sizeElt
+]
+
+{ #category : 'initialization' }
+JamPlayground >> sizeElt: aPoint [
+	sizeElt := aPoint.
+]
+
 { #category : 'accessing' }
-Interface >> theme [
+JamPlayground >> theme [
+
 	^ theme
 ]
 
 { #category : 'accessing' }
-Interface >> theme: aTheme [
+JamPlayground >> theme: aTheme [
 
 	theme := aTheme
 ]

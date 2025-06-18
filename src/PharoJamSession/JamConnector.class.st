@@ -3,7 +3,7 @@ I'm a connector use with widget to link to widgets together by create a line bet
 I must be an input or output connector before been link to another connector 
 "
 Class {
-	#name : 'Connector',
+	#name : 'JamConnector',
 	#superclass : 'BlElement',
 	#instVars : [
 		'isInputConnect',
@@ -17,7 +17,7 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-Connector >> calcMiddleWith: anInteger and: anotherInteger [
+JamConnector >> calcMiddleWith: anInteger and: anotherInteger [
 	anInteger < anotherInteger
 		ifTrue: [ ^ anInteger + (anotherInteger - anInteger / 2) ]
 		ifFalse: [ ^ anotherInteger + (anInteger - anotherInteger / 2) ]
@@ -25,13 +25,13 @@ Connector >> calcMiddleWith: anInteger and: anotherInteger [
 ]
 
 { #category : 'initialization' }
-Connector >> checkBeforeDisconnect [
+JamConnector >> checkBeforeDisconnect [
 
 	self connectTo ifNotNil: [ self disconnect ]
 ]
 
 { #category : 'connecting' }
-Connector >> connect: aConnector [
+JamConnector >> connect: aConnector [
 
 	self checkBeforeDisconnect.
 	aConnector checkBeforeDisconnect.
@@ -40,12 +40,12 @@ Connector >> connect: aConnector [
 ]
 
 { #category : 'accessing' }
-Connector >> connectTo [
+JamConnector >> connectTo [
 	^ connectTo
 ]
 
 { #category : 'accessing' }
-Connector >> connectTo: aWidget [
+JamConnector >> connectTo: aWidget [
 
 	connectTo := aWidget.
 	aWidget ifNil: [
@@ -55,7 +55,7 @@ Connector >> connectTo: aWidget [
 ]
 
 { #category : 'accessing' }
-Connector >> connectorConnected [
+JamConnector >> connectorConnected [
 	"Get the correct connector base on if this connector is an output or input"
 
 	connectTo ifNil: [ ^ self ].
@@ -65,7 +65,7 @@ Connector >> connectorConnected [
 ]
 
 { #category : 'accessing' }
-Connector >> connectorWhichHaveLine: aConnector [
+JamConnector >> connectorWhichHaveLine: aConnector [
 
 	aConnector line geometry class = BlBezierCurveGeometry
 		ifTrue: [ ^ aConnector ]
@@ -73,7 +73,7 @@ Connector >> connectorWhichHaveLine: aConnector [
 ]
 
 { #category : 'connecting' }
-Connector >> disconnect [
+JamConnector >> disconnect [
 
 	| aConnector |
 	aConnector := self connectorConnected.
@@ -83,7 +83,7 @@ Connector >> disconnect [
 ]
 
 { #category : 'initialization' }
-Connector >> initialize [
+JamConnector >> initialize [
 
 	super initialize.
 	isInputConnect := false.
@@ -98,7 +98,7 @@ Connector >> initialize [
 ]
 
 { #category : 'initialization' }
-Connector >> initializeDrag [
+JamConnector >> initializeDrag [
 
 	| points |
 	self addEventHandlerOn: BlDragStartEvent do: [ :evt |
@@ -115,48 +115,48 @@ Connector >> initializeDrag [
 ]
 
 { #category : 'accessing' }
-Connector >> isInputConnect [
+JamConnector >> isInputConnect [
 
 	^ isInputConnect
 ]
 
 { #category : 'accessing' }
-Connector >> isInputConnect: aBoolean [
+JamConnector >> isInputConnect: aBoolean [
 
 	isInputConnect := aBoolean
 ]
 
 { #category : 'accessing' }
-Connector >> isOutputConnect [
+JamConnector >> isOutputConnect [
 
 	^ isOutputConnect
 ]
 
 { #category : 'accessing' }
-Connector >> isOutputConnect: aBoolean [
+JamConnector >> isOutputConnect: aBoolean [
 
 	isOutputConnect := aBoolean
 ]
 
 { #category : 'initialization' }
-Connector >> line [
+JamConnector >> line [
 	^line
 ]
 
 { #category : 'initialization' }
-Connector >> line: aPolyLine [
+JamConnector >> line: aPolyLine [
 	line := aPolyLine.
 ]
 
 { #category : 'initialization' }
-Connector >> resetInit [
+JamConnector >> resetInit [
 
 	line := BlElement new.
 	self checkBeforeDisconnect.
 ]
 
 { #category : 'connecting' }
-Connector >> updateLine [
+JamConnector >> updateLine [
 	"When the widget connected or the widget parent position move and there is another widget connected, we edit our visual connexion line to put it visually connect to the correct widget"
 
 	| points first last midX sizeBound connectedWithLine |

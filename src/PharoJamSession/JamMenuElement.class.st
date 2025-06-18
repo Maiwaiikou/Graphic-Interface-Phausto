@@ -3,7 +3,7 @@ I'm the menu of the interface compose with functionnalities such as Export, Save
 I'm also compose with many MenuItemElement, each of them handle the creation of a widget song.
 "
 Class {
-	#name : 'MenuElement',
+	#name : 'JamMenuElement',
 	#superclass : 'ToMenuPane',
 	#category : 'PharoJamSession-UIElement',
 	#package : 'PharoJamSession',
@@ -11,7 +11,7 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-MenuElement >> childMenu: aString [
+JamMenuElement >> childMenu: aString [
 
 	self children do: [ :aChild |
 		(aChild labelText = aString) ifTrue: [^ aChild ]].
@@ -19,14 +19,14 @@ MenuElement >> childMenu: aString [
 ]
 
 { #category : 'as yet unclassified' }
-MenuElement >> createEffectsMenu [
+JamMenuElement >> createEffectsMenu [
 	| menu aMenuEventListener |
 	aMenuEventListener := self newMenuEventListener menu: self.
 	menu := ToMenu new labelText: 'Effects'.
-	ToWidgetElement widgetsEffects do: [ :i |
+	JamWidgetElement widgetsEffects do: [ :i |
 		| elt |
 		i atRandomPos.
-		elt := MenuItemElement new widget: i.
+		elt := JamMenuItemElement new widget: i.
 		elt addEventHandler: aMenuEventListener.
 		menu addItem: elt ].
 	^ menu
@@ -34,7 +34,7 @@ MenuElement >> createEffectsMenu [
 ]
 
 { #category : 'instance creation' }
-MenuElement >> createFileMenu [
+JamMenuElement >> createFileMenu [
 
 	| menu items  elt |
 	menu := ToMenu new labelText: 'File'.
@@ -52,37 +52,37 @@ MenuElement >> createFileMenu [
 ]
 
 { #category : 'as yet unclassified' }
-MenuElement >> createInstrumentMenu [
+JamMenuElement >> createInstrumentMenu [
 
 	| menu aMenuEventListener |
 	aMenuEventListener := self newMenuEventListener menu: self.
 	menu := ToMenu new labelText: 'Instrument'.
-	ToWidgetElement widgetsInstruments do: [ :i |
+	JamWidgetElement widgetsInstruments do: [ :i |
 		| elt |
 		i atRandomPos.
-		elt := MenuItemElement new widget: i.
+		elt := JamMenuItemElement new widget: i.
 		elt addEventHandler: aMenuEventListener.
 		menu addItem: elt ].
 	^ menu
 ]
 
 { #category : 'as yet unclassified' }
-MenuElement >> createOscillatorMenu [
+JamMenuElement >> createOscillatorMenu [
 
 	| menu aMenuEventListener |
 	aMenuEventListener := self newMenuEventListener menu: self.
 	menu := ToMenu new labelText: 'Oscillators'.
-	ToWidgetElement widgetsOscillator do: [ :i |
+	JamWidgetElement widgetsOscillator do: [ :i |
 		| elt |
 		i atRandomPos.
-		elt := MenuItemElement new widget: i.
+		elt := JamMenuItemElement new widget: i.
 		elt addEventHandler: aMenuEventListener.
 		menu addItem: elt ].
 	^ menu
 ]
 
 { #category : 'instance creation' }
-MenuElement >> createSettingMenu [
+JamMenuElement >> createSettingMenu [
 
 	| menu items elt |
 	menu := ToMenu new labelText: 'Settings'.
@@ -94,7 +94,7 @@ MenuElement >> createSettingMenu [
 ]
 
 { #category : 'instance creation' }
-MenuElement >> createSoundsMenu [
+JamMenuElement >> createSoundsMenu [
 
 	| menu aMenuEventListener |
 	aMenuEventListener := self newMenuEventListener menu: self.
@@ -107,44 +107,40 @@ MenuElement >> createSoundsMenu [
 ]
 
 { #category : 'as yet unclassified' }
-MenuElement >> createSynthsMenu [
+JamMenuElement >> createSynthsMenu [
 	| menu aMenuEventListener |
 	aMenuEventListener := self newMenuEventListener menu: self.
 	menu := ToMenu new labelText: 'Synths'.
-	ToWidgetElement widgetsSynths do: [ :i |
+	JamWidgetElement widgetsSynths do: [ :i |
 		| elt |
 		i atRandomPos.
-		elt := MenuItemElement new widget: i.
+		elt := JamMenuItemElement new widget: i.
 		elt addEventHandler: aMenuEventListener.
 		menu addItem: elt ].
 	^ menu
 	
 ]
 
-{ #category : 'as yet unclassified' }
-MenuElement >> defaultConstrains [
-
-	self constraintsDo: [ :c |
-		c frame vertical alignTop.
-		c padding: (BlInsets left: parent size x right: parent size x) ]
-]
-
-{ #category : 'accessing' }
-MenuElement >> initialize [
+{ #category : 'initialization' }
+JamMenuElement >> initialize [
 
 	super initialize.
 	self horizontal: true.
-	self width: 500.
 	self refreshMenu
 ]
 
 { #category : 'instance creation' }
-MenuElement >> newMenuEventListener [
-	^ MenuEventListeners new.
+JamMenuElement >> newMenuEventListener [
+	^ JamMenuEventListeners new.
+]
+
+{ #category : 'skin' }
+JamMenuElement >> newRawSkin [
+	^ JamMenuElementSkin new.
 ]
 
 { #category : 'as yet unclassified' }
-MenuElement >> refreshMenu [
+JamMenuElement >> refreshMenu [
 
 	self removeChildren.
 	self createFileMenu.
@@ -153,6 +149,6 @@ MenuElement >> refreshMenu [
 ]
 
 { #category : 'as yet unclassified' }
-MenuElement >> subMenuItem: aMenu [
+JamMenuElement >> subMenuItem: aMenu [
 	^ aMenu itemBar children.
 ]

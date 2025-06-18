@@ -1,5 +1,5 @@
 Class {
-	#name : 'ToWidgetWithIconElementSkin',
+	#name : 'JamWidgetWithIconElementSkin',
 	#superclass : 'ToRawSkin',
 	#category : 'PharoJamSession-UIElementStyle',
 	#package : 'PharoJamSession',
@@ -7,7 +7,7 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-ToWidgetWithIconElementSkin >> installSkinEvent: anEvent [
+JamWidgetWithIconElementSkin >> installSkinEvent: anEvent [
 
 	super installSkinEvent: anEvent.
 	anEvent elementDo: [ :elt |

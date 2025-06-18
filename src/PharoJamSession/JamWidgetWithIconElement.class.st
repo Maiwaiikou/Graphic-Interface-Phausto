@@ -2,8 +2,8 @@
 I'm a sort of ToWidgetElement but I don't have phaustoSound so I don't have any sliders, I only have an icon at the middle and connectors. As my parent, I can be drag and drop.
 "
 Class {
-	#name : 'ToWidgetWithIconElement',
-	#superclass : 'ToWidgetElement',
+	#name : 'JamWidgetWithIconElement',
+	#superclass : 'JamWidgetElement',
 	#instVars : [
 		'icon'
 	],
@@ -13,18 +13,18 @@ Class {
 }
 
 { #category : 'examples' }
-ToWidgetWithIconElement class >> exampleWidgetWithAIcon [
+JamWidgetWithIconElement class >> exampleWidgetWithAIcon [
 
 	<example>
 	| interface |
-	interface := Interface new clear.
+	interface := JamPlayground new clear.
 	interface addChildElement: (self new initializeNewIconFromURL:
 			 'https://i.ebayimg.com/images/g/kE8AAOSwpzJhwRn~/s-l400.png').
 	interface open
 ]
 
 { #category : 'as yet unclassified' }
-ToWidgetWithIconElement class >> withAudioIcon [
+JamWidgetWithIconElement class >> withAudioIcon [
 
 	| widget |
 	widget := self onlyWithInputConnector.
@@ -35,7 +35,7 @@ ToWidgetWithIconElement class >> withAudioIcon [
 ]
 
 { #category : 'as yet unclassified' }
-ToWidgetWithIconElement class >> withMicroIcon [
+JamWidgetWithIconElement class >> withMicroIcon [
 	|widget|
 	widget := self onlyWithOutputConnector.
 	widget initializeNewIconFromURL: 'https://cdn-icons-png.flaticon.com/128/25/25682.png'.
@@ -45,7 +45,7 @@ ToWidgetWithIconElement class >> withMicroIcon [
 ]
 
 { #category : 'drawing' }
-ToWidgetWithIconElement >> draw [
+JamWidgetWithIconElement >> draw [
 	self removeChildren.
 	self addChild: inputConnect.
 	self addChild: outputConnect.
@@ -53,24 +53,24 @@ ToWidgetWithIconElement >> draw [
 ]
 
 { #category : 'drawing' }
-ToWidgetWithIconElement >> drawIcon [
+JamWidgetWithIconElement >> drawIcon [
 	icon constraintsDo: [ :c |
 		c frame vertical alignCenter ].
 	self addChild: icon.
 ]
 
 { #category : 'initialization' }
-ToWidgetWithIconElement >> icon [
+JamWidgetWithIconElement >> icon [
 	^ icon
 ]
 
 { #category : 'initialization' }
-ToWidgetWithIconElement >> icon: anElement [
+JamWidgetWithIconElement >> icon: anElement [
 	icon := anElement.
 ]
 
 { #category : 'initialization' }
-ToWidgetWithIconElement >> initialize [
+JamWidgetWithIconElement >> initialize [
 
 	icon := BlElement new.
 	super initialize.
@@ -78,12 +78,12 @@ ToWidgetWithIconElement >> initialize [
 ]
 
 { #category : 'initialization' }
-ToWidgetWithIconElement >> initializeNewIconFromURL: anURL [
+JamWidgetWithIconElement >> initializeNewIconFromURL: anURL [
 	icon:= ((ZnEasy getPng: anURL) scaledToSize:50@50) asElement.
 	self draw.
 ]
 
 { #category : 'instance creation' }
-ToWidgetWithIconElement >> newRawSkin [
-	^ ToWidgetWithIconElementSkin new.
+JamWidgetWithIconElement >> newRawSkin [
+	^ JamWidgetWithIconElementSkin new.
 ]
