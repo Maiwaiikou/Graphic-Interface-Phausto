@@ -343,11 +343,7 @@ JamWidgetElement >> initialize [
 	self constraintsDo: [ :c |
 		c vertical fitContent.
 		c horizontal fitContent ].
-	self addEventHandlerOn: BlDropEvent do: [ :evt |
-		evt consumed: true.
-		(self isConnector: evt gestureSource) ifTrue: [
-			evt gestureSource line: BlElement new.
-			self notifyDrawingLine ] ]
+	self initializeEvents.
 ]
 
 { #category : 'initialization' }
@@ -387,6 +383,26 @@ JamWidgetElement >> initializeDragWidgetEventOn: anElement [
 ]
 
 { #category : 'initialization' }
+JamWidgetElement >> initializeEvents [
+	self addEventHandlerOn: BlDropEvent do: [ :evt |
+		evt consumed: true.
+		(self isConnector: evt gestureSource) ifTrue: [
+			| line |
+			line := evt gestureSource line.
+			evt gestureSource isOutputConnect
+				ifTrue: [
+					line geometry vertices:
+						line geometry vertices , { inputConnect positionInSpace }.
+					inputConnect connect: evt gestureSource ]
+				ifFalse: [
+					line geometry vertices:
+						line geometry vertices , { outputConnect positionInSpace }.
+					outputConnect connect: evt gestureSource ].
+			self adjustLine: evt gestureSource.
+			self notifyDrawingLine ] ]
+]
+
+{ #category : 'initialization' }
 JamWidgetElement >> initializeInputConnect [
 
 	inputConnect := JamConnector new isInputConnect: true.
@@ -413,14 +429,15 @@ JamWidgetElement >> initializeOutputConnect [
 	outputConnect := JamConnector new isOutputConnect: true.
 	outputConnect constraintsDo: [ :c |
 		c frame horizontal alignRight.
-		c frame vertical alignCenter. ].
+		c frame vertical alignCenter ].
 	outputConnect transformDo: [ :t | t translateBy: 30 @ 0 ].
 	outputConnect addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
 		evt gestureSource isInputConnect
 			ifTrue: [
-				self adjustLine: evt gestureSource.
-				outputConnect connect: evt gestureSource ]
+				outputConnect connect: evt gestureSource.
+				self adjustLine: evt gestureSource. 
+				]
 			ifFalse: [
 				evt gestureSource line: BlElement new.
 				self notifyDrawingLine ] ].
