@@ -187,24 +187,31 @@ JamWidgetElement class >> typeOfWidget: aPhaustoElement [
 { #category : 'widgets list' }
 JamWidgetElement class >> widgetsEffects [
 
-	| oscillators |
-	oscillators := OrderedCollection new.
-	Saturators subclasses do: [ :subClass |
+	| effectsList effectsClass |
+	effectsList := OrderedCollection new.
+	effectsClass := ((PackageOrganizer default packageNamed:
+		                  'PharoJamSession') tagNamed: 'Effect') classes.
+	effectsClass do: [ :subClass |
 		subClass hasSubclasses
-			ifTrue: [ oscillators addAll: subClass subclasses ]
-			ifFalse: [ oscillators add: subClass ] ].
-	^ self configureWithoutSoundFor: oscillators
+			ifTrue: [ effectsList addAllFirstUnlessAlreadyPresent: subClass subclasses ]
+			ifFalse: [
+				(effectsList includes: subClass) ifFalse: [
+					effectsList add: subClass ] ] ].
+	^ self configureFor: effectsList
 ]
 
 { #category : 'widgets list' }
 JamWidgetElement class >> widgetsInstruments [
 
-	| instList |
+	| instList instClasses |
 	instList := OrderedCollection new.
-	JamInstrument subclasses do: [ :subClass |
+	instClasses := ((PackageOrganizer default packageNamed:
+		                 'PharoJamSession') tagNamed: 'Instrument') classes.
+	instClasses do: [ :subClass |
 		subClass hasSubclasses
-			ifTrue: [ instList addAll: subClass subclasses ]
-			ifFalse: [ instList add: subClass ] ].
+			ifTrue: [ instList addAllFirstUnlessAlreadyPresent: subClass subclasses ]
+			ifFalse: [
+			(instList includes: subClass) ifFalse: [ instList add: subClass ] ] ].
 	^ self configureFor: instList
 ]
 
