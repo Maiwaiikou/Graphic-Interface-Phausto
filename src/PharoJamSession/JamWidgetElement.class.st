@@ -65,7 +65,7 @@ JamWidgetElement class >> exampleWidgetWithDifferentTheme [
 
 	<example>
 	| interface theme |
-	interface := JamPlayground new clear.
+	interface := JamSession new clear.
 	theme := ToRawTheme new.
 	theme addTokenProperties: {
 			(ToTokenProperty name: #'widget-background' value: Color white).
@@ -104,7 +104,7 @@ JamWidgetElement class >> exampleWidgetWithInputConnector [
 
 	<example>
 	| interface |
-	interface := JamPlayground new clear.
+	interface := JamSession new clear.
 	interface addChildElement: (self onlyWithInputConnector name: 'Beautiful widget' ).
 	interface open
 ]
@@ -116,7 +116,7 @@ JamWidgetElement class >> exampleWidgetWithMultipleSliders [
 	| interface dict |
 	dict := OrderedDictionary new.
 	'abcdefghijklmnopqstuvwxyz' do: [ :c | dict at: (c asString) put: JamSliders new ].
-	interface := JamPlayground new clear.
+	interface := JamSession new clear.
 	interface addChildElement: (self new
 			 name: 'Beautiful widget';
 			 slidersDic: dict).
@@ -128,7 +128,7 @@ JamWidgetElement class >> exampleWidgetWithOutputConnector [
 
 	<example>
 	| interface |
-	interface := JamPlayground new clear.
+	interface := JamSession new clear.
 	interface addChildElement: (self onlyWithOutputConnector name: 'Beautiful widget' ).
 	interface open
 ]
@@ -138,7 +138,7 @@ JamWidgetElement class >> exampleWidgetWithSliders [
 
 	<example>
 	| interface |
-	interface := JamPlayground new clear.
+	interface := JamSession new clear.
 	interface addChildElement: (self new
 			 name: 'Beautiful widget';
 			 slidersDic: { ('Beauty' -> JamSliders new) } asDictionary).
@@ -150,7 +150,7 @@ JamWidgetElement class >> exampleWidgetWithTwoConnectors [
 
 	<example>
 	| interface |
-	interface := JamPlayground new clear.
+	interface := JamSession new clear.
 	interface addChildElement: (self new
 			 name: 'Beautiful widget').
 	interface open

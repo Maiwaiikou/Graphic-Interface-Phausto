@@ -17,7 +17,7 @@ JamWidgetWithIconElement class >> exampleWidgetWithAIcon [
 
 	<example>
 	| interface |
-	interface := JamPlayground new clear.
+	interface := JamSession new clear.
 	interface addChildElement: (self new initializeNewIconFromURL:
 			 'https://i.ebayimg.com/images/g/kE8AAOSwpzJhwRn~/s-l400.png').
 	interface open
