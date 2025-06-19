@@ -254,7 +254,10 @@ JamWidgetElement >> adjustLine: aConnector [
 	line := BlElement new.
 	line geometry: (BlBezierCurveGeometry controlPoints: points).
 	line outskirts: BlOutskirts centered.
-	line border: (BlBorder paint: Color black width: 2).
+	line border: (BlBorder paint: Color black width: 3).
+	line addEventHandlerOn: BlClickEvent do: [
+		aConnector disconnect.
+		self notifyDrawingLine ].
 	aConnector line: line.
 	self notifyDrawingLine
 ]
@@ -391,6 +394,7 @@ JamWidgetElement >> initializeDragWidgetEventOn: anElement [
 
 { #category : 'initialization' }
 JamWidgetElement >> initializeEvents [
+
 	self addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
 		(self isConnector: evt gestureSource) ifTrue: [
@@ -399,11 +403,11 @@ JamWidgetElement >> initializeEvents [
 			evt gestureSource isOutputConnect
 				ifTrue: [
 					line geometry vertices:
-						line geometry vertices , { inputConnect positionInSpace }.
+						line geometry vertices , { inputConnect positionInSpace + (inputConnect size /2) }.
 					inputConnect connect: evt gestureSource ]
 				ifFalse: [
 					line geometry vertices:
-						line geometry vertices , { outputConnect positionInSpace }.
+						line geometry vertices , { outputConnect positionInSpace + (outputConnect size /2) }.
 					outputConnect connect: evt gestureSource ].
 			self adjustLine: evt gestureSource.
 			self notifyDrawingLine ] ]
