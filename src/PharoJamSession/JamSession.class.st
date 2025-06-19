@@ -2,7 +2,7 @@
 The interface which regroup all UIElement of the PharoJamSession compose with widgets and a menu.
 "
 Class {
-	#name : 'JamPlayground',
+	#name : 'JamSession',
 	#superclass : 'ToElement',
 	#instVars : [
 		'menu',
@@ -19,46 +19,60 @@ Class {
 }
 
 { #category : 'accessing' }
-JamPlayground >> activeDSP [
+JamSession >> activeDSP [
 	^ activeDSP
 ]
 
 { #category : 'accessing' }
-JamPlayground >> activeDSP: aCollectionOfDSP [
+JamSession >> activeDSP: aCollectionOfDSP [
 
 	activeDSP := aCollectionOfDSP
 ]
 
 { #category : 'accessing' }
-JamPlayground >> addChildElement: aWidget [
+JamSession >> addChildElement: aWidget [
 
 	childrenElements add: aWidget.
 	self drawElement
 ]
 
 { #category : 'accessing' }
-JamPlayground >> audio [
+JamSession >> audio [
 	^ audio
 ]
 
 { #category : 'accessing' }
-JamPlayground >> childrenElements [
+JamSession >> childrenElements [
 	^ childrenElements
 ]
 
 { #category : 'accessing' }
-JamPlayground >> childrenElements: aCollectionOfElements [
+JamSession >> childrenElements: aCollectionOfElements [
 	childrenElements := aCollectionOfElements.
 	self drawElement.
 ]
 
 { #category : 'accessing' }
-JamPlayground >> clear [
+JamSession >> clear [
 	self removeChildren.
 ]
 
+{ #category : 'dsp management' }
+JamSession >> disableDsp: anActiveDSP [
+
+	anActiveDSP stop.
+	activeDSP remove: anActiveDSP.
+]
+
+{ #category : 'dsp management' }
+JamSession >> disconnectedEachDsp [
+
+	activeDSP do: [ :dsp | dsp stop ].
+	activeDSP removeAll.
+]
+
 { #category : 'drawing' }
-JamPlayground >> drawChildren [
+JamSession >> drawChildren [
 
 	childrenElements do: [ :elt |
 		self addChild: elt.
@@ -69,7 +83,7 @@ JamPlayground >> drawChildren [
 ]
 
 { #category : 'drawing' }
-JamPlayground >> drawElement [
+JamSession >> drawElement [
 
 	self removeElementExcept: {
 			menu.
@@ -82,37 +96,55 @@ JamPlayground >> drawElement [
 ]
 
 { #category : 'element events handling' }
-JamPlayground >> handleAudioConnectedEvent: aWidget [
+JamSession >> handleAudioConnectedEvent [
+	self disconnectedEachDsp.
+	audio inputConnect connectTo do: [ :widget | self handleWidgetsConnected: widget ].
+]
+
+{ #category : 'element events handling' }
+JamSession >> handleAudioDisconnectedEvent [
+
+	self flag: #ToFix.
+	"Check on handleWidgetsDisconnected method to fix this one"
+	self disconnectedEachDsp.
+	self handleAudioConnectedEvent
+	"audio inputConnect connectTo do: [ :widget |
+		self handleWidgetsDisconnected: widget ]"
+]
+
+{ #category : 'element events handling' }
+JamSession >> handleWidgetsConnected: aWidget [
 
 	| nextConnected dsp |
 	nextConnected := (aWidget isConnector: aWidget inputConnect)
 		                 ifTrue: [ aWidget inputConnect connectTo ]
-		                 ifFalse: [ nil ].
+		                 ifFalse: [ OrderedCollection new ].
 	aWidget phaustoSound ifNotNil: [
 		dsp := aWidget phaustoSound.
 		dsp init.
 		dsp start.
 		activeDSP add: dsp ].
-	nextConnected ifNotNil: [
-		self handleAudioConnectedEvent: nextConnected ]
+	nextConnected do: [ :each |
+		self handleWidgetsConnected: each ]
 ]
 
 { #category : 'element events handling' }
-JamPlayground >> handleAudioDisconnectedEvent [
+JamSession >> handleWidgetsDisconnected: aWidget [
 
-	activeDSP do: [ :dsp | dsp stop ].
-	activeDSP removeAll.
-]
-
-{ #category : 'element events handling' }
-JamPlayground >> handleAudioDisconnectedEventFor: anActiveDSP [
-
-	anActiveDSP stop.
-	activeDSP removeChild: anActiveDSP.
+	| nextConnected |
+	nextConnected := (aWidget isConnector: aWidget inputConnect)
+		                 ifTrue: [ aWidget inputConnect connectTo ]
+		                 ifFalse: [ OrderedCollection new ].
+		self flag: #ToFix.
+		"Why this cond is false at execution but when we put an halt before that told us it's true ?"
+	((aWidget isConnectedTo: audio) not and: [
+		 activeDSP includes: aWidget phaustoSound ]) ifTrue: [
+		self disableDsp: aWidget phaustoSound ].
+	nextConnected do: [ :each | self handleWidgetsDisconnected: each ]
 ]
 
 { #category : 'initialization' }
-JamPlayground >> initialize [
+JamSession >> initialize [
 
 	super initialize.
 	childrenElements := OrderedCollection new.
@@ -126,20 +158,21 @@ JamPlayground >> initialize [
 	self initializeAudio.
 	self addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
-		evt gestureSource class = JamConnector ifTrue: [
+		self flag: #ToChange.
+		(evt gestureSource isKindOf: JamConnector) ifTrue: [
 			evt gestureSource line: BlElement new.
 			self drawElement ] ].
 	self drawElement
 ]
 
 { #category : 'initialization' }
-JamPlayground >> initializeAudio [
+JamSession >> initializeAudio [
 
 	audio := JamWidgetWithIconElement withAudioIcon.
 	audio announcer
 		when: ConnectionAnnouncer
-		do: [ self handleAudioConnectedEvent: audio ]
-		for: audio.
+		send: #handleAudioConnectedEvent
+		to: self.
 	audio announcer
 		when: DisconnectionAnnouncer
 		send: #handleAudioDisconnectedEvent
@@ -153,13 +186,13 @@ JamPlayground >> initializeAudio [
 ]
 
 { #category : 'initialization' }
-JamPlayground >> initializeDefaultTheme [
+JamSession >> initializeDefaultTheme [
 
 	theme := JamTheme new
 ]
 
 { #category : 'initialization' }
-JamPlayground >> initializeMenu [
+JamSession >> initializeMenu [
 
 	menu := JamMenuElement new.
 	menu constraintsDo: [ :c |
@@ -172,7 +205,7 @@ JamPlayground >> initializeMenu [
 ]
 
 { #category : 'initialization' }
-JamPlayground >> initializeMicro [
+JamSession >> initializeMicro [
 	|mic effect|
 	mic := Wire new.
 	effect := JamEchoDelay new.
@@ -187,31 +220,30 @@ JamPlayground >> initializeMicro [
 ]
 
 { #category : 'accessing' }
-JamPlayground >> menu [
+JamSession >> menu [
 	^ menu
 ]
 
 { #category : 'accessing' }
-JamPlayground >> menu: aMenuElement [
+JamSession >> menu: aMenuElement [
 	menu := aMenuElement.
 	self drawElement.
 ]
 
 { #category : 'accessing' }
-JamPlayground >> micro [
+JamSession >> micro [
 	^ micro
 ]
 
 { #category : 'instance creation' }
-JamPlayground >> newRawSkin [
+JamSession >> newRawSkin [
 	^ JamPlaygroundSkin new
 ]
 
 { #category : 'instance creation' }
-JamPlayground >> open [
+JamSession >> open [
 
 	| space |
-	self installRawStyle.
 	space := BlSpace new.
 	space toTheme: theme.
 	space root addChild: self.
@@ -220,7 +252,7 @@ JamPlayground >> open [
 ]
 
 { #category : 'removing' }
-JamPlayground >> removeElementExcept: aListOfElementToNotDelete [
+JamSession >> removeElementExcept: aListOfElementToNotDelete [
 	|childrenCopy|
 	childrenCopy := children copy.
 	childrenCopy do: [ : item | 
@@ -229,7 +261,7 @@ JamPlayground >> removeElementExcept: aListOfElementToNotDelete [
 ]
 
 { #category : 'initialization' }
-JamPlayground >> resetElements [
+JamSession >> resetElements [
 	menu refreshMenu.
 	micro resetToInit.
 	audio resetToInit.
@@ -237,23 +269,23 @@ JamPlayground >> resetElements [
 ]
 
 { #category : 'initialization' }
-JamPlayground >> sizeElt [
+JamSession >> sizeElt [
 	^ sizeElt
 ]
 
 { #category : 'initialization' }
-JamPlayground >> sizeElt: aPoint [
+JamSession >> sizeElt: aPoint [
 	sizeElt := aPoint.
 ]
 
 { #category : 'accessing' }
-JamPlayground >> theme [
+JamSession >> theme [
 
 	^ theme
 ]
 
 { #category : 'accessing' }
-JamPlayground >> theme: aTheme [
+JamSession >> theme: aTheme [
 
 	theme := aTheme
 ]

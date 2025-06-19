@@ -6,7 +6,6 @@ Class {
 	#name : 'JamConnector',
 	#superclass : 'BlElement',
 	#instVars : [
-		'isInputConnect',
 		'isOutputConnect',
 		'line',
 		'connectTo'
@@ -49,7 +48,7 @@ JamConnector >> connectTo: aWidget [
 
 	connectTo := aWidget.
 	aWidget ifNil: [
-		parent notifyDisconnection.
+		"parent notifyDisconnection."
 		^ self ].
 	parent notifyConnection
 ]
@@ -78,15 +77,14 @@ JamConnector >> disconnect [
 	| aConnector |
 	aConnector := self connectorConnected.
 	(self connectorWhichHaveLine: aConnector) line: BlElement new.
+	self connectTo: nil.
 	aConnector connectTo: nil.
-	self connectTo: nil
 ]
 
 { #category : 'initialization' }
 JamConnector >> initialize [
 
 	super initialize.
-	isInputConnect := false.
 	isOutputConnect := false.
 	self zIndex: 3.
 	line := BlElement new.
@@ -117,13 +115,7 @@ JamConnector >> initializeDrag [
 { #category : 'accessing' }
 JamConnector >> isInputConnect [
 
-	^ isInputConnect
-]
-
-{ #category : 'accessing' }
-JamConnector >> isInputConnect: aBoolean [
-
-	isInputConnect := aBoolean
+	^ false
 ]
 
 { #category : 'accessing' }
@@ -159,12 +151,12 @@ JamConnector >> resetInit [
 JamConnector >> updateLine [
 	"When the widget connected or the widget parent position move and there is another widget connected, we edit our visual connexion line to put it visually connect to the correct widget"
 
-	| points first last midX sizeBound connectedWithLine |
+	| points first last midX sizeBound |
 	sizeBound := self size / 2.
-	
+
 	connectTo ifNil: [ ^ self ].
-	connectedWithLine := self connectorWhichHaveLine:
-		                     self connectorConnected.
+	"connectedWithLine := self connectorWhichHaveLine:
+		                     self connectorConnected."
 	points := OrderedCollection new.
 	first := self positionInSpace.
 	last := self connectorConnected positionInSpace.
@@ -176,6 +168,5 @@ JamConnector >> updateLine [
 	points add: midX @ (first y + sizeBound y).
 	points add: midX @ (last y + sizeBound y).
 	points add: last x + sizeBound x @ (last y + sizeBound y).
-	connectedWithLine line geometry:
-		(BlBezierCurveGeometry controlPoints: points)
+	line geometry: (BlBezierCurveGeometry controlPoints: points)
 ]

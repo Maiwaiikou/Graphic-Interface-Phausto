@@ -65,7 +65,7 @@ JamWidgetElement class >> exampleWidgetWithDifferentTheme [
 
 	<example>
 	| interface theme |
-	interface := JamPlayground new clear.
+	interface := JamSession new clear.
 	theme := ToRawTheme new.
 	theme addTokenProperties: {
 			(ToTokenProperty name: #'widget-background' value: Color white).
@@ -104,7 +104,7 @@ JamWidgetElement class >> exampleWidgetWithInputConnector [
 
 	<example>
 	| interface |
-	interface := JamPlayground new clear.
+	interface := JamSession new clear.
 	interface addChildElement: (self onlyWithInputConnector name: 'Beautiful widget' ).
 	interface open
 ]
@@ -116,7 +116,7 @@ JamWidgetElement class >> exampleWidgetWithMultipleSliders [
 	| interface dict |
 	dict := OrderedDictionary new.
 	'abcdefghijklmnopqstuvwxyz' do: [ :c | dict at: (c asString) put: JamSliders new ].
-	interface := JamPlayground new clear.
+	interface := JamSession new clear.
 	interface addChildElement: (self new
 			 name: 'Beautiful widget';
 			 slidersDic: dict).
@@ -128,7 +128,7 @@ JamWidgetElement class >> exampleWidgetWithOutputConnector [
 
 	<example>
 	| interface |
-	interface := JamPlayground new clear.
+	interface := JamSession new clear.
 	interface addChildElement: (self onlyWithOutputConnector name: 'Beautiful widget' ).
 	interface open
 ]
@@ -138,7 +138,7 @@ JamWidgetElement class >> exampleWidgetWithSliders [
 
 	<example>
 	| interface |
-	interface := JamPlayground new clear.
+	interface := JamSession new clear.
 	interface addChildElement: (self new
 			 name: 'Beautiful widget';
 			 slidersDic: { ('Beauty' -> JamSliders new) } asDictionary).
@@ -150,7 +150,7 @@ JamWidgetElement class >> exampleWidgetWithTwoConnectors [
 
 	<example>
 	| interface |
-	interface := JamPlayground new clear.
+	interface := JamSession new clear.
 	interface addChildElement: (self new
 			 name: 'Beautiful widget').
 	interface open
@@ -241,8 +241,8 @@ JamWidgetElement class >> widgetsSynths [
 JamWidgetElement >> adjustLine: aConnector [
 
 	| points line first last midX |
-	aConnector line geometry class = BlPolylineGeometry ifFalse: [
-		^ self ].
+	"aConnector line geometry class = BlPolylineGeometry ifFalse: [
+		^ self ]."
 	points := OrderedCollection new.
 	first := aConnector line geometry vertices first.
 	last := aConnector line geometry vertices last.
@@ -384,8 +384,7 @@ JamWidgetElement >> initializeDragWidgetEventOn: anElement [
 	anElement addEventHandlerOn: BlDragEndEvent do: [ :evt |
 		evt consumed: true.
 		(self isConnector: inputConnect) ifTrue: [
-			(inputConnect connectorWhichHaveLine:
-				 inputConnect connectorConnected) updateLine ].
+			inputConnect updateLine ].
 		(self isConnector: outputConnect) ifTrue: [
 			(outputConnect connectorWhichHaveLine:
 				 outputConnect connectorConnected) updateLine ].
@@ -416,18 +415,17 @@ JamWidgetElement >> initializeEvents [
 { #category : 'initialization' }
 JamWidgetElement >> initializeInputConnect [
 
-	inputConnect := JamConnector new isInputConnect: true.
+	inputConnect := JamInputConnector new.
 	inputConnect constraintsDo: [ :c |
 		c frame horizontal alignLeft.
 		c frame vertical alignCenter.
-		c margin: (BlInsets all: -30).].
+		c margin: (BlInsets all: -30) ].
 	inputConnect addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
 		evt gestureSource isOutputConnect
 			ifTrue: [
 				inputConnect connect: evt gestureSource.
-				self adjustLine: evt gestureSource.
-			 ]
+				self adjustLine: evt gestureSource ]
 			ifFalse: [
 				evt gestureSource line: BlElement new.
 				self notifyDrawingLine ] ].
@@ -447,8 +445,9 @@ JamWidgetElement >> initializeOutputConnect [
 		evt gestureSource isInputConnect
 			ifTrue: [
 				outputConnect connect: evt gestureSource.
-				self adjustLine: evt gestureSource. 
-				]
+				outputConnect line: evt gestureSource line.
+				evt gestureSource line: BlElement new.
+				self adjustLine: outputConnect. ]
 			ifFalse: [
 				evt gestureSource line: BlElement new.
 				self notifyDrawingLine ] ].
@@ -518,9 +517,18 @@ JamWidgetElement >> inputConnect: aConnector [
 ]
 
 { #category : 'testing' }
+JamWidgetElement >> isConnectedTo: aWidget [
+
+	(aWidget isNil or: outputConnect connectTo isNil) ifTrue: [
+		^ false ].
+	self = aWidget ifTrue: [ ^ true ].
+	^ (outputConnect connectTo) isConnectedTo: aWidget
+]
+
+{ #category : 'testing' }
 JamWidgetElement >> isConnector: anElement [
-	^ anElement class = JamConnector.
-	
+	self flag: #ToChange.
+	^ anElement isKindOf: JamConnector
 ]
 
 { #category : 'accessing' }
