@@ -44,6 +44,12 @@ JamInputConnector >> isInputConnect [
 	^ true
 ]
 
+{ #category : 'initialization' }
+JamInputConnector >> resetInit [
+	connectTo do: [ :widget | widget outputConnect line: BlElement new ].
+	self checkBeforeDisconnect
+]
+
 { #category : 'connecting' }
 JamInputConnector >> updateLine [
 	connectTo do: [ :widget | widget outputConnect updateLine ].
