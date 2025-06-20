@@ -90,6 +90,7 @@ JamSession >> drawElement [
 			micro.
 			audio }.
 
+	"self addChild: micro outputConnect line."
 	self addChild: micro outputConnect line.
 	self addChild: audio inputConnect line.
 	self drawChildren

@@ -21,5 +21,6 @@ JamEffect >> asBox [
 JamEffect >> initialize [
 
 	super initialize.
+	numberOfInputs := 1.
 	self initializeControlParameters
 ]
