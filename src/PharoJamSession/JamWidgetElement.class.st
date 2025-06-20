@@ -519,10 +519,11 @@ JamWidgetElement >> inputConnect: aConnector [
 { #category : 'testing' }
 JamWidgetElement >> isConnectedTo: aWidget [
 
-	(aWidget isNil or: outputConnect connectTo isNil) ifTrue: [
-		^ false ].
-	self = aWidget ifTrue: [ ^ true ].
-	^ (outputConnect connectTo) isConnectedTo: aWidget
+	aWidget ifNil: [ ^ false ].
+	(outputConnect connectTo isNotNil and:
+		 outputConnect connectTo ~= aWidget) ifTrue: [
+		^ outputConnect connectTo isConnectedTo: aWidget ].
+	^ outputConnect connectTo = aWidget
 ]
 
 { #category : 'testing' }
