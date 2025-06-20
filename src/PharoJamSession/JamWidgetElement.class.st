@@ -66,10 +66,12 @@ JamWidgetElement class >> exampleWidgetWithDifferentTheme [
 	<example>
 	| interface theme |
 	interface := JamSession new clear.
-	theme := ToRawTheme new.
+	theme := JamTheme new.
 	theme addTokenProperties: {
 			(ToTokenProperty name: #'widget-background' value: Color white).
-			(ToTokenProperty name: #'bar-background' value: (Color blue alpha: 0.5)).
+			(ToTokenProperty
+				 name: #'bar-background'
+				 value: (Color blue alpha: 0.5)).
 			(ToTokenProperty
 				 name: #'input-connect-background'
 				 value: Color pink).
@@ -84,14 +86,34 @@ JamWidgetElement class >> exampleWidgetWithDifferentTheme [
 			(ToTokenProperty name: #'labels-text-color' value: Color magenta).
 			(ToTokenProperty name: #'labels-text-size' value: 20).
 			(ToTokenProperty
-				 name: #'menuPane-background'
-				 value: Color palePeach).
-			(ToTokenProperty name: #'menuPane-height' value: 25).
-			(ToTokenProperty name: #'menu-interspace' value: 15).
-			(ToTokenProperty
 				 name: #'JSPlayground-background'
 				 value: Color transparent).
-			(ToTokenProperty name:#'bar-border' value: (BlBorder paint: Color transparent width: 1))}.
+			(ToTokenProperty
+				 name: #'bar-border'
+				 value: (BlBorder paint: Color transparent width: 1)).
+			(ToTokenProperty name: #'widget-cornerRadius' value: 30).
+			(ToTokenProperty
+				 name: #'widget-effect'
+				 value:
+				 (BlGaussianShadowEffect color: Color red width: 2 offset: 7 @ 11)).
+			(ToTokenProperty
+				 name: #'slidersContainer-background'
+				 value: Color lightBlue).
+			(ToTokenProperty
+				 name: #'slidersContainer-border'
+				 value: (BlBorder paint: Color black width: 1)).
+			(ToTokenProperty name: #'slidersContainer-cornerRadius' value: 20).
+			(ToTokenProperty
+				 name: #'slidersContainer-effect'
+				 value:
+				 (BlGaussianShadowEffect color: Color green width: 2 offset: 2 @ 6)).
+			((ToTokenProperty name: #'slidersContainer-margin') value:
+				 (BlInsets all: 25)).
+			ToTokenProperty name: #'bar-isTop' value: false.
+			ToTokenProperty name: #'bar-width' value: 500.
+			ToTokenProperty name: #'bar-margin' value: (BlInsets left: 30).
+			ToTokenProperty name: #'bar-text-color' value: Color green.
+ToTokenProperty name: #'bar-text-size' value: 10 }.
 	interface theme: theme.
 	interface addChildElement: (self new
 			 name: 'WindowsXp';
@@ -360,10 +382,8 @@ JamWidgetElement >> initialize [
 JamWidgetElement >> initializeBar [
 
 	barElement := JamBarElement new name: self name.
-	barElement border: (BlBorder paint: Color black width: 1).
 	barElement constraintsDo: [ :c |
 		c vertical fitContent.
-		c frame vertical alignTop.
 		c frame horizontal alignCenter ].
 	barElement closeButton newClickAction: [ self close ].
 	self initializeDragWidgetEventOn: barElement.
@@ -496,7 +516,6 @@ JamWidgetElement >> initializeSlidersContainer [
 	slidersContainer layout: BlLinearLayout new.
 	slidersContainer layout beVertical.
 	slidersContainer constraintsDo: [ :c |
-		c margin: (BlInsets top: 25).
 		c vertical fitContent.
 		c horizontal fitContent.
 		c frame vertical alignCenter.

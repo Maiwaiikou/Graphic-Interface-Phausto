@@ -1,9 +1,9 @@
 Class {
 	#name : 'JamWidgetElementTest',
 	#superclass : 'TestCase',
-	#category : 'PharoJamSession-UIElement',
+	#category : 'PharoJamSession-Tests',
 	#package : 'PharoJamSession',
-	#tag : 'UIElement'
+	#tag : 'Tests'
 }
 
 { #category : 'tests' }

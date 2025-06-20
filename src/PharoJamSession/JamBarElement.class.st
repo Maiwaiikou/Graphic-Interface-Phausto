@@ -7,7 +7,8 @@ Class {
 	#instVars : [
 		'name',
 		'closeButton',
-		'labelName'
+		'labelName',
+		'configuredAttributes'
 	],
 	#category : 'PharoJamSession-UIElement',
 	#package : 'PharoJamSession',
@@ -24,6 +25,26 @@ JamBarElement >> closeButton: aButton [
 	closeButton := aButton.
 ]
 
+{ #category : 'evaluating' }
+JamBarElement >> configuredAttributes [
+	^ configuredAttributes
+]
+
+{ #category : 'evaluating' }
+JamBarElement >> configuredAttributes: anOrderedCollectionOfAttributes [
+	configuredAttributes := anOrderedCollectionOfAttributes
+]
+
+{ #category : 'evaluating' }
+JamBarElement >> configuredString: aString [
+
+	| stringRoped |
+	stringRoped := aString asRopedText.
+	configuredAttributes ifNotEmpty: [
+		stringRoped attributes: configuredAttributes ].
+	^ stringRoped
+]
+
 { #category : 'initialization' }
 JamBarElement >> drawCloseButton [
 	closeButton := ToIconicRemoveButton new.
@@ -36,13 +57,13 @@ JamBarElement >> drawCloseButton [
 
 { #category : 'initialization' }
 JamBarElement >> drawLabelName [
-	labelName := ToLabel new.
-	labelName text: name.
+
+	labelName := BlTextElement new.
+	labelName text: (self configuredString: name).
 	labelName constraintsDo: [ :c |
-		c frame vertical alignCenter .
-		c frame horizontal alignCenter.].
-	self addChild: labelName.
-	
+		c frame vertical alignCenter.
+		c frame horizontal alignCenter ].
+	self addChild: labelName
 ]
 
 { #category : 'initialization' }
@@ -50,6 +71,7 @@ JamBarElement >> initialize [
 
 	super initialize.
 	name := ''.
+	configuredAttributes := OrderedCollection new.
 	self drawCloseButton.
 	self drawLabelName
 ]
