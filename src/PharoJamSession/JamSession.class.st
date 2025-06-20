@@ -90,12 +90,14 @@ JamSession >> drawElement [
 			micro.
 			audio }.
 
+	"self addChild: micro outputConnect line."
 	self addChild: micro outputConnect line.
 	self addChild: audio inputConnect line.
 	self drawChildren
 ]
 
 { #category : 'element events handling' }
+
 JamSession >> handleAudioConnectedEvent [
 	self disconnectedEachDsp.
 	audio inputConnect connectTo do: [ :widget | self handleWidgetsConnected: widget ].
