@@ -1,5 +1,5 @@
 Class {
-	#name : 'JamTheme',
+	#name : 'JamSimpleTheme',
 	#superclass : 'ToRawTheme',
 	#category : 'PharoJamSession-UIElementStyle',
 	#package : 'PharoJamSession',
@@ -7,7 +7,7 @@ Class {
 }
 
 { #category : 'accessing' }
-JamTheme class >> defaultConnectorTokenProperties [
+JamSimpleTheme class >> defaultConnectorTokenProperties [
 
 	^ {
 		  (ToTokenProperty
@@ -20,7 +20,7 @@ JamTheme class >> defaultConnectorTokenProperties [
 ]
 
 { #category : 'accessing' }
-JamTheme class >> defaultJamSessionPlaygroundTokenProperties [
+JamSimpleTheme class >> defaultJamSessionPlaygroundTokenProperties [
 
 	^ { (ToTokenProperty
 		   name: #'JSPlayground-background'
@@ -28,7 +28,7 @@ JamTheme class >> defaultJamSessionPlaygroundTokenProperties [
 ]
 
 { #category : 'accessing' }
-JamTheme class >> defaultLabelsTokenProperties [
+JamSimpleTheme class >> defaultLabelsTokenProperties [
 
 	^ {
 		  (ToTokenProperty name: #'labels-text-color' value: Color black).
@@ -36,7 +36,7 @@ JamTheme class >> defaultLabelsTokenProperties [
 ]
 
 { #category : 'accessing' }
-JamTheme class >> defaultMenuTokenProperties [
+JamSimpleTheme class >> defaultMenuTokenProperties [
 
 	^ {
 		  (ToTokenProperty
@@ -49,7 +49,7 @@ JamTheme class >> defaultMenuTokenProperties [
 ]
 
 { #category : 'accessing' }
-JamTheme class >> defaultSlidersContainerTokenProperties [
+JamSimpleTheme class >> defaultSlidersContainerTokenProperties [
 
 	^ {
 		  (ToTokenProperty
@@ -57,26 +57,25 @@ JamTheme class >> defaultSlidersContainerTokenProperties [
 			   value: Color transparent).
 		  (ToTokenProperty
 			   name: #'slidersContainer-border'
-			   value: (BlBorder paint: Color transparent)).
-		  (ToTokenProperty name: #'slidersContainer-cornerRadius' value: 0).
+			   value: (BlBorder paint: Color veryLightGray width: 1)).
+		  (ToTokenProperty name: #'slidersContainer-cornerRadius' value: 3).
 		  (ToTokenProperty
 			   name: #'slidersContainer-effect'
 			   value: BlNullEffect new).
 		  ((ToTokenProperty name: #'slidersContainer-margin') value:
-			   (BlInsets top: 25)) }
+			   (BlInsets top: 25 bottom: 40)) }
 ]
 
 { #category : 'accessing' }
-JamTheme class >> defaultSlidersTokenProperties [
+JamSimpleTheme class >> defaultSlidersTokenProperties [
 
 	^ {
-		  (ToTokenProperty name: #'slider-background' value: Color pink).
-		 (ToTokenProperty name: #'button-background' value: Color white).
-		  }
+		  (ToTokenProperty name: #'slider-background' value: (Color fromHexString: 'fff0db')).
+		  (ToTokenProperty name: #'button-background' value: Color white) }
 ]
 
 { #category : 'accessing' }
-JamTheme class >> defaultTokenProperties [
+JamSimpleTheme class >> defaultTokenProperties [
 
 	^ super defaultTokenProperties , self defaultWidgetsTokenProperties
 	  , self defaultConnectorTokenProperties
@@ -85,35 +84,39 @@ JamTheme class >> defaultTokenProperties [
 	  , self defaultLabelsTokenProperties
 	  , self defaultJamSessionPlaygroundTokenProperties
 	  , self defaultMenuTokenProperties,
-		self defaultSlidersContainerTokenProperties 
+	self defaultSlidersContainerTokenProperties
 ]
 
 { #category : 'accessing' }
-JamTheme class >> defaultWidgetBarTokenProperties [
+JamSimpleTheme class >> defaultWidgetBarTokenProperties [
 
 	^ {
-		  (ToTokenProperty name: #'bar-background' value: Color palePeach).
-		  (ToTokenProperty name: #'bar-isTop' value: true).
+		  (ToTokenProperty name: #'bar-background' value: Color transparent).
+		  (ToTokenProperty name: #'bar-isTop' value: false).
 		  (ToTokenProperty name: #'bar-width' value: 300).
-		  (ToTokenProperty name: #'bar-margin' value: (BlInsets all: 0)).
-		  (ToTokenProperty name: #'bar-text-color' value: Color black).
-		  (ToTokenProperty name: #'bar-text-size' value: 15).
+		  (ToTokenProperty name: #'bar-margin' value: (BlInsets top: 40 bottom: 5)).
+		  (ToTokenProperty name: #'bar-text-color' value: Color brown).
+		  (ToTokenProperty name: #'bar-text-size' value: 24).
 		  (ToTokenProperty
 			   name: #'bar-border'
-			   value: (BlBorder paint: Color black width: 1)) }
+			   value: (BlBorder paint: Color transparent)) }
 ]
 
 { #category : 'accessing' }
-JamTheme class >> defaultWidgetsTokenProperties [
+JamSimpleTheme class >> defaultWidgetsTokenProperties [
 
 	^ {
 		  (ToTokenProperty
 			   name: #'widget-icon-background'
 			   value: Color white).
+		  (ToTokenProperty name: #'widget-background' value: Color white).
+		  (ToTokenProperty name: #'widget-cornerRadius' value: 0).
+		(ToTokenProperty name:#'widget-draggableEverywhere' value: true).
 		  (ToTokenProperty
-			   name: #'widget-background'
-			   value: Color lightYellow).
-		  (ToTokenProperty name: #'widget-cornerRadius' value: 5).
-		  (ToTokenProperty name: #'widget-effect' value: BlNullEffect new).
-		(ToTokenProperty name:#'widget-draggableEverywhere' value: false). }
+			   name: #'widget-effect'
+			   value:
+			   (BlGaussianShadowEffect
+				    color: Color black
+				    width: 3
+				    offset: 5 @ 3)) }
 ]

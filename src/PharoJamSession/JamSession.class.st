@@ -57,6 +57,20 @@ JamSession >> clear [
 	self removeChildren.
 ]
 
+{ #category : 'dsp management' }
+JamSession >> disableDsp: anActiveDSP [
+
+	anActiveDSP stop.
+	activeDSP remove: anActiveDSP.
+]
+
+{ #category : 'dsp management' }
+JamSession >> disconnectedEachDsp [
+
+	activeDSP do: [ :dsp | dsp stop ].
+	activeDSP removeAll.
+]
+
 { #category : 'drawing' }
 JamSession >> drawChildren [
 
@@ -76,41 +90,59 @@ JamSession >> drawElement [
 			micro.
 			audio }.
 
-	
 	"self addChild: micro outputConnect line."
-	
+	self addChild: micro outputConnect line.
 	self addChild: audio inputConnect line.
 	self drawChildren
 ]
 
 { #category : 'element events handling' }
-JamSession >> handleAudioConnectedEvent: aWidget [
 
-	| nextConnected dsp |
-	nextConnected := (aWidget isConnector: aWidget inputConnect)
-		                 ifTrue: [ aWidget inputConnect connectTo ]
-		                 ifFalse: [ nil ].
-	aWidget phaustoSound ifNotNil: [
-		dsp := aWidget phaustoSound.
-		dsp init.
-		dsp start.
-		activeDSP add: dsp ].
-	nextConnected ifNotNil: [
-		self handleAudioConnectedEvent: nextConnected ]
+JamSession >> handleAudioConnectedEvent [
+	self disconnectedEachDsp.
+	audio inputConnect connectTo do: [ :widget | self handleWidgetsConnected: widget ].
 ]
 
 { #category : 'element events handling' }
 JamSession >> handleAudioDisconnectedEvent [
 
-	activeDSP do: [ :dsp | dsp stop ].
-	activeDSP removeAll.
+	self flag: #ToFix.
+	"Check on handleWidgetsDisconnected method to fix this one"
+	self disconnectedEachDsp.
+	self handleAudioConnectedEvent
+	"audio inputConnect connectTo do: [ :widget |
+		self handleWidgetsDisconnected: widget ]"
 ]
 
 { #category : 'element events handling' }
-JamSession >> handleAudioDisconnectedEventFor: anActiveDSP [
+JamSession >> handleWidgetsConnected: aWidget [
 
-	anActiveDSP stop.
-	activeDSP removeChild: anActiveDSP.
+	| nextConnected dsp |
+	nextConnected := (aWidget isConnector: aWidget inputConnect)
+		                 ifTrue: [ aWidget inputConnect connectTo ]
+		                 ifFalse: [ OrderedCollection new ].
+	aWidget phaustoSound ifNotNil: [
+		dsp := aWidget phaustoSound.
+		dsp init.
+		dsp start.
+		activeDSP add: dsp ].
+	nextConnected do: [ :each |
+		self handleWidgetsConnected: each ]
+]
+
+{ #category : 'element events handling' }
+JamSession >> handleWidgetsDisconnected: aWidget [
+
+	| nextConnected |
+	nextConnected := (aWidget isConnector: aWidget inputConnect)
+		                 ifTrue: [ aWidget inputConnect connectTo ]
+		                 ifFalse: [ OrderedCollection new ].
+		self flag: #ToFix.
+		"Why this cond is false at execution but when we put an halt before that told us it's true ?"
+	((aWidget isConnectedTo: audio) not and: [
+		 activeDSP includes: aWidget phaustoSound ]) ifTrue: [
+		self disableDsp: aWidget phaustoSound ].
+	nextConnected do: [ :each | self handleWidgetsDisconnected: each ]
 ]
 
 { #category : 'initialization' }
@@ -128,7 +160,8 @@ JamSession >> initialize [
 	self initializeAudio.
 	self addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
-		evt gestureSource class = JamConnector ifTrue: [
+		self flag: #ToChange.
+		(evt gestureSource isKindOf: JamConnector) ifTrue: [
 			evt gestureSource line: BlElement new.
 			self drawElement ] ].
 	self drawElement
@@ -140,8 +173,8 @@ JamSession >> initializeAudio [
 	audio := JamWidgetWithIconElement withAudioIcon.
 	audio announcer
 		when: ConnectionAnnouncer
-		do: [ self handleAudioConnectedEvent: audio ]
-		for: audio.
+		send: #handleAudioConnectedEvent
+		to: self.
 	audio announcer
 		when: DisconnectionAnnouncer
 		send: #handleAudioDisconnectedEvent
@@ -213,7 +246,6 @@ JamSession >> newRawSkin [
 JamSession >> open [
 
 	| space |
-	self installRawStyle.
 	space := BlSpace new.
 	space toTheme: theme.
 	space root addChild: self.
