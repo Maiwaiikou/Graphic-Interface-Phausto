@@ -481,8 +481,10 @@ JamWidgetElement >> initializeSliderLabel: aString [
 	label := BlTextElement new.
 	label text: (aString , ':  ') asRopedText.
 	valueLabel := BlTextElement new.
-	valueLabel text: 0 asRopedText.
-	slidersLabels addAll: { label. valueLabel }.
+	valueLabel text: (slidersDic at:aString) value asRopedText.
+	slidersLabels addAll: {
+			label.
+			valueLabel }.
 	container := BlElement new
 		             layout: BlLinearLayout horizontal;
 		             constraintsDo: [ :c |

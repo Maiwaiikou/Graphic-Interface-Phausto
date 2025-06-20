@@ -28,7 +28,8 @@ JamSliders class >> withAPhControlParam: aPhControlParam [
 
 	| slider |
 	slider := self new.
-	aPhControlParam initialValue ifNotNil: [ :max | slider value: 0 ].
+	aPhControlParam initialValue ifNotNil: [ :initVal |
+		slider value: initVal ].
 	aPhControlParam max ifNotNil: [ :max | slider maxValue: max ].
 	aPhControlParam min ifNotNil: [ :min | slider minValue: min ].
 	aPhControlParam step ifNotNil: [ :step | slider step: step ].
@@ -105,10 +106,8 @@ JamSliders >> handleMoveEvent: aPosition [
 
 	| newPosX |
 	newPosX := aPosition x.
-	newPosX < sliderBar position x ifTrue: [
-		newPosX := sliderBar position x ].
-	newPosX > (sliderBar position + sliderBar size) x ifTrue: [
-		newPosX := (sliderBar position + sliderBar size) x ].
+	newPosX := newPosX max: sliderBar position x.
+	newPosX := newPosX min: (sliderBar position + sliderBar size) x.
 	button position: newPosX @ 0
 ]
 
