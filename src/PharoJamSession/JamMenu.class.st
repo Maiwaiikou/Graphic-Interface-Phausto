@@ -5,12 +5,24 @@ Class {
 		'title',
 		'spaceElement',
 		'subMenuContainer',
-		'categories'
+		'categories',
+		'labelCategories',
+		'allButtonsContainers'
 	],
 	#category : 'PharoJamSession-UIElement',
 	#package : 'PharoJamSession',
 	#tag : 'UIElement'
 }
+
+{ #category : 'as yet unclassified' }
+JamMenu class >> defaultSoundsMenu [
+	^ (self new title:'Sounds'; categories: { 'Effects' -> JamWidgetElement widgetsEffects. 'Instruments' -> JamWidgetElement widgetsInstruments. 'Oscillators' -> JamWidgetElement widgetsOscillator. 'Synths' -> JamWidgetElement widgetsSynths. } asDictionary ).
+]
+
+{ #category : 'initialization' }
+JamMenu >> allButtonsContainers [
+	^ allButtonsContainers
+]
 
 { #category : 'accessing' }
 JamMenu >> categories [
@@ -30,10 +42,11 @@ JamMenu >> initialize [
 	super initialize.
 	title := ''.
 	categories := Dictionary new.
-	self background: Color blue.
+	labelCategories := OrderedCollection new.
+	allButtonsContainers := OrderedCollection new.
 	self initializeTitle.
 	self initializeSubMenuContainer.
-	self initializeEvent.
+	self initializeEvent
 ]
 
 { #category : 'initialization' }
@@ -45,9 +58,18 @@ JamMenu >> initializeButtonsContainer: aCollectionOfWidget [
 		        c horizontal fitContent ].
 	list dataAccessor addAll: aCollectionOfWidget.
 	list nodeBuilder: [ :node :widget |
+		
 		node addChild: (JamMenuItem new
 				 widget: widget atRandomPos;
-				 spaceElement: spaceElement) ].
+				 spaceElement: spaceElement)
+		"widget.
+		self halt.
+		node addChild: (JamMenuItem new
+				 action: [
+					 widget atRandomPos.
+					 spaceElement addChild: widget.
+					 node disable ];
+				 spaceElement: spaceElement) "].
 
 	scrollBar := BlVerticalScrollbarElement new.
 	scrollBar constraintsDo: [ :c |
@@ -73,18 +95,21 @@ JamMenu >> initializeCategories [
 	| container label buttonContainer |
 	categories keysAndValuesDo: [ :key :values |
 		label := BlTextElement text: key asString asRopedText.
+		label constraintsDo: [ :c |
+			c margin: (BlInsets left: 65) ].
 		buttonContainer := self initializeButtonsContainer: values.
 		container := ToElement new
 			             layout: BlLinearLayout vertical;
-			             background: Color lightGray;
 			             constraintsDo: [ :c |
 				             c frame horizontal alignCenter.
-				             c margin: (BlInsets all: 5).
+				             c margin: (BlInsets all: 10).
 				             c vertical fitContent.
 				             c horizontal fitContent ];
 			             addChildren: {
 					             label.
 					             buttonContainer }.
+		labelCategories add: label.
+		allButtonsContainers add: buttonContainer.
 		subMenuContainer addChild: container ]
 ]
 
@@ -93,8 +118,8 @@ JamMenu >> initializeEvent [
 
 	self addEventHandlerOn: BlClickEvent do: [
 		(spaceElement children includes: subMenuContainer) ifFalse: [
-			subMenuContainer position: self positionInSpace x @ 100.
-			spaceElement addChild: subMenuContainer ] ].
+			subMenuContainer position: self positionInSpace x @ self height.
+			spaceElement addChild: subMenuContainer ] ]
 ]
 
 { #category : 'initialization' }
@@ -106,20 +131,34 @@ JamMenu >> initializeSubMenuContainer [
 	subMenuContainer constraintsDo: [ :c |
 		c horizontal fitContent.
 		c vertical fitContent ].
-	subMenuContainer addEventFilterOn: BlMouseOutEvent do: [ :evt | 
-		|pos size|
+	subMenuContainer addEventFilterOn: BlMouseOutEvent do: [ :evt |
+		| pos size |
 		pos := subMenuContainer positionInSpace.
 		size := subMenuContainer size.
-		(evt position x between: pos x and: (pos + size )x) ifFalse: [ spaceElement removeChild: subMenuContainer ].
-		"spaceElement removeChild: subMenuContainer" ]
+		(evt position x between: pos x and: (pos + size) x) ifFalse: [
+			spaceElement removeChild: subMenuContainer ] ].
 ]
 
 { #category : 'initialization' }
 JamMenu >> initializeTitle [
 
 	title := BlTextElement new.
-	title constraintsDo: [ :c | c margin: (BlInsets all: 50) ].
+	title constraintsDo: [ :c |
+		c margin: (BlInsets all: 5).
+		c frame vertical alignCenter.
+		c frame horizontal alignCenter ].
 	self addChild: title
+]
+
+{ #category : 'initialization' }
+JamMenu >> labelCategories [
+	^ labelCategories
+]
+
+{ #category : 'instance creation' }
+JamMenu >> newRawSkin [
+
+	^ JamMenuSkin new.
 ]
 
 { #category : 'accessing' }
@@ -132,6 +171,11 @@ JamMenu >> spaceElement [
 JamMenu >> spaceElement: anElement [
 
 	spaceElement := anElement
+]
+
+{ #category : 'accessing' }
+JamMenu >> subMenuContainer [
+	^ subMenuContainer
 ]
 
 { #category : 'accessing' }
