@@ -16,7 +16,7 @@ JamMenuItem >> initialize [
 
 	super initialize.
 	self background: Color orange.
-	self initializeEvents.
+	self initializeEvents
 ]
 
 { #category : 'accessing' }
