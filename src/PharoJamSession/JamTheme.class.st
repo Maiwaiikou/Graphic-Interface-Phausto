@@ -7,6 +7,18 @@ Class {
 }
 
 { #category : 'accessing' }
+JamTheme class >> defaultButtonTokenProperties [
+
+	^ {
+		  (ToTokenProperty name: #'button-width' value: 125).
+		  (ToTokenProperty
+			   name: #'button-padding'
+			   value: (BlInsets left: 0 right: 25)).
+		  (ToTokenProperty name: #'button-text-color' value: Color orange).
+		  (ToTokenProperty name: #'button-text-size' value: 14) }
+]
+
+{ #category : 'accessing' }
 JamTheme class >> defaultConnectorTokenProperties [
 
 	^ {
@@ -84,8 +96,9 @@ JamTheme class >> defaultTokenProperties [
 	  , self defaultWidgetBarTokenProperties
 	  , self defaultLabelsTokenProperties
 	  , self defaultJamSessionPlaygroundTokenProperties
-	  , self defaultMenuTokenProperties,
-		self defaultSlidersContainerTokenProperties 
+	  , self defaultMenuTokenProperties
+	  , self defaultSlidersContainerTokenProperties ,
+	self defaultButtonTokenProperties
 ]
 
 { #category : 'accessing' }

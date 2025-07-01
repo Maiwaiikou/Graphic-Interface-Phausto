@@ -15,5 +15,11 @@ JamMenuSkin >> installSkinEvent: anEvent [
 		elt height: 40.
 		elt geometry: (BlRoundedRectangleGeometry cornerRadius: 3).
 		elt border: (BlBorder paint: (Color red alpha: 0.05) width: 1).
-		 ]
+		elt configuredAttributes: {
+				(elt valueOfTokenNamed: #'button-width').
+				(elt valueOfTokenNamed: #'button-padding').
+				(BlTextForegroundAttribute paint:
+					 (elt valueOfTokenNamed: #'button-text-color')).
+				(BlFontSizeAttribute size:
+					 (elt valueOfTokenNamed: #'button-text-size')) } ]
 ]

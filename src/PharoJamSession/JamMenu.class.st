@@ -7,7 +7,8 @@ Class {
 		'subMenuContainer',
 		'categories',
 		'labelCategories',
-		'allButtonsContainers'
+		'allButtonsContainers',
+		'configuredAttributes'
 	],
 	#category : 'PharoJamSession-UIElement',
 	#package : 'PharoJamSession',
@@ -36,6 +37,27 @@ JamMenu >> categories: aDictionnary [
 	self initializeCategories.
 ]
 
+{ #category : 'accessing' }
+JamMenu >> configuredAttributes [
+	^ configuredAttributes
+]
+
+{ #category : 'accessing' }
+JamMenu >> configuredAttributes: aCollectionOfAttributes [
+
+	configuredAttributes := aCollectionOfAttributes
+]
+
+{ #category : 'as yet unclassified' }
+JamMenu >> configuredMenuItem: aMenuItem [
+
+	aMenuItem constraintsDo: [ :c | c horizontal matchParent. c padding: (BlInsets all: 5) ].
+	configuredAttributes ifNotEmpty: [
+		aMenuItem width: configuredAttributes first.
+		aMenuItem constraintsDo: [ :c | c padding: configuredAttributes second ].
+		aMenuItem text attributes: (configuredAttributes allButFirst:2) ]
+]
+
 { #category : 'initialization' }
 JamMenu >> initialize [
 
@@ -44,6 +66,7 @@ JamMenu >> initialize [
 	categories := Dictionary new.
 	labelCategories := OrderedCollection new.
 	allButtonsContainers := OrderedCollection new.
+	configuredAttributes := OrderedCollection new.
 	self initializeTitle.
 	self initializeSubMenuContainer.
 	self initializeEvent
@@ -58,10 +81,16 @@ JamMenu >> initializeButtonsContainer: aCollectionOfWidget [
 		        c horizontal fitContent ].
 	list dataAccessor addAll: aCollectionOfWidget.
 	list nodeBuilder: [ :node :widget |
-		
-		node addChild: (JamMenuItem new
-				 widget: widget atRandomPos;
-				 spaceElement: spaceElement)
+		| item |
+		item := JamMenuItem new
+			        widget: widget;
+			        action: [
+				        widget atRandomPos.
+				        spaceElement addChild: widget.
+				        node disable ];
+			        spaceElement: spaceElement.
+		self configuredMenuItem: item.
+		node addChild: item
 		"widget.
 		self halt.
 		node addChild: (JamMenuItem new
@@ -69,7 +98,7 @@ JamMenu >> initializeButtonsContainer: aCollectionOfWidget [
 					 widget atRandomPos.
 					 spaceElement addChild: widget.
 					 node disable ];
-				 spaceElement: spaceElement) "].
+				 spaceElement: spaceElement) " ].
 
 	scrollBar := BlVerticalScrollbarElement new.
 	scrollBar constraintsDo: [ :c |

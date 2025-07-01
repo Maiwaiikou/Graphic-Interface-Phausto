@@ -1,11 +1,12 @@
 Class {
 	#name : 'JamMenuItem',
-	#superclass : 'ToButton',
+	#superclass : 'BlTextElement',
 	#instVars : [
 		'title',
 		'widget',
 		'spaceElement',
-		'action'
+		'action',
+		'name'
 	],
 	#category : 'PharoJamSession-UIElement',
 	#package : 'PharoJamSession',
@@ -27,17 +28,25 @@ JamMenuItem >> action: aBlock [
 JamMenuItem >> initialize [
 
 	super initialize.
-	self background: Color orange.
 	self initializeEvents
 ]
 
 { #category : 'accessing' }
 JamMenuItem >> initializeEvents [
 
-	self addEventHandlerOn: BlClickEvent do: [ 
-		spaceElement addChild: widget.
-		self disable
-		"action ensure" ]
+	self addEventHandlerOn: BlClickEvent do: [ action value ].
+]
+
+{ #category : 'accessing' }
+JamMenuItem >> name [
+	^ name
+]
+
+{ #category : 'accessing' }
+JamMenuItem >> name: aString [
+
+	name := aString.
+	self text: name asRopedText.
 ]
 
 { #category : 'accessing' }
@@ -60,5 +69,5 @@ JamMenuItem >> widget [
 JamMenuItem >> widget: aWidget [
 
 	widget := aWidget.
-	self labelText: aWidget name.
+	self name: aWidget name
 ]
