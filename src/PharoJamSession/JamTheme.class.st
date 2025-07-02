@@ -54,10 +54,14 @@ JamTheme class >> defaultMenuTokenProperties [
 		  (ToTokenProperty
 			   name: #'menuPane-background'
 			   value: Color palePeach).
-			(ToTokenProperty
-			   name: #'menuPane-height'
-			   value: 25).
-		  (ToTokenProperty name: #'menu-interspace' value: 15) }
+		  (ToTokenProperty name: #'menuPane-height' value: 25).
+		  (ToTokenProperty name: #'menu-interspace' value: 15).
+		  (ToTokenProperty
+			   name: #'subMenuContainer-background'
+			   value: (Color pink alpha: 0.1)).
+		  (ToTokenProperty
+			   name: #'subMenuContainer-effect'
+			   value: BlNullEffect new) }
 ]
 
 { #category : 'accessing' }

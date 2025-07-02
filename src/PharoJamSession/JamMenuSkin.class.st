@@ -15,6 +15,9 @@ JamMenuSkin >> installSkinEvent: anEvent [
 		elt height: 40.
 		elt geometry: (BlRoundedRectangleGeometry cornerRadius: 3).
 		elt border: (BlBorder paint: (Color red alpha: 0.05) width: 1).
+		elt subMenuContainer background:
+			(elt valueOfTokenNamed: #'subMenuContainer-background');
+			effect: (elt valueOfTokenNamed: #'subMenuContainer-effect').
 		elt configuredAttributes: {
 				(elt valueOfTokenNamed: #'button-width').
 				(elt valueOfTokenNamed: #'button-padding').

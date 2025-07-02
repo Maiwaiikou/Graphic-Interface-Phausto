@@ -16,6 +16,20 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
+JamMenu class >> defaultFileMenu [
+
+	| menu dict |
+	menu := self new
+		  title: 'File'.
+	dict := OrderedDictionary new.
+	{ 'New page'. 'Open a file'. 'Save'. 'Save as' } do: [ :elt |
+		dict at: elt put: [  ] ].
+	dict at: 'New page' put: [ JamSession new theme: (menu spaceElement theme); open].
+	menu categories: { ('File' -> dict) } asDictionary.
+	^ menu
+]
+
+{ #category : 'as yet unclassified' }
 JamMenu class >> defaultSoundsMenu [
 	^ (self new title:'Sounds'; categories: { 'Effects' -> JamWidgetElement widgetsEffects. 'Instruments' -> JamWidgetElement widgetsInstruments. 'Oscillators' -> JamWidgetElement widgetsOscillator. 'Synths' -> JamWidgetElement widgetsSynths. } asDictionary ).
 ]
@@ -84,14 +98,14 @@ JamMenu >> initializeButtonsContainer: aCollection [
 		ifFalse: [ self initializeWidget: aCollection inList: list ].
 	scrollBar := BlVerticalScrollbarElement new.
 	scrollBar constraintsDo: [ :c |
-		c margin: (BlInsets all: 5).
+		c margin: (BlInsets right: 2).
 		c ignored horizontal alignRight ].
 	scrollBar attachTo: list innerElement.
 
 	container := ToElement new
 		             layout: BlLinearLayout horizontal;
 		             constraintsDo: [ :c |
-			             c margin: (BlInsets all: 10).
+			             c margin: (BlInsets all: 5).
 			             c horizontal fitContent ].
 	container height: 200.
 	container addChildren: {
@@ -106,8 +120,7 @@ JamMenu >> initializeCategories [
 	| container label buttonContainer |
 	categories keysAndValuesDo: [ :key :values |
 		label := BlTextElement text: key asString asRopedText.
-		label constraintsDo: [ :c |
-			c margin: (BlInsets left: 65) ].
+		label constraintsDo: [ :c | c margin: (BlInsets left: 65) ].
 		buttonContainer := self initializeButtonsContainer: values.
 		container := ToElement new
 			             layout: BlLinearLayout vertical;
@@ -151,7 +164,6 @@ JamMenu >> initializeEvent [
 JamMenu >> initializeSubMenuContainer [
 
 	subMenuContainer := ToElement new.
-	subMenuContainer background: Color green.
 	subMenuContainer layout: BlLinearLayout new.
 	subMenuContainer constraintsDo: [ :c |
 		c horizontal fitContent.
@@ -160,8 +172,9 @@ JamMenu >> initializeSubMenuContainer [
 		| pos size |
 		pos := subMenuContainer positionInSpace.
 		size := subMenuContainer size.
-		(evt position x between: pos x and: (pos + size) x) ifFalse: [
-			spaceElement removeChild: subMenuContainer ] ].
+		
+		((evt position x between: pos x and: (pos + size) x) and: (evt position y between: pos y and: (pos + size) y)) ifFalse: [
+			spaceElement removeChild: subMenuContainer ] ]
 ]
 
 { #category : 'initialization' }
