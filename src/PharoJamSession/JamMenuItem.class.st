@@ -2,11 +2,9 @@ Class {
 	#name : 'JamMenuItem',
 	#superclass : 'BlTextElement',
 	#instVars : [
-		'title',
-		'widget',
+		'name',
 		'spaceElement',
-		'action',
-		'name'
+		'action'
 	],
 	#category : 'PharoJamSession-UIElement',
 	#package : 'PharoJamSession',
@@ -58,16 +56,4 @@ JamMenuItem >> spaceElement [
 JamMenuItem >> spaceElement: anElement [
 
 	spaceElement := anElement
-]
-
-{ #category : 'accessing' }
-JamMenuItem >> widget [
-	^ widget
-]
-
-{ #category : 'accessing' }
-JamMenuItem >> widget: aWidget [
-
-	widget := aWidget.
-	self name: aWidget name
 ]

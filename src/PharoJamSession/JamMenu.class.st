@@ -73,33 +73,15 @@ JamMenu >> initialize [
 ]
 
 { #category : 'initialization' }
-JamMenu >> initializeButtonsContainer: aCollectionOfWidget [
+JamMenu >> initializeButtonsContainer: aCollection [
 
 	| list scrollBar container |
 	list := ToListElement new constraintsDo: [ :c |
 		        c margin: (BlInsets all: 10).
 		        c horizontal fitContent ].
-	list dataAccessor addAll: aCollectionOfWidget.
-	list nodeBuilder: [ :node :widget |
-		| item |
-		item := JamMenuItem new
-			        widget: widget;
-			        action: [
-				        widget atRandomPos.
-				        spaceElement addChild: widget.
-				        node disable ];
-			        spaceElement: spaceElement.
-		self configuredMenuItem: item.
-		node addChild: item
-		"widget.
-		self halt.
-		node addChild: (JamMenuItem new
-				 action: [
-					 widget atRandomPos.
-					 spaceElement addChild: widget.
-					 node disable ];
-				 spaceElement: spaceElement) " ].
-
+	aCollection isDictionary
+		ifTrue: [ self initializeDefaultElement: aCollection inList: list ]
+		ifFalse: [ self initializeWidget: aCollection inList: list ].
 	scrollBar := BlVerticalScrollbarElement new.
 	scrollBar constraintsDo: [ :c |
 		c margin: (BlInsets all: 5).
@@ -143,6 +125,20 @@ JamMenu >> initializeCategories [
 ]
 
 { #category : 'initialization' }
+JamMenu >> initializeDefaultElement: aCollection inList: aListElement [
+
+	aListElement dataAccessor addAll: (aCollection keys).
+	aListElement nodeBuilder: [ :node :key |
+		| item |
+		item := JamMenuItem new
+						name: key asString;
+			        action: (aCollection at:key);
+			        spaceElement: spaceElement.
+		self configuredMenuItem: item.
+		node addChild: item ]
+]
+
+{ #category : 'initialization' }
 JamMenu >> initializeEvent [
 
 	self addEventHandlerOn: BlClickEvent do: [
@@ -177,6 +173,24 @@ JamMenu >> initializeTitle [
 		c frame vertical alignCenter.
 		c frame horizontal alignCenter ].
 	self addChild: title
+]
+
+{ #category : 'initialization' }
+JamMenu >> initializeWidget: aCollectionOfWidget inList: aListElement [
+
+	aListElement dataAccessor addAll: aCollectionOfWidget.
+	aListElement nodeBuilder: [ :node :widget |
+		| item |
+		item := JamMenuItem new
+		name: widget name;
+			        action: [
+				        widget atRandomPos.
+				        (spaceElement children includes: widget) ifFalse: [
+						        spaceElement addChild: widget ].
+				        node disable ];
+			        spaceElement: spaceElement.
+		self configuredMenuItem: item.
+		node addChild: item ]
 ]
 
 { #category : 'initialization' }

@@ -30,6 +30,31 @@ JamMenuBar class >> defaultMenuWithSpace: anElement [
 	^ menuBar
 ]
 
+{ #category : 'examples' }
+JamMenuBar class >> exampleMenuBar [
+
+	| dict bar menu space |
+	self flag: #ToChange.
+	dict := Dictionary new.
+	dict at: 'Open playground' put: [ Smalltalk tools openWorkspace ].
+	bar := self new.
+	bar constraintsDo: [ :c | c horizontal matchParent ].
+	space := JamSession new clear.
+	space addChild: bar.
+	bar spaceElement: space.
+	menu := JamMenu new
+		        title: 'I NEED A PLAYGROUND';
+		        categories: { ('File' -> dict) } asDictionary.
+	bar addMenu: menu.
+	bar addMenu: (JamMenu new
+			 title: 'Specials songs';
+			 categories:
+				 { ('Song' -> { (JamWidgetElement new name: 'Petit poney') }) }
+					 asDictionary).
+	bar updateMenuBar.
+	space open
+]
+
 { #category : 'initialization' }
 JamMenuBar >> addMenu: aMenu [
 
