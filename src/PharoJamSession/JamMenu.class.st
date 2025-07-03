@@ -22,9 +22,13 @@ JamMenu class >> defaultFileMenu [
 	menu := self new
 		  title: 'File'.
 	dict := OrderedDictionary new.
-	{ 'New page'. 'Open a file'. 'Save'. 'Save as' } do: [ :elt |
+	{ 'New page'. 'Open a file'. 'Save'. 'Save as'. 'Clear' } do: [ :elt |
 		dict at: elt put: [  ] ].
 	dict at: 'New page' put: [ JamSession new theme: (menu spaceElement theme); open].
+	dict at: 'Clear' put:[
+		menu spaceElement resetElements.
+		menu spaceElement childrenElements removeAll.
+		menu spaceElement drawElement ].
 	menu categories: { ('File' -> dict) } asDictionary.
 	^ menu
 ]
@@ -77,6 +81,7 @@ JamMenu >> initialize [
 
 	super initialize.
 	title := ''.
+	self minWidth: 70.
 	categories := Dictionary new.
 	labelCategories := OrderedCollection new.
 	allButtonsContainers := OrderedCollection new.
@@ -172,9 +177,10 @@ JamMenu >> initializeSubMenuContainer [
 		| pos size |
 		pos := subMenuContainer positionInSpace.
 		size := subMenuContainer size.
-		
-		((evt position x between: pos x and: (pos + size) x) and: (evt position y between: pos y and: (pos + size) y)) ifFalse: [
-			spaceElement removeChild: subMenuContainer ] ]
+		(spaceElement children includes: subMenuContainer) ifTrue: [
+			((evt position x between: pos x and: (pos + size) x) and:
+				 (evt position y between: pos y and: (pos + size) y)) ifFalse: [
+				spaceElement removeChild: subMenuContainer ] ] ]
 ]
 
 { #category : 'initialization' }
@@ -194,12 +200,20 @@ JamMenu >> initializeWidget: aCollectionOfWidget inList: aListElement [
 	aListElement dataAccessor addAll: aCollectionOfWidget.
 	aListElement nodeBuilder: [ :node :widget |
 		| item |
+		widget announcer
+		when: LineCurrentlyDrawAnnouncer
+		send: #drawElement
+		to: spaceElement.
+	widget announcer
+		when: EnableCreationAnnouncer
+		send: #enable
+		to: node.
 		item := JamMenuItem new
-		name: widget name;
+			        name: widget name;
 			        action: [
 				        widget atRandomPos.
 				        (spaceElement children includes: widget) ifFalse: [
-						        spaceElement addChild: widget ].
+						        spaceElement addChildElement: widget ].
 				        node disable ];
 			        spaceElement: spaceElement.
 		self configuredMenuItem: item.

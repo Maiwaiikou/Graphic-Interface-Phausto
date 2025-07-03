@@ -23,11 +23,7 @@ JamMenuBar class >> defaultMenu [
 { #category : 'as yet unclassified' }
 JamMenuBar class >> defaultMenuWithSpace: anElement [
 
-	| menuBar |
-	menuBar := self new spaceElement: anElement.
-	menuBar addMenu: JamMenu defaultSoundsMenu.
-	menuBar updateMenuBar.
-	^ menuBar
+	^ self new spaceElement: anElement; initializeDefaultMenu.
 ]
 
 { #category : 'examples' }
@@ -78,7 +74,16 @@ JamMenuBar >> initialize [
 	super initialize.
 	menus := OrderedCollection new.
 	"self size: 500 @ 30."
-	self layout: BlLinearLayout new
+	self layout: BlLinearLayout new.
+]
+
+{ #category : 'initialization' }
+JamMenuBar >> initializeDefaultMenu [
+
+	self addMenu: JamMenu defaultFileMenu.
+	self updateMenuBar.
+	self addMenu: JamMenu defaultSoundsMenu.
+	self updateMenuBar
 ]
 
 { #category : 'accessing' }
