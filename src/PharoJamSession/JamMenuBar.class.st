@@ -1,3 +1,6 @@
+"
+I'm a menu bar create for JamSession. I can have many children menu by using addMenu: and then everything is add, I need to update myself (updateMenuBar) for the graphic.
+"
 Class {
 	#name : 'JamMenuBar',
 	#superclass : 'ToElement',

@@ -1,3 +1,6 @@
+"
+I'm a menu item create for JamSession. I can handle an action given as block when we click on me.
+"
 Class {
 	#name : 'JamMenuItem',
 	#superclass : 'BlTextElement',

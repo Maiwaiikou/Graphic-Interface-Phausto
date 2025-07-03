@@ -1,3 +1,6 @@
+"
+I'm a menu for JamSession, when you click on me it show you a subMenu containers with all of my subMenu sort by categories. Every click on subMenu do an JamMenuAction and it handle action for widget creation (initializeWidget: inList:) but also every type of subMenu you want or if you want to create other action during widget creation (initializeDefaultElement: inList). My subMenu container disappear when your mouse is out of it and his children.
+"
 Class {
 	#name : 'JamMenu',
 	#superclass : 'ToElement',
