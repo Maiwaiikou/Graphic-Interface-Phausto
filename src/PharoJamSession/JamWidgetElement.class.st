@@ -5,12 +5,14 @@ Class {
 	#name : 'JamWidgetElement',
 	#superclass : 'ToElement',
 	#instVars : [
+		'action',
 		'barElement',
 		'name',
 		'slidersDic',
 		'slidersLabels',
 		'configuredAttributes',
 		'phaustoSound',
+		'phaustoSoundInit',
 		'inputConnect',
 		'outputConnect',
 		'announcer',
@@ -259,6 +261,16 @@ JamWidgetElement class >> widgetsSynths [
 	^ self configureWithoutSoundFor: synthsList
 ]
 
+{ #category : 'accessing' }
+JamWidgetElement >> action [
+	^ action
+]
+
+{ #category : 'accessing' }
+JamWidgetElement >> action: aBlock [
+	action := aBlock
+]
+
 { #category : 'drawing' }
 JamWidgetElement >> adjustLine: aConnector [
 
@@ -376,6 +388,12 @@ JamWidgetElement >> initialize [
 		c vertical fitContent.
 		c horizontal fitContent ].
 	self initializeEvents.
+	self flag: #ToUncommentWhenDspProblemIsSolve
+	"self announcer when: ConnectionAnnouncer send: #onConnection to: self.
+	self announcer
+		when: DisconnectionAnnouncer
+		send: #onDisconnection
+		to: self"
 ]
 
 { #category : 'initialization' }
@@ -591,6 +609,30 @@ JamWidgetElement >> notifyEnableCreation [
 	self announcer announce: EnableCreationAnnouncer.
 ]
 
+{ #category : 'as yet unclassified' }
+JamWidgetElement >> onConnection [
+	((self isConnector: outputConnect ) and:
+		 outputConnect connectTo isNotNil) ifTrue: [ self onConnectionWith: outputConnect connectTo inputConnect ].
+	((self isConnector: inputConnect) and:
+		 inputConnect connectTo isNotEmpty) ifTrue: [ inputConnect connectTo do: [ :widgets | self onConnectionWith: widgets outputConnect ] ]
+]
+
+{ #category : 'enumerating' }
+JamWidgetElement >> onConnectionWith: aConnector [
+
+	phaustoSound ifNotNil: [
+		aConnector isOutputConnect
+			ifTrue: [
+				aConnector parent phaustoSound:
+					aConnector parent phaustoSound => phaustoSound ]
+			ifFalse: [ phaustoSound := phaustoSound => aConnector phaustoSound ] ]
+]
+
+{ #category : 'as yet unclassified' }
+JamWidgetElement >> onDisconnection [
+	phaustoSound := phaustoSoundInit
+]
+
 { #category : 'accessing' }
 JamWidgetElement >> outputConnect [
 
@@ -612,6 +654,17 @@ JamWidgetElement >> phaustoSound [
 JamWidgetElement >> phaustoSound: aPhaustoSoundAsDsp [
 
 	phaustoSound := aPhaustoSoundAsDsp.
+	self phaustoSoundInit: aPhaustoSoundAsDsp.
+]
+
+{ #category : 'accessing' }
+JamWidgetElement >> phaustoSoundInit [
+	^ phaustoSoundInit
+]
+
+{ #category : 'accessing' }
+JamWidgetElement >> phaustoSoundInit: aPhaustoSound [
+	phaustoSoundInit ifNil: [ phaustoSoundInit := aPhaustoSound ].
 ]
 
 { #category : 'initialization' }
