@@ -26,10 +26,14 @@ JamInputConnector >> connectTo: aWidget [
 
 { #category : 'connecting' }
 JamInputConnector >> disconnect [
-	|connectedWidgets|
+
+	| connectedWidgets |
 	connectedWidgets := connectTo copy.
 	connectedWidgets do: [ :widget |
-		widget outputConnect connectTo ifNil: [ connectTo remove: widget. parent notifyDisconnection. ] ]
+		widget outputConnect connectTo ifNil: [
+			connectTo remove: widget.
+			widget notifyDisconnection.
+			parent notifyDisconnection ] ]
 ]
 
 { #category : 'initialization' }

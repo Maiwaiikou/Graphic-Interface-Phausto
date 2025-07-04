@@ -7,6 +7,18 @@ Class {
 }
 
 { #category : 'accessing' }
+JamTheme class >> defaultButtonTokenProperties [
+
+	^ {
+		  (ToTokenProperty name: #'button-width' value: 125).
+		  (ToTokenProperty
+			   name: #'button-padding'
+			   value: (BlInsets left: 0 right: 25)).
+		  (ToTokenProperty name: #'button-text-color' value: Color orange).
+		  (ToTokenProperty name: #'button-text-size' value: 14) }
+]
+
+{ #category : 'accessing' }
 JamTheme class >> defaultConnectorTokenProperties [
 
 	^ {
@@ -42,10 +54,14 @@ JamTheme class >> defaultMenuTokenProperties [
 		  (ToTokenProperty
 			   name: #'menuPane-background'
 			   value: Color palePeach).
-			(ToTokenProperty
-			   name: #'menuPane-height'
-			   value: 25).
-		  (ToTokenProperty name: #'menu-interspace' value: 15) }
+		  (ToTokenProperty name: #'menuPane-height' value: 25).
+		  (ToTokenProperty name: #'menu-interspace' value: 15).
+		  (ToTokenProperty
+			   name: #'subMenuContainer-background'
+			   value: (Color pink alpha: 0.1)).
+		  (ToTokenProperty
+			   name: #'subMenuContainer-effect'
+			   value: BlNullEffect new) }
 ]
 
 { #category : 'accessing' }
@@ -84,8 +100,9 @@ JamTheme class >> defaultTokenProperties [
 	  , self defaultWidgetBarTokenProperties
 	  , self defaultLabelsTokenProperties
 	  , self defaultJamSessionPlaygroundTokenProperties
-	  , self defaultMenuTokenProperties,
-		self defaultSlidersContainerTokenProperties 
+	  , self defaultMenuTokenProperties
+	  , self defaultSlidersContainerTokenProperties ,
+	self defaultButtonTokenProperties
 ]
 
 { #category : 'accessing' }

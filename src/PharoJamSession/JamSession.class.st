@@ -195,14 +195,14 @@ JamSession >> initializeDefaultTheme [
 { #category : 'initialization' }
 JamSession >> initializeMenu [
 
-	menu := JamMenuElement new.
-	menu constraintsDo: [ :c |
+	menu := JamMenuBar defaultMenuWithSpace: self.
+	menu constraintsDo: [ :c | c horizontal matchParent ].
+
+	"menu constraintsDo: [ :c |
 		c vertical fitContent.
-		c frame vertical alignTop.
-		c frame horizontal alignCenter ].
-	menu width: sizeElt x.
+		c horizontal matchParent.
+		c frame vertical alignTop ]."
 	self addChild: menu
-	"menu defaultConstrains"
 ]
 
 { #category : 'initialization' }
@@ -263,7 +263,6 @@ JamSession >> removeElementExcept: aListOfElementToNotDelete [
 
 { #category : 'initialization' }
 JamSession >> resetElements [
-	menu refreshMenu.
 	micro resetToInit.
 	audio resetToInit.
 	childrenElements do: [ :elt | elt resetToInit ].
