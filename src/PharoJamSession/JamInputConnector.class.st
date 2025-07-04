@@ -32,7 +32,7 @@ JamInputConnector >> disconnect [
 	connectedWidgets do: [ :widget |
 		widget outputConnect connectTo ifNil: [
 			connectTo remove: widget.
-			widget parent notifyDisconnection.
+			widget notifyDisconnection.
 			parent notifyDisconnection ] ]
 ]
 
