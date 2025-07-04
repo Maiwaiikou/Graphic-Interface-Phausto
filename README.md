@@ -15,5 +15,5 @@ EpMonitor disableDuring: [
 ## Launch the project
 
 ```smalltalk
-Interface new open.
+JamSession new open.
 ```
