@@ -91,6 +91,7 @@ JamMenu >> initialize [
 	labelCategories := OrderedCollection new.
 	allButtonsContainers := OrderedCollection new.
 	configuredAttributes := OrderedCollection new.
+
 	self initializeTitle.
 	self initializeSubMenuContainer.
 	self initializeEvent

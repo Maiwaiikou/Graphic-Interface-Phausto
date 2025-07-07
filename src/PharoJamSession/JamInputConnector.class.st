@@ -8,7 +8,6 @@ Class {
 
 { #category : 'initialization' }
 JamInputConnector >> checkBeforeDisconnect [
-
 	self connectTo ifEmpty: [ ^ self ].
 	self disconnect
 ]
@@ -50,7 +49,8 @@ JamInputConnector >> isInputConnect [
 
 { #category : 'initialization' }
 JamInputConnector >> resetInit [
-	connectTo do: [ :widget | widget outputConnect line: BlElement new ].
+
+	connectTo do: [ :widget | widget outputConnect line: nil ].
 	self checkBeforeDisconnect
 ]
 

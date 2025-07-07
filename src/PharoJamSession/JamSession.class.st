@@ -72,10 +72,11 @@ JamSession >> drawChildren [
 
 	childrenElements do: [ :elt |
 		self addChild: elt.
-			(elt isConnector: elt inputConnect ) ifTrue: [
-				self addChild: elt inputConnect line ].
-			(elt isConnector: elt outputConnect) ifTrue: [
-				self addChild: elt outputConnect line ] ].
+		elt inputConnect ifNotNil: [
+			elt inputConnect line ifNotNil: [
+				self addChild: elt inputConnect line ] ].
+		(elt outputConnect isNotNil and: elt outputConnect line isNotNil)
+			ifTrue: [ self addChild: elt outputConnect line ] ]
 ]
 
 { #category : 'drawing' }
@@ -85,10 +86,10 @@ JamSession >> drawElement [
 			menu.
 			micro.
 			speaker }.
-
-	"self addChild: micro outputConnect line."
-	self addChild: micro outputConnect line.
-	self addChild: speaker inputConnect line.
+	micro outputConnect line ifNotNil: [
+		self addChild: micro outputConnect line ].
+	speaker inputConnect line ifNotNil: [
+		self addChild: speaker inputConnect line ].
 	self drawChildren
 ]
 
@@ -159,7 +160,7 @@ JamSession >> initialize [
 		evt consumed: true.
 		self flag: #ToChange.
 		(evt gestureSource isKindOf: JamConnector) ifTrue: [
-			evt gestureSource line: BlElement new.
+			evt gestureSource line: nil.
 			self drawElement ] ].
 	self drawElement
 ]

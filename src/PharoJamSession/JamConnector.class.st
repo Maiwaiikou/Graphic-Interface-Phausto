@@ -65,7 +65,7 @@ JamConnector >> connectorConnected [
 
 { #category : 'accessing' }
 JamConnector >> connectorWhichHaveLine: aConnector [
-
+	aConnector line ifNil: [ ^ self ].
 	aConnector line geometry class = BlBezierCurveGeometry
 		ifTrue: [ ^ aConnector ]
 		ifFalse: [ ^ self ]
@@ -76,9 +76,9 @@ JamConnector >> disconnect [
 
 	| aConnector |
 	aConnector := self connectorConnected.
-	(self connectorWhichHaveLine: aConnector) line: BlElement new.
+	(self connectorWhichHaveLine: aConnector) line: nil.
 	self connectTo: nil.
-	aConnector connectTo: nil.
+	aConnector connectTo: nil
 ]
 
 { #category : 'initialization' }
@@ -87,7 +87,6 @@ JamConnector >> initialize [
 	super initialize.
 	isOutputConnect := false.
 	self zIndex: 3.
-	line := BlElement new.
 	self border: (BlBorder paint: Color black width: 2).
 	self layout: BlFrameLayout new.
 	self geometry: BlCircleGeometry new.
@@ -137,14 +136,15 @@ JamConnector >> line [
 
 { #category : 'initialization' }
 JamConnector >> line: aPolyLine [
+
 	line := aPolyLine.
 ]
 
 { #category : 'initialization' }
 JamConnector >> resetInit [
 
-	line := BlElement new.
-	self checkBeforeDisconnect.
+	line := nil.
+	self checkBeforeDisconnect
 ]
 
 { #category : 'connecting' }

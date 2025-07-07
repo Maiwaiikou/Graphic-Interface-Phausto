@@ -77,7 +77,7 @@ JamMenuBar >> initialize [
 	super initialize.
 	menus := OrderedCollection new.
 	"self size: 500 @ 30."
-	self layout: BlLinearLayout new.
+	self layout: BlLinearLayout new
 ]
 
 { #category : 'initialization' }
