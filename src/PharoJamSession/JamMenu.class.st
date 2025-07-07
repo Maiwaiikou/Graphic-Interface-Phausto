@@ -22,17 +22,19 @@ Class {
 JamMenu class >> defaultFileMenu [
 
 	| menu dict |
-	menu := self new
-		  title: 'File'.
+	menu := self new title: 'File'.
 	dict := OrderedDictionary new.
 	{ 'New page'. 'Open a file'. 'Save'. 'Save as'. 'Clear' } do: [ :elt |
 		dict at: elt put: [  ] ].
-	dict at: 'New page' put: [ JamSession new theme: (menu spaceElement theme); open].
-	dict at: 'Clear' put:[
+	dict at: 'New page' put: [
+		JamSession new
+			theme: menu spaceElement theme;
+			open ].
+	dict at: 'Clear' put: [
 		menu spaceElement resetElements.
 		menu spaceElement childrenElements removeAll.
 		menu spaceElement drawElement ].
-	menu categories: { ('File' -> dict) } asDictionary.
+	menu categories: { ('' -> dict) } asDictionary.
 	^ menu
 ]
 
