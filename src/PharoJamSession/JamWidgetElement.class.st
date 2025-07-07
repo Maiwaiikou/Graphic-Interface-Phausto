@@ -185,8 +185,7 @@ JamWidgetElement class >> onlyWithInputConnector [
 
 	| widget |
 	widget := self new.
-	widget removeChild: widget outputConnect.
-	widget outputConnect: BlElement new.
+	widget outputConnect: nil.
 	^ widget
 ]
 
@@ -195,8 +194,7 @@ JamWidgetElement class >> onlyWithOutputConnector [
 
 	| widget |
 	widget := self new.
-	widget removeChild: widget inputConnect.
-	widget inputConnect: BlElement new.
+	widget inputConnect:nil.
 	^ widget
 ]
 
@@ -421,8 +419,7 @@ JamWidgetElement >> initializeDragWidgetEventOn: anElement [
 		self position: evt position - offset ].
 	anElement addEventHandlerOn: BlDragEndEvent do: [ :evt |
 		evt consumed: true.
-		(self isConnector: inputConnect) ifTrue: [
-			inputConnect updateLine ].
+		(self isConnector: inputConnect) ifTrue: [ inputConnect updateLine ].
 		(self isConnector: outputConnect) ifTrue: [
 			(outputConnect connectorWhichHaveLine:
 				 outputConnect connectorConnected) updateLine ].
@@ -465,7 +462,7 @@ JamWidgetElement >> initializeInputConnect [
 				inputConnect connect: evt gestureSource.
 				self adjustLine: evt gestureSource ]
 			ifFalse: [
-				evt gestureSource line: BlElement new.
+				evt gestureSource line: nil.
 				self notifyDrawingLine ] ].
 	self addChild: inputConnect
 ]
@@ -484,10 +481,10 @@ JamWidgetElement >> initializeOutputConnect [
 			ifTrue: [
 				outputConnect connect: evt gestureSource.
 				outputConnect line: evt gestureSource line.
-				evt gestureSource line: BlElement new.
-				self adjustLine: outputConnect. ]
+				evt gestureSource line: nil.
+				self adjustLine: outputConnect ]
 			ifFalse: [
-				evt gestureSource line: BlElement new.
+				evt gestureSource line: nil.
 				self notifyDrawingLine ] ].
 	self addChild: outputConnect
 ]
@@ -552,6 +549,7 @@ JamWidgetElement >> inputConnect [
 { #category : 'accessing' }
 JamWidgetElement >> inputConnect: aConnector [
 
+	aConnector ifNil: [ (self children includes: inputConnect) ifTrue: [ self removeChild: inputConnect. ]].
 	inputConnect := aConnector
 ]
 
@@ -567,8 +565,9 @@ JamWidgetElement >> isConnectedTo: aWidget [
 
 { #category : 'testing' }
 JamWidgetElement >> isConnector: anElement [
-	self flag: #ToChange.
-	^ anElement isKindOf: JamConnector
+
+	anElement ifNil: [ ^ false ].
+	^ ((anElement class inheritsFrom: JamConnector) or: (anElement class = JamConnector))
 ]
 
 { #category : 'accessing' }
@@ -642,6 +641,8 @@ JamWidgetElement >> outputConnect [
 { #category : 'accessing' }
 JamWidgetElement >> outputConnect: aConnector [
 
+aConnector ifNil: [ (self children includes: outputConnect) ifTrue: [ self removeChild: outputConnect. ]].
+	
 	outputConnect := aConnector
 ]
 

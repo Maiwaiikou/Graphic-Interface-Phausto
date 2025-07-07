@@ -46,10 +46,9 @@ JamWidgetWithIconElement class >> withMicroIcon [
 
 { #category : 'drawing' }
 JamWidgetWithIconElement >> draw [
-	self removeChildren.
-	self addChild: inputConnect.
-	self addChild: outputConnect.
-	self drawIcon.
+
+	(self children includes: barElement) ifTrue: [ self removeChild: barElement ].
+	self drawIcon
 ]
 
 { #category : 'drawing' }

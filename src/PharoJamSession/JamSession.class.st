@@ -8,10 +8,11 @@ Class {
 		'menu',
 		'childrenElements',
 		'micro',
-		'audio',
+		'speaker',
 		'activeDSP',
 		'theme',
-		'sizeElt'
+		'sizeElt',
+		'synthesiser'
 	],
 	#category : 'PharoJamSession-UIElement',
 	#package : 'PharoJamSession',
@@ -34,11 +35,6 @@ JamSession >> addChildElement: aWidget [
 
 	childrenElements add: aWidget.
 	self drawElement
-]
-
-{ #category : 'accessing' }
-JamSession >> audio [
-	^ audio
 ]
 
 { #category : 'accessing' }
@@ -76,10 +72,11 @@ JamSession >> drawChildren [
 
 	childrenElements do: [ :elt |
 		self addChild: elt.
-			(elt isConnector: elt inputConnect ) ifTrue: [
-				self addChild: elt inputConnect line ].
-			(elt isConnector: elt outputConnect) ifTrue: [
-				self addChild: elt outputConnect line ] ].
+		elt inputConnect ifNotNil: [
+			elt inputConnect line ifNotNil: [
+				self addChild: elt inputConnect line ] ].
+		(elt outputConnect isNotNil and: elt outputConnect line isNotNil)
+			ifTrue: [ self addChild: elt outputConnect line ] ]
 ]
 
 { #category : 'drawing' }
@@ -88,27 +85,29 @@ JamSession >> drawElement [
 	self removeElementExcept: {
 			menu.
 			micro.
-			audio }.
-
-	"self addChild: micro outputConnect line."
-	self addChild: micro outputConnect line.
-	self addChild: audio inputConnect line.
+			speaker }.
+	micro outputConnect line ifNotNil: [
+		self addChild: micro outputConnect line ].
+	speaker inputConnect line ifNotNil: [
+		self addChild: speaker inputConnect line ].
 	self drawChildren
 ]
 
 { #category : 'element events handling' }
-JamSession >> handleAudioConnectedEvent [
+JamSession >> handleSpeakerConnectedEvent [
+
 	self disconnectedEachDsp.
-	audio inputConnect connectTo do: [ :widget | self handleWidgetsConnected: widget ].
+	speaker inputConnect connectTo do: [ :widget |
+		self handleWidgetsConnected: widget ]
 ]
 
 { #category : 'element events handling' }
-JamSession >> handleAudioDisconnectedEvent [
+JamSession >> handleSpeakerDisconnectedEvent [
 
 	self flag: #ToFix.
 	"Check on handleWidgetsDisconnected method to fix this one"
 	self disconnectedEachDsp.
-	self handleAudioConnectedEvent
+	self handleSpeakerConnectedEvent
 	"audio inputConnect connectTo do: [ :widget |
 		self handleWidgetsDisconnected: widget ]"
 ]
@@ -136,9 +135,9 @@ JamSession >> handleWidgetsDisconnected: aWidget [
 	nextConnected := (aWidget isConnector: aWidget inputConnect)
 		                 ifTrue: [ aWidget inputConnect connectTo ]
 		                 ifFalse: [ OrderedCollection new ].
-		self flag: #ToFix.
-		"Why this cond is false at execution but when we put an halt before that told us it's true ?"
-	((aWidget isConnectedTo: audio) not and: [
+	self flag: #ToFix.
+	"Why this cond is false at execution but when we put an halt before that told us it's true ?"
+	((aWidget isConnectedTo: speaker) not and: [
 		 activeDSP includes: aWidget phaustoSound ]) ifTrue: [
 		self disableDsp: aWidget phaustoSound ].
 	nextConnected do: [ :each | self handleWidgetsDisconnected: each ]
@@ -156,34 +155,14 @@ JamSession >> initialize [
 	self initializeDefaultTheme.
 	self initializeMenu.
 	self initializeMicro.
-	self initializeAudio.
+	self initializeSpeaker.
 	self addEventHandlerOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
 		self flag: #ToChange.
 		(evt gestureSource isKindOf: JamConnector) ifTrue: [
-			evt gestureSource line: BlElement new.
+			evt gestureSource line: nil.
 			self drawElement ] ].
 	self drawElement
-]
-
-{ #category : 'initialization' }
-JamSession >> initializeAudio [
-
-	audio := JamWidgetWithIconElement withAudioIcon.
-	audio announcer
-		when: ConnectionAnnouncer
-		send: #handleAudioConnectedEvent
-		to: self.
-	audio announcer
-		when: DisconnectionAnnouncer
-		send: #handleAudioDisconnectedEvent
-		to: self.
-	audio announcer
-		when: LineCurrentlyDrawAnnouncer
-		send: #drawElement
-		to: self.
-	audio position: 1130 @ 150.
-	self addChild: audio
 ]
 
 { #category : 'initialization' }
@@ -218,6 +197,26 @@ JamSession >> initializeMicro [
 		to: self.
 	micro position: 0 @ 150.
 	self addChild: micro.
+]
+
+{ #category : 'initialization' }
+JamSession >> initializeSpeaker [
+
+	speaker := JamWidgetWithIconElement withAudioIcon.
+	speaker announcer
+		when: ConnectionAnnouncer
+		send: #handleSpeakerConnectedEvent
+		to: self.
+	speaker announcer
+		when: DisconnectionAnnouncer
+		send: #handleSpeakerDisconnectedEvent
+		to: self.
+	speaker announcer
+		when: LineCurrentlyDrawAnnouncer
+		send: #drawElement
+		to: self.
+	speaker position: 1130 @ 150.
+	self addChild: speaker
 ]
 
 { #category : 'accessing' }
@@ -263,9 +262,10 @@ JamSession >> removeElementExcept: aListOfElementToNotDelete [
 
 { #category : 'initialization' }
 JamSession >> resetElements [
+
 	micro resetToInit.
-	audio resetToInit.
-	childrenElements do: [ :elt | elt resetToInit ].
+	speaker resetToInit.
+	childrenElements do: [ :elt | elt resetToInit ]
 ]
 
 { #category : 'initialization' }
@@ -276,6 +276,11 @@ JamSession >> sizeElt [
 { #category : 'initialization' }
 JamSession >> sizeElt: aPoint [
 	sizeElt := aPoint.
+]
+
+{ #category : 'accessing' }
+JamSession >> speaker [
+	^ speaker
 ]
 
 { #category : 'accessing' }
