@@ -12,7 +12,8 @@ Class {
 		'activeDSP',
 		'theme',
 		'sizeElt',
-		'synthesiser'
+		'synthesiser',
+		'synthPatch'
 	],
 	#category : 'PharoJamSession-UIElement',
 	#package : 'PharoJamSession',
@@ -61,6 +62,13 @@ JamSession >> disableDsp: anActiveDSP [
 ]
 
 { #category : 'dsp management' }
+JamSession >> disconnectDsp [
+
+	self activeDSP ifNotNil: [ self activeDSP stop; destroy ].
+	activeDSP := nil.
+]
+
+{ #category : 'dsp management' }
 JamSession >> disconnectedEachDsp [
 
 	activeDSP do: [ :dsp | dsp stop ].
@@ -95,10 +103,17 @@ JamSession >> drawElement [
 
 { #category : 'element events handling' }
 JamSession >> handleSpeakerConnectedEvent [
-
-	self disconnectedEachDsp.
+	"self disconnectedEachDsp.
 	speaker inputConnect connectTo do: [ :widget |
-		self handleWidgetsConnected: widget ]
+		self handleWidgetsConnected: widget ]"
+
+	"	activeDSP := self synthPatch stereo asDsp."
+   | ugenChain |
+ugenChain := synthPatch collect: [ :i |i new ].
+
+	activeDSP := ugenChain asArray asChainOfUGen stereo asDsp.
+	activeDSP init.
+	activeDSP start
 ]
 
 { #category : 'element events handling' }
@@ -106,8 +121,8 @@ JamSession >> handleSpeakerDisconnectedEvent [
 
 	self flag: #ToFix.
 	"Check on handleWidgetsDisconnected method to fix this one"
-	self disconnectedEachDsp.
-	self handleSpeakerConnectedEvent
+	self disconnectDsp
+	"	self handleSpeakerConnectedEvent"
 	"audio inputConnect connectTo do: [ :widget |
 		self handleWidgetsDisconnected: widget ]"
 ]
@@ -116,16 +131,17 @@ JamSession >> handleSpeakerDisconnectedEvent [
 JamSession >> handleWidgetsConnected: aWidget [
 
 	| nextConnected dsp |
+	
 	nextConnected := (aWidget isConnector: aWidget inputConnect)
 		                 ifTrue: [ aWidget inputConnect connectTo ]
 		                 ifFalse: [ OrderedCollection new ].
-	aWidget phaustoSound ifNotNil: [
-		dsp := aWidget phaustoSound.
-		dsp init.
-		dsp start.
-		activeDSP add: dsp ].
-	nextConnected do: [ :each |
-		self handleWidgetsConnected: each ]
+		'STRONZO' traceCr.
+	"aWidget phaustoSound ifNotNil: [
+			dsp := aWidget phaustoSound.
+			dsp init.
+			dsp start.
+			activeDSP add: dsp ]."
+	nextConnected do: [ :each | self handleWidgetsConnected: each ]
 ]
 
 { #category : 'element events handling' }
@@ -148,7 +164,8 @@ JamSession >> initialize [
 
 	super initialize.
 	childrenElements := OrderedCollection new.
-	activeDSP := OrderedCollection new.
+	synthPatch := OrderedCollection new.
+	"	activeDSP := OrderedCollection new."
 	self layout: BlBasicLayout new.
 	sizeElt := 1200 @ 600.
 	self size: sizeElt.
@@ -157,11 +174,11 @@ JamSession >> initialize [
 	self initializeMicro.
 	self initializeSpeaker.
 	self addEventHandlerOn: BlDropEvent do: [ :evt |
-		evt consumed: true.
-		self flag: #ToChange.
-		(evt gestureSource isKindOf: JamConnector) ifTrue: [
-			evt gestureSource line: nil.
-			self drawElement ] ].
+			evt consumed: true.
+			self flag: #ToChange.
+			(evt gestureSource isKindOf: JamConnector) ifTrue: [
+					evt gestureSource line: nil.
+					self drawElement ] ].
 	self drawElement
 ]
 
@@ -186,17 +203,19 @@ JamSession >> initializeMenu [
 
 { #category : 'initialization' }
 JamSession >> initializeMicro [
-	|mic effect|
+
+	| mic effect |
 	mic := Wire new.
 	effect := JamEchoDelay new.
-	micro := JamWidgetWithIconElement withMicroIcon phaustoSound: ((mic => effect) stereo asDsp).
+	micro := JamWidgetWithIconElement withMicroIcon phaustoSound:
+		         Wire new.
 	"Mic event action"
 	micro announcer
 		when: LineCurrentlyDrawAnnouncer
 		send: #drawElement
 		to: self.
 	micro position: 0 @ 150.
-	self addChild: micro.
+	self addChild: micro
 ]
 
 { #category : 'initialization' }
@@ -281,6 +300,18 @@ JamSession >> sizeElt: aPoint [
 { #category : 'accessing' }
 JamSession >> speaker [
 	^ speaker
+]
+
+{ #category : 'accessing' }
+JamSession >> synthPatch [
+
+^ synthPatch 
+]
+
+{ #category : 'accessing' }
+JamSession >> synthPatch: aUGenOrPhBox [
+
+synthPatch := aUGenOrPhBox .
 ]
 
 { #category : 'accessing' }
