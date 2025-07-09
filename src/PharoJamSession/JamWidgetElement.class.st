@@ -16,7 +16,8 @@ Class {
 		'inputConnect',
 		'outputConnect',
 		'announcer',
-		'slidersContainer'
+		'slidersContainer',
+		'unitGenerator'
 	],
 	#category : 'PharoJamSession-UIElement',
 	#package : 'PharoJamSession',
@@ -29,17 +30,17 @@ JamWidgetElement class >> configureFor: anArrayOfClassName [
 	| widgetsList widget currentControlParameter phControlParameter |
 	widgetsList := OrderedCollection new.
 	anArrayOfClassName do: [ :osc |
-		widget := (self typeOfWidget: osc new)
-			          name: osc asString;
-			          phaustoSound: (osc new stereo asDsp).
-		currentControlParameter := osc new controlParameters.
-		currentControlParameter keysDo: [ :key |
-			phControlParameter := currentControlParameter at: key.
-			widget slidersDic
-				at: key asString
-				put: (JamSliders withAPhControlParam: phControlParameter) ].
-		widget initializeSliders.
-		widgetsList add: widget ].
+			widget := (self typeOfWidget: osc new)
+				          name: osc asString;
+				          phaustoSound: osc .
+			currentControlParameter := osc new controlParameters.
+			currentControlParameter keysDo: [ :key |
+					phControlParameter := currentControlParameter at: key.
+					widget slidersDic
+						at: key asString
+						put: (JamSliders withAPhControlParam: phControlParameter) ].
+			widget initializeSliders.
+			widgetsList add: widget ].
 	^ widgetsList
 ]
 
@@ -317,12 +318,18 @@ JamWidgetElement >> barElement [
 JamWidgetElement >> close [
 
 	self notifyEnableCreation.
+	
+
+
 	(self isConnector: inputConnect) ifTrue: [
 		inputConnect checkBeforeDisconnect ].
 	(self isConnector: outputConnect) ifTrue: [
 		outputConnect checkBeforeDisconnect ].
+	"remove from synthpatch"
+	self parent synthPatch remove: self phaustoSound  ifAbsent: [ ] .
 	self resetToInit.
-	self parent childrenElements remove: self ifAbsent: [].
+	self parent childrenElements remove: self ifAbsent: [ ].
+	
 	self removeFromParent
 ]
 

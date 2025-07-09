@@ -166,9 +166,9 @@ JamMenu >> initializeDefaultElement: aCollection inList: aListElement [
 JamMenu >> initializeEvent [
 
 	self addEventHandlerOn: BlClickEvent do: [
-		(spaceElement children includes: subMenuContainer) ifFalse: [
-			subMenuContainer position: self positionInSpace x @ self height.
-			spaceElement addChild: subMenuContainer ] ]
+			(spaceElement children includes: subMenuContainer) ifFalse: [
+					subMenuContainer position: self positionInSpace x @ self height.
+					spaceElement addChild: subMenuContainer . ] ]
 ]
 
 { #category : 'initialization' }
@@ -204,26 +204,28 @@ JamMenu >> initializeTitle [
 JamMenu >> initializeWidget: aCollectionOfWidget inList: aListElement [
 
 	aListElement dataAccessor addAll: aCollectionOfWidget.
+
 	aListElement nodeBuilder: [ :node :widget |
-		| item |
-		widget announcer
-		when: LineCurrentlyDrawAnnouncer
-		send: #drawElement
-		to: spaceElement.
-	widget announcer
-		when: EnableCreationAnnouncer
-		send: #enable
-		to: node.
-		item := JamMenuItem new
-			        name: widget name;
-			        action: [
-				        widget atRandomPos.
-				        (spaceElement children includes: widget) ifFalse: [
-						        spaceElement addChildElement: widget ].
-				        node disable ];
-			        spaceElement: spaceElement.
-		self configuredMenuItem: item.
-		node addChild: item ]
+			| item |
+			widget announcer
+				when: LineCurrentlyDrawAnnouncer
+				send: #drawElement
+				to: spaceElement.
+			widget announcer
+				when: EnableCreationAnnouncer
+				send: #enable
+				to: node.
+			item := JamMenuItem new
+				        name: widget name;
+				        action: [
+						        widget atRandomPos.
+						        (spaceElement children includes: widget) ifFalse: [
+									        spaceElement addChildElement: widget.
+									        widget parent synthPatch add: widget phaustoSound ].
+						        node disable ];
+				        spaceElement: spaceElement.
+			self configuredMenuItem: item.
+			node addChild: item ]
 ]
 
 { #category : 'initialization' }

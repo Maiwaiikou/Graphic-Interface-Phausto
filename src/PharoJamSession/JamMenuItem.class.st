@@ -35,7 +35,9 @@ JamMenuItem >> initialize [
 { #category : 'accessing' }
 JamMenuItem >> initializeEvents [
 
-	self addEventHandlerOn: BlClickEvent do: [ action value ].
+	self addEventHandlerOn: BlClickEvent do: [
+			action value.
+			]
 ]
 
 { #category : 'accessing' }
