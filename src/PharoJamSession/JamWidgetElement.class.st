@@ -402,6 +402,12 @@ JamWidgetElement >> initialize [
 ]
 
 { #category : 'initialization' }
+JamWidgetElement >> initializeAnnouncers [
+
+self shouldBeImplemented 
+]
+
+{ #category : 'initialization' }
 JamWidgetElement >> initializeBar [
 
 	barElement := JamBarElement new name: self name.
