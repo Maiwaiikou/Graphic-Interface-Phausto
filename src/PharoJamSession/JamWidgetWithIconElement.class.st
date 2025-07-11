@@ -3,7 +3,7 @@ I'm a sort of ToWidgetElement but I don't have phaustoSound so I don't have any 
 "
 Class {
 	#name : 'JamWidgetWithIconElement',
-	#superclass : 'JamWidgetElement',
+	#superclass : 'JamAbstractWidgetElement',
 	#instVars : [
 		'icon'
 	],
@@ -42,6 +42,11 @@ JamWidgetWithIconElement class >> withMicroIcon [
 	widget icon constraintsDo: [ :c |
 		c frame horizontal alignLeft ].
 	^ widget
+]
+
+{ #category : 'accessing' }
+JamWidgetWithIconElement >> announcer [
+	^ announcer ifNil: [ announcer := Announcer new. ]
 ]
 
 { #category : 'drawing' }
@@ -85,4 +90,24 @@ JamWidgetWithIconElement >> initializeNewIconFromURL: anURL [
 { #category : 'instance creation' }
 JamWidgetWithIconElement >> newRawSkin [
 	^ JamWidgetWithIconElementSkin new.
+]
+
+{ #category : 'announcer connection' }
+JamWidgetWithIconElement >> notifyConnection [
+
+	self announcer announce: SpeakerConnectionAnnouncer new.
+	Object inform: 'CONNECTED TO SPEAKER'
+]
+
+{ #category : 'announcer connection' }
+JamWidgetWithIconElement >> notifyConnectionWith: aSource [
+
+	self announcer announce: (SpeakerConnectionAnnouncer new source: aSource).
+	Object inform: 'CONNECTED TO SPEAKER'
+]
+
+{ #category : 'announcer connection' }
+JamWidgetWithIconElement >> notifyDisconnection [
+
+	self announcer announce: SpeakerDisconnectionAnnouncer new
 ]

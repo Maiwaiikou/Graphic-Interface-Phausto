@@ -117,6 +117,21 @@ ugenChain := synthPatch collect: [ :i |i new ].
 ]
 
 { #category : 'element events handling' }
+JamSession >> handleSpeakerConnectedEvent: aSource [
+	"self disconnectedEachDsp.
+	speaker inputConnect connectTo do: [ :widget |
+		self handleWidgetsConnected: widget ]"
+
+	"	activeDSP := self synthPatch stereo asDsp."
+   | ugenChain |
+ugenChain := aSource source collect: [ :i |i new ].
+
+	activeDSP := ugenChain asArray asChainOfUGen stereo asDsp.
+	activeDSP init.
+	activeDSP start
+]
+
+{ #category : 'element events handling' }
 JamSession >> handleSpeakerDisconnectedEvent [
 
 	self flag: #ToFix.
@@ -130,13 +145,12 @@ JamSession >> handleSpeakerDisconnectedEvent [
 { #category : 'element events handling' }
 JamSession >> handleWidgetsConnected: aWidget [
 
-	| nextConnected dsp |
+	| nextConnected  |
 	
 	nextConnected := (aWidget isConnector: aWidget inputConnect)
 		                 ifTrue: [ aWidget inputConnect connectTo ]
 		                 ifFalse: [ OrderedCollection new ].
-		'STRONZO' traceCr.
-	"aWidget phaustoSound ifNotNil: [
+"aWidget phaustoSound ifNotNil: [
 			dsp := aWidget phaustoSound.
 			dsp init.
 			dsp start.
@@ -168,7 +182,7 @@ JamSession >> initialize [
 	"	activeDSP := OrderedCollection new."
 	self layout: BlBasicLayout new.
 	sizeElt := 1200 @ 600.
-	self size: sizeElt.
+	self extent: sizeElt.
 	self initializeDefaultTheme.
 	self initializeMenu.
 	self initializeMicro.
@@ -223,11 +237,11 @@ JamSession >> initializeSpeaker [
 
 	speaker := JamWidgetWithIconElement withAudioIcon.
 	speaker announcer
-		when: ConnectionAnnouncer
-		send: #handleSpeakerConnectedEvent
+		when: SpeakerConnectionAnnouncer
+		send: #handleSpeakerConnectedEvent:
 		to: self.
 	speaker announcer
-		when: DisconnectionAnnouncer
+		when: SpeakerDisconnectionAnnouncer
 		send: #handleSpeakerDisconnectedEvent
 		to: self.
 	speaker announcer

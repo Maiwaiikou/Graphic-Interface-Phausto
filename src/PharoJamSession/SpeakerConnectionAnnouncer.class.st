@@ -1,8 +1,8 @@
 "
-I announce connection between Instruments and Effects
+I announce the connection to the Speaker widget for audio output
 "
 Class {
-	#name : 'ConnectionAnnouncer',
+	#name : 'SpeakerConnectionAnnouncer',
 	#superclass : 'Announcement',
 	#instVars : [
 		'source'
@@ -13,13 +13,13 @@ Class {
 }
 
 { #category : 'accessing' }
-ConnectionAnnouncer >> source [
+SpeakerConnectionAnnouncer >> source [
 
 	^ source
 ]
 
 { #category : 'accessing' }
-ConnectionAnnouncer >> source: anObject [
+SpeakerConnectionAnnouncer >> source: anObject [
 
 	source := anObject
 ]

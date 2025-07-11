@@ -89,7 +89,7 @@ JamSliders >> createCircle [
 		          layout: BlFrameLayout new;
 		          geometry: BlCircleGeometry new;
 		          transformDo: [ :t | t translateBy: -10 @ 0 ];
-		          size: 20 @ 20.
+		          extent: 20 @ 20.
 	^ circle
 ]
 
@@ -107,7 +107,7 @@ JamSliders >> handleMoveEvent: aPosition [
 	| newPosX |
 	newPosX := aPosition x.
 	newPosX := newPosX max: sliderBar position x.
-	newPosX := newPosX min: (sliderBar position + sliderBar size) x.
+	newPosX := newPosX min: (sliderBar position + sliderBar extent) x.
 	button position: newPosX @ 0
 ]
 
@@ -169,7 +169,8 @@ JamSliders >> initializeSliderBar [
 
 	| pos |
 	sliderBar := BlElement new.
-	pos := self size x + barMargin @ (self size y + barThickness + 2.5).
+	pos := self extent x + barMargin
+	       @ (self extent y + barThickness + 2.5).
 	sliderBar position: pos.
 	self addChild: sliderBar
 ]
@@ -261,15 +262,15 @@ JamSliders >> updatePossibleValues [
 
 { #category : 'accessing' }
 JamSliders >> updateValueAt: aPoint [
+
 	| length valueDiff valProd coeff |
 	length := (aPoint - sliderBar position) x.
 	valProd := minValue.
-	length = 0
-		ifFalse: [
+	length = 0 ifFalse: [
 			valueDiff := maxValue - minValue.
-			coeff := (sliderBar size x) / length.
+			coeff := sliderBar extent x / length.
 			valProd := minValue + (valueDiff / coeff) ].
-	self value: (self nearestValue: valProd).
+	self value: (self nearestValue: valProd)
 ]
 
 { #category : 'accessing' }
