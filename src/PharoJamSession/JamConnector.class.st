@@ -50,7 +50,7 @@ JamConnector >> connectTo: aWidget [
 	aWidget ifNil: [
 		"parent notifyDisconnection."
 		^ self ].
-	parent notifyConnection
+	"parent notifyConnection"
 ]
 
 { #category : 'accessing' }
@@ -152,7 +152,7 @@ JamConnector >> updateLine [
 	"When the widget connected or the widget parent position move and there is another widget connected, we edit our visual connexion line to put it visually connect to the correct widget"
 
 	| points first last midX sizeBound |
-	sizeBound := self size / 2.
+	sizeBound := self extent / 2.
 
 	connectTo ifNil: [ ^ self ].
 	"connectedWithLine := self connectorWhichHaveLine:

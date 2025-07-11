@@ -177,16 +177,16 @@ JamMenu >> initializeSubMenuContainer [
 	subMenuContainer := ToElement new.
 	subMenuContainer layout: BlLinearLayout new.
 	subMenuContainer constraintsDo: [ :c |
-		c horizontal fitContent.
-		c vertical fitContent ].
+			c horizontal fitContent.
+			c vertical fitContent ].
 	subMenuContainer addEventFilterOn: BlMouseOutEvent do: [ :evt |
-		| pos size |
-		pos := subMenuContainer positionInSpace.
-		size := subMenuContainer size.
-		(spaceElement children includes: subMenuContainer) ifTrue: [
-			((evt position x between: pos x and: (pos + size) x) and:
-				 (evt position y between: pos y and: (pos + size) y)) ifFalse: [
-				spaceElement removeChild: subMenuContainer ] ] ]
+			| pos size |
+			pos := subMenuContainer positionInSpace.
+			size := subMenuContainer extent.
+			(spaceElement children includes: subMenuContainer) ifTrue: [
+					((evt position x between: pos x and: (pos + size) x) and:
+						 (evt position y between: pos y and: (pos + size) y)) ifFalse: [
+						spaceElement removeChild: subMenuContainer ] ] ]
 ]
 
 { #category : 'initialization' }

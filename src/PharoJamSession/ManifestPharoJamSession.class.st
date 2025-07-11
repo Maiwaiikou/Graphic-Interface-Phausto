@@ -13,12 +13,12 @@ Class {
 ManifestPharoJamSession class >> ruleReGuardClauseRuleV1FalsePositive [
 
 	<ignoreForCoverage>
-	^ #(#(#(#RGMethodDefinition #(#JamWidgetElement #resetToInit #false)) #'2025-05-22T10:36:14.244194+02:00') )
+	^ #(#(#(#RGMethodDefinition #(#JamAbstractWidgetElement #resetToInit #false)) #'2025-05-22T10:36:14.244194+02:00') )
 ]
 
 { #category : 'code-critics' }
 ManifestPharoJamSession class >> ruleStringConcatenationRuleV1FalsePositive [
 
 	<ignoreForCoverage>
-	^ #(#(#(#RGMethodDefinition #(#JamWidgetElement #drawLabel #false)) #'2025-05-16T09:10:28.242192+02:00') )
+	^ #(#(#(#RGMethodDefinition #(#JamAbstractWidgetElement #drawLabel #false)) #'2025-05-16T09:10:28.242192+02:00') )
 ]

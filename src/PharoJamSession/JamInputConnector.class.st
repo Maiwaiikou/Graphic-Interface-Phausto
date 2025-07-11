@@ -20,7 +20,7 @@ JamInputConnector >> connectTo: aWidget [
 		self disconnect.
 		^ self ].
 	connectTo add: aWidget.
-	parent notifyConnection
+	parent notifyConnectionWith: aWidget synthPatch .
 ]
 
 { #category : 'connecting' }
