@@ -25,3 +25,9 @@ JamInstrument >> initialize [
 super initialize .
 self initializeControlParameters .
 ]
+
+{ #category : 'initialization' }
+JamInstrument >> initializeControlParameters [ 
+
+controlParameters  := Dictionary new
+]

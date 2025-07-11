@@ -5,6 +5,7 @@ Class {
 	#name : 'JamSliders',
 	#superclass : 'ToElement',
 	#instVars : [
+		'label',
 		'value',
 		'possibleValues',
 		'button',
@@ -173,6 +174,17 @@ JamSliders >> initializeSliderBar [
 	       @ (self extent y + barThickness + 2.5).
 	sliderBar position: pos.
 	self addChild: sliderBar
+]
+
+{ #category : 'accessing' }
+JamSliders >> label [
+^ label
+]
+
+{ #category : 'accessing' }
+JamSliders >> label: aString [
+
+label := aString 
 ]
 
 { #category : 'slider - api' }
