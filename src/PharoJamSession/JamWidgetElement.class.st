@@ -24,7 +24,8 @@ JamWidgetElement class >> configureFor: anArrayOfClassName [
 					phControlParameter := currentControlParameter at: key.
 					widget slidersDic
 						at: key asString
-						put: (JamSliders withAPhControlParam: phControlParameter) ].
+						put: ((JamSliders withAPhControlParam: phControlParameter)label: key asString )].
+					
 			widget initializeSliders.
 			widgetsList add: widget ].
 	^ widgetsList
