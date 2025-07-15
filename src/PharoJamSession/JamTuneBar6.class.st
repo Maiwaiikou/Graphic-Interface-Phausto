@@ -40,7 +40,7 @@ hand(1) = hslider("TB6Hand2", 0, 0, 5, 1):int:ba.automat(120, 15, 0.0);
 hand(2) = hslider("TB6Hand3", 2, 0, 5, 1):int:ba.automat(240, 15, 0.0);
 hand(3) = hslider("TB6Hand4", 2, 0, 5, 1):int:ba.automat(240, 15, 0.0);
 hand(4) = hslider("TB6Hand5", 4, 0, 5, 1):int:ba.automat(480, 15, 0.0);
-hand(5) = hslider("TBHand6", 4, 0, 5, 1):int:ba.automat(480, 15, 0.0);
+hand(5) = hslider("TB6Hand6", 4, 0, 5, 1):int:ba.automat(480, 15, 0.0);
 
 position(h,n) = abs(hand(h) - n) < 0.5;
 upfront(x) = x>x'';
