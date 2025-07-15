@@ -15,7 +15,7 @@ Class {
 	#tag : 'UIElement'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'calculating' }
 JamConnector >> calcMiddleWith: anInteger and: anotherInteger [
 	anInteger < anotherInteger
 		ifTrue: [ ^ anInteger + (anotherInteger - anInteger / 2) ]

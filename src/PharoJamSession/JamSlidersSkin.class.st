@@ -1,3 +1,6 @@
+"
+I'm the JamSliders skin, I can custom the size and background> I can also custo; the button background but in case of the sliderBar, I can custom size, background, border and geometry corner radius
+"
 Class {
 	#name : 'JamSlidersSkin',
 	#superclass : 'ToRawSkin',

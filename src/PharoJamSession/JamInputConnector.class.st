@@ -1,3 +1,6 @@
+"
+I'm a specific connector for input, I allowed multiple connections and i'm use in case we applied some effects from synthsPaths of my parent (a widget) to each widget connected to me.
+"
 Class {
 	#name : 'JamInputConnector',
 	#superclass : 'JamConnector',

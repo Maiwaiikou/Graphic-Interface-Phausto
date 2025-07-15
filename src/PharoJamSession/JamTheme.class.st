@@ -1,3 +1,6 @@
+"
+I'm the default theme for the JamSession and each elements. I look like windows Xp
+"
 Class {
 	#name : 'JamTheme',
 	#superclass : 'ToRawTheme',
@@ -53,9 +56,11 @@ JamTheme class >> defaultMenuTokenProperties [
 	^ {
 		  (ToTokenProperty
 			   name: #'menuPane-background'
-			   value: Color palePeach).
-		  (ToTokenProperty name: #'menuPane-height' value: 25).
-		  (ToTokenProperty name: #'menu-interspace' value: 15).
+			   value: (Color red alpha: 0.09)).
+		  (ToTokenProperty name: #'menu-background' value: Color pink).
+		  (ToTokenProperty name: #'menu-height' value: 40).
+		(ToTokenProperty name:#'menu-border-color' value: (Color red alpha: 0.05)).
+		(ToTokenProperty name:#'menu-border-width' value: 1).
 		  (ToTokenProperty
 			   name: #'subMenuContainer-background'
 			   value: (Color pink alpha: 0.1)).

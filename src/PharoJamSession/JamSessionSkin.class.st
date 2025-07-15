@@ -1,5 +1,8 @@
+"
+I'm the default skin for the JamSession, I only custom the background
+"
 Class {
-	#name : 'JamPlaygroundSkin',
+	#name : 'JamSessionSkin',
 	#superclass : 'ToRawSkin',
 	#category : 'PharoJamSession-UIElementStyle',
 	#package : 'PharoJamSession',
@@ -7,7 +10,7 @@ Class {
 }
 
 { #category : 'event handling' }
-JamPlaygroundSkin >> installSkinEvent: anEvent [
+JamSessionSkin >> installSkinEvent: anEvent [
 
 	super installSkinEvent: anEvent.
 	anEvent elementDo: [ :elt | elt background: (elt valueOfTokenNamed: #'JSPlayground-background') ]

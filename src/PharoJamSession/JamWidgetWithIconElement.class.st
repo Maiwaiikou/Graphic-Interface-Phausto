@@ -1,5 +1,5 @@
 "
-I'm a sort of ToWidgetElement but I don't have phaustoSound so I don't have any sliders, I only have an icon at the middle and connectors. As my parent, I can be drag and drop.
+I'm a sort of JamWidgetElement but I don't have synthPatch so I don't have any sliders, I only have an icon at the middle and connectors. As my parent class, I can be drag and drop.
 "
 Class {
 	#name : 'JamWidgetWithIconElement',

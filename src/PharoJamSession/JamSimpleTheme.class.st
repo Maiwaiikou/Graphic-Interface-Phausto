@@ -1,3 +1,6 @@
+"
+I'm another default theme for the JamSession and each elements. I'm a kind of minimalist graphics
+"
 Class {
 	#name : 'JamSimpleTheme',
 	#superclass : 'ToRawTheme',
@@ -7,16 +10,27 @@ Class {
 }
 
 { #category : 'accessing' }
+JamSimpleTheme class >> defaultButtonTokenProperties [
+
+	^ {
+		  (ToTokenProperty name: #'button-width' value: 50).
+		  (ToTokenProperty
+			   name: #'button-padding'
+			   value: (BlInsets left: 0 right: 25)).
+		  (ToTokenProperty name: #'button-text-color' value: Color purple).
+		  (ToTokenProperty name: #'button-text-size' value: 16) }
+]
+
+{ #category : 'accessing' }
 JamSimpleTheme class >> defaultConnectorTokenProperties [
 
 	^ {
 		  (ToTokenProperty
 			   name: #'input-connect-background'
-			   value: Color lightGreen).
+			   value: (Color fromHexString: '3b824b')).
 		  (ToTokenProperty
 			   name: #'output-connect-background'
-			   value: Color red).
-		  }
+			   value: (Color fromHexString: 'b8371a')) }
 ]
 
 { #category : 'accessing' }
@@ -24,15 +38,15 @@ JamSimpleTheme class >> defaultJamSessionPlaygroundTokenProperties [
 
 	^ { (ToTokenProperty
 		   name: #'JSPlayground-background'
-		   value: Color paleBuff ) }
+		   value: (Color lightYellow alpha: 0.05)) }
 ]
 
 { #category : 'accessing' }
 JamSimpleTheme class >> defaultLabelsTokenProperties [
 
 	^ {
-		  (ToTokenProperty name: #'labels-text-color' value: Color black).
-		  (ToTokenProperty name: #'labels-text-size' value: 14) }
+		  (ToTokenProperty name: #'labels-text-color' value: Color blue).
+		  (ToTokenProperty name: #'labels-text-size' value: 16) }
 ]
 
 { #category : 'accessing' }
@@ -41,15 +55,19 @@ JamSimpleTheme class >> defaultMenuTokenProperties [
 	^ {
 		  (ToTokenProperty
 			   name: #'menuPane-background'
-			   value: Color palePeach).
-		  (ToTokenProperty name: #'menuPane-height' value: 25).
-		  (ToTokenProperty name: #'menu-interspace' value: 15).
-		(ToTokenProperty
+			   value: (Color gray alpha: 0.09)).
+		  (ToTokenProperty name: #'menu-background' value: Color white).
+		  (ToTokenProperty name: #'menu-height' value: 50).
+		  (ToTokenProperty
+			   name: #'menu-border-color'
+			   value: (Color gray alpha: 0.05)).
+		  (ToTokenProperty name: #'menu-border-width' value: 3).
+		  (ToTokenProperty
 			   name: #'subMenuContainer-background'
-			   value: (Color pink alpha:0.08)).
-		(ToTokenProperty
+			   value: (Color white alpha: 0.1)).
+		  (ToTokenProperty
 			   name: #'subMenuContainer-effect'
-			   value: BlNullEffect new). }
+			   value: BlNullEffect new) }
 ]
 
 { #category : 'accessing' }
@@ -74,7 +92,9 @@ JamSimpleTheme class >> defaultSlidersContainerTokenProperties [
 JamSimpleTheme class >> defaultSlidersTokenProperties [
 
 	^ {
-		  (ToTokenProperty name: #'slider-background' value: (Color fromHexString: 'fff0db')).
+		  (ToTokenProperty
+			   name: #'slider-background'
+			   value: (Color fromHexString: 'ffffdb')).
 		  (ToTokenProperty name: #'button-background' value: Color white) }
 ]
 
@@ -87,8 +107,9 @@ JamSimpleTheme class >> defaultTokenProperties [
 	  , self defaultWidgetBarTokenProperties
 	  , self defaultLabelsTokenProperties
 	  , self defaultJamSessionPlaygroundTokenProperties
-	  , self defaultMenuTokenProperties,
-	self defaultSlidersContainerTokenProperties
+	  , self defaultMenuTokenProperties
+	  , self defaultSlidersContainerTokenProperties
+	  , self defaultButtonTokenProperties
 ]
 
 { #category : 'accessing' }

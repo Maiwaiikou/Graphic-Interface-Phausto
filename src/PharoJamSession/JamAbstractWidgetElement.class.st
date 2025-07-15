@@ -400,12 +400,7 @@ JamAbstractWidgetElement >> notifyDrawingLine [
 	self announcer announce: LineCurrentlyDrawAnnouncer new.
 ]
 
-{ #category : 'drawing' }
-JamAbstractWidgetElement >> notifyEnableCreation [
-	self announcer announce: EnableCreationAnnouncer.
-]
-
-{ #category : 'as yet unclassified' }
+{ #category : 'event' }
 JamAbstractWidgetElement >> onConnection [
 	((self isConnector: outputConnect ) and:
 		 outputConnect connectTo isNotNil) ifTrue: [ self onConnectionWith: outputConnect connectTo inputConnect ].
@@ -424,7 +419,7 @@ JamAbstractWidgetElement >> onConnectionWith: aConnector [
 			ifFalse: [ phaustoSound := phaustoSound => aConnector phaustoSound ] ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'event' }
 JamAbstractWidgetElement >> onDisconnection [
 	phaustoSound := phaustoSoundInit
 ]

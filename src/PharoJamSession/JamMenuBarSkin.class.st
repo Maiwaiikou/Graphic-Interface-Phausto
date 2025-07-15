@@ -1,3 +1,6 @@
+"
+I'm the default skin for the JamMenuBar, I only custom the background
+"
 Class {
 	#name : 'JamMenuBarSkin',
 	#superclass : 'ToRawSkin',
@@ -10,6 +13,5 @@ Class {
 JamMenuBarSkin >> installSkinEvent: anEvent [
 
 	super installSkinEvent: anEvent.
-	anEvent elementDo: [ :elt |
-		elt background: (Color red alpha: 0.09).]
+	anEvent elementDo: [ :elt | elt background: (elt valueOfTokenNamed: #'menuPane-background') ]
 ]

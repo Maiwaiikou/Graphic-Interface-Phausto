@@ -58,7 +58,7 @@ JamSession >> clear [
 	self removeChildren.
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'removing' }
 JamSession >> closeSelectedWidget [
 	selectedWidget ifNil: [ ^self ].
 	selectedWidget close.
@@ -281,7 +281,7 @@ JamSession >> micro [
 
 { #category : 'instance creation' }
 JamSession >> newRawSkin [
-	^ JamPlaygroundSkin new
+	^ JamSessionSkin new
 ]
 
 { #category : 'instance creation' }

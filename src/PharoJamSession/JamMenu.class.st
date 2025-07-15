@@ -71,7 +71,7 @@ JamMenu >> configuredAttributes: aCollectionOfAttributes [
 	configuredAttributes := aCollectionOfAttributes
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'initialization' }
 JamMenu >> configuredMenuItem: aMenuItem [
 
 	aMenuItem constraintsDo: [ :c | c horizontal matchParent. c padding: (BlInsets all: 5) ].
@@ -206,26 +206,22 @@ JamMenu >> initializeWidget: aCollectionOfWidget inList: aListElement [
 	aListElement dataAccessor addAll: aCollectionOfWidget.
 
 	aListElement nodeBuilder: [ :node :widget |
-			| item |
-			widget announcer
-				when: LineCurrentlyDrawAnnouncer
-				send: #drawElement
-				to: spaceElement.
-			widget announcer
-				when: EnableCreationAnnouncer
-				send: #enable
-				to: node.
-			item := JamMenuItem new
-				        name: widget name;
-				        action: [
-						        widget atRandomPos.
-						        (spaceElement children includes: widget) ifFalse: [
-									        spaceElement addChildElement: widget.
-									        widget parent synthPatch add: widget phaustoSound ].
-						        node disable ];
-				        spaceElement: spaceElement.
-			self configuredMenuItem: item.
-			node addChild: item ]
+		| item |
+		widget announcer
+			when: LineCurrentlyDrawAnnouncer
+			send: #drawElement
+			to: spaceElement.
+		item := JamMenuItem new
+			        name: widget name;
+			        action: [
+				        widget atRandomPos.
+				        (spaceElement children includes: widget) ifFalse: [
+						        spaceElement addChildElement: widget.
+						        widget parent synthPatch add: widget phaustoSound ].
+				        node disable ];
+			        spaceElement: spaceElement.
+		self configuredMenuItem: item.
+		node addChild: item ]
 ]
 
 { #category : 'initialization' }

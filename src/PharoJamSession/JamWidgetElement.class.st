@@ -1,3 +1,6 @@
+"
+I'm a sort of default widget with synthPatch, I also have sliders to configure my synthPatch parameters.
+"
 Class {
 	#name : 'JamWidgetElement',
 	#superclass : 'JamAbstractWidgetElement',
@@ -221,13 +224,13 @@ JamWidgetElement class >> widgetsSynths [
 	^ self configureWithoutSoundFor: synthsList
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'event handling' }
 JamWidgetElement >> handleInputConnection [
 
 self synthPatch add: #(1)
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'event handling' }
 JamWidgetElement >> handleInputConnection: aPatch [
 
 self synthPatch addAllFirst: aPatch source
