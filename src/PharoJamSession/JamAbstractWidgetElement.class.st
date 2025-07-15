@@ -225,19 +225,20 @@ JamAbstractWidgetElement >> initializeDragWidgetEventOn: anElement [
 { #category : 'initialization' }
 JamAbstractWidgetElement >> initializeEvents [
 
-	self addEventHandlerOn: BlDropEvent do: [ :evt |
+	self addEventFilterOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
 		(self isConnector: evt gestureSource) ifTrue: [
 			| line |
 			line := evt gestureSource line.
 			evt gestureSource isOutputConnect
 				ifTrue: [
-					line geometry vertices:
-						line geometry vertices , { inputConnect positionInSpace + (inputConnect size /2) }.
+					line geometry vertices: line geometry vertices
+						, { (inputConnect positionInSpace + (inputConnect extent / 2)) }.
 					inputConnect connect: evt gestureSource ]
 				ifFalse: [
-					line geometry vertices:
-						line geometry vertices , { outputConnect positionInSpace + (outputConnect size /2) }.
+					line geometry vertices: line geometry vertices
+						,
+						{ (outputConnect positionInSpace + (outputConnect extent / 2)) }.
 					outputConnect connect: evt gestureSource ].
 			self adjustLine: evt gestureSource.
 			self notifyDrawingLine ] ]
@@ -251,7 +252,7 @@ JamAbstractWidgetElement >> initializeInputConnect [
 		c frame horizontal alignLeft.
 		c frame vertical alignCenter.
 		c margin: (BlInsets all: -30) ].
-	inputConnect addEventHandlerOn: BlDropEvent do: [ :evt |
+	inputConnect addEventFilterOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
 		evt gestureSource isOutputConnect
 			ifTrue: [
@@ -271,7 +272,7 @@ JamAbstractWidgetElement >> initializeOutputConnect [
 		c frame horizontal alignRight.
 		c frame vertical alignCenter ].
 	outputConnect transformDo: [ :t | t translateBy: 30 @ 0 ].
-	outputConnect addEventHandlerOn: BlDropEvent do: [ :evt |
+	outputConnect addEventFilterOn: BlDropEvent do: [ :evt |
 		evt consumed: true.
 		evt gestureSource isInputConnect
 			ifTrue: [
