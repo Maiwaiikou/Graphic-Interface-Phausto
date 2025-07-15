@@ -142,26 +142,22 @@ JamSliders >> initializeButton [
 
 	button := self createCircle.
 	button position: barMargin @ 0.
-	
+
 	"All event which edit value or move the button"
-	
-	self flag: #TODO.
+
 	"Handle MouseDown and Drag at the same time"
-	button addEventHandlerOn: BlDragStartEvent do: [ :evt |
-		evt consumed: true.
-		offset := evt position - self position ].
-	button addEventHandlerOn: BlDragEvent do: [ :evt |
-		evt consumed: true.
-		self handleMoveEvent: evt position - offset.
+	
+	self addEventHandlerOn: BlMouseDownEvent do: [ :event |
+		self handleMoveEvent: (self globalPointToLocal: event position) ].
+	self
+		addEventHandlerOn: BlDragStartEvent
+		do: [ :event | event consumed: true ].
+	self addEventHandlerOn: BlDragEvent do: [ :event |
+		self handleMoveEvent: (self globalPointToLocal: event position).
 		self updateValueAt: button position ].
-	self addEventHandlerOn: BlMouseDownEvent do: [ :evt |
-		evt consumed: true.
-		"offset := evt position - self position."
-		self handleMoveEvent: evt position - self positionInSpace ].
 	self addEventHandlerOn: BlMouseUpEvent do: [ :evt |
 		evt consumed: true.
 		self updateValueAt: button position ].
-
 	self addChild: button
 ]
 
