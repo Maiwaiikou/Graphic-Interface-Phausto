@@ -146,14 +146,15 @@ JamSliders >> initializeButton [
 	"All event which edit value or move the button"
 
 	"Handle MouseDown and Drag at the same time"
-	
-	self addEventHandlerOn: BlMouseDownEvent do: [ :event |
-		self handleMoveEvent: (self globalPointToLocal: event position) ].
+	self addEventHandlerOn: BlMouseDownEvent do: [ :evt |
+		evt consumed: true.
+		self handleMoveEvent: (self globalPointToLocal: evt position) ].
 	self
 		addEventHandlerOn: BlDragStartEvent
-		do: [ :event | event consumed: true ].
-	self addEventHandlerOn: BlDragEvent do: [ :event |
-		self handleMoveEvent: (self globalPointToLocal: event position).
+		do: [ :evt | evt consumed: true ].
+	self addEventHandlerOn: BlDragEvent do: [ :evt |
+		evt consumed: true.
+		self handleMoveEvent: (self globalPointToLocal: evt position).
 		self updateValueAt: button position ].
 	self addEventHandlerOn: BlMouseUpEvent do: [ :evt |
 		evt consumed: true.
