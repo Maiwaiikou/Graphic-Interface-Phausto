@@ -7,6 +7,7 @@ Class {
 	#instVars : [
 		'menu',
 		'childrenElements',
+		'selectedWidget',
 		'micro',
 		'speaker',
 		'activeDSP',
@@ -35,6 +36,9 @@ JamSession >> activeDSP: aCollectionOfDSP [
 JamSession >> addChildElement: aWidget [
 
 	childrenElements add: aWidget.
+	aWidget
+		addEventFilterOn: BlClickEvent
+		do: [ :anEvent | selectedWidget := aWidget ].
 	self drawElement
 ]
 
@@ -52,6 +56,13 @@ JamSession >> childrenElements: aCollectionOfElements [
 { #category : 'accessing' }
 JamSession >> clear [
 	self removeChildren.
+]
+
+{ #category : 'as yet unclassified' }
+JamSession >> closeSelectedWidget [
+	selectedWidget ifNil: [ ^self ].
+	selectedWidget close.
+	selectedWidget := nil.
 ]
 
 { #category : 'dsp management' }
@@ -280,7 +291,11 @@ JamSession >> open [
 	space := BlSpace new.
 	space toTheme: theme.
 	space root addChild: self.
+	space root addEventHandlerOn: BlKeyDownEvent do: [ :anEvent |
+		anEvent key name = 'BACKSPACE' ifTrue: [
+			self closeSelectedWidget ] ].
 	space extent: sizeElt.
+	space resizable: false.
 	space show
 ]
 
@@ -299,6 +314,17 @@ JamSession >> resetElements [
 	micro resetToInit.
 	speaker resetToInit.
 	childrenElements do: [ :elt | elt resetToInit ]
+]
+
+{ #category : 'accessing' }
+JamSession >> selectedWidget [
+	^ selectedWidget
+]
+
+{ #category : 'accessing' }
+JamSession >> selectedWidget: aWidget [
+
+	selectedWidget := aWidget
 ]
 
 { #category : 'initialization' }

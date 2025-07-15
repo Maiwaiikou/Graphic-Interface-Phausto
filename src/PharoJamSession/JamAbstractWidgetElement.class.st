@@ -188,13 +188,6 @@ JamAbstractWidgetElement >> initialize [
 		c vertical fitContent.
 		c horizontal fitContent ].
 	self initializeEvents.
-
-	self flag: #ToUncommentWhenDspProblemIsSolve
-	"self announcer when: ConnectionAnnouncer send: #onConnection to: self.
-	self announcer
-		when: DisconnectionAnnouncer
-		send: #onDisconnection
-		to: self"
 ]
 
 { #category : 'initialization' }
