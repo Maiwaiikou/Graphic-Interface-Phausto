@@ -107,11 +107,6 @@ JamAbstractWidgetElement >> barElement [
 
 { #category : 'initialize-release' }
 JamAbstractWidgetElement >> close [
-
-	self notifyEnableCreation.
-	
-
-
 	(self isConnector: inputConnect) ifTrue: [
 		inputConnect checkBeforeDisconnect ].
 	(self isConnector: outputConnect) ifTrue: [
