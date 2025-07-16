@@ -29,11 +29,15 @@ JamSliders class >> withAPhControlParam: aPhControlParam [
 
 	| slider |
 	slider := self new.
-	aPhControlParam initialValue ifNotNil: [ :initVal |
-		slider value: initVal ].
 	aPhControlParam max ifNotNil: [ :max | slider maxValue: max ].
 	aPhControlParam min ifNotNil: [ :min | slider minValue: min ].
+	aPhControlParam initialValue
+		ifNotNil: [ :initVal | slider value: initVal ]
+		ifNil: [ slider value: slider minValue ].
 	aPhControlParam step ifNotNil: [ :step | slider step: step ].
+	(slider value between: slider minValue and: slider maxValue) ifTrue: [
+		slider whenLayoutedDoOnce: [ :anEvent |
+			slider pointAt: slider value ] ].
 
 	^ slider
 ]
@@ -301,6 +305,5 @@ JamSliders >> value [
 JamSliders >> value: anInteger [
 
 	value := anInteger clampBetween: minValue and: maxValue.
-	self whenLayoutedDoOnce: [ :anEvent | self pointAt: value ].
 	self callBack ifNotNil: [ :c | c value: value ]
 ]

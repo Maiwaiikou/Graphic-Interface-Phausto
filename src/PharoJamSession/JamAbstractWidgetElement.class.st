@@ -142,15 +142,14 @@ JamAbstractWidgetElement >> configuredString: aString [
 JamAbstractWidgetElement >> connectSlider: aToSlider toLabel: aTextElement [
 
 	aToSlider callBack: [ :value |
-		aTextElement text: (self configuredString: ((value round: 2) asString)) .
-		self parent activeDSP ifNotNil: [  
-		self parent activeDSP setValue: value parameter: aToSlider label.]
-		
-		].
+		aTextElement text:
+			(self configuredString: (value round: 2) asString).
+		self parent activeDSP ifNotNil: [
+			self parent activeDSP setValue: value parameter: aToSlider label ] ].
 
 	aToSlider constraintsDo: [ :c |
 		c frame horizontal alignCenter.
-		c margin: (BlInsets all: 5) ].
+		c margin: (BlInsets all: 2) ].
 	slidersContainer addChild: aToSlider
 ]
 
