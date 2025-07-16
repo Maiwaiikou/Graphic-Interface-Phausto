@@ -37,8 +37,10 @@ JamSimpleTheme class >> defaultConnectorTokenProperties [
 JamSimpleTheme class >> defaultJamSessionPlaygroundTokenProperties [
 
 	^ { (ToTokenProperty
-		   name: #'JSPlayground-background'
-		   value: (Color lightYellow alpha: 0.05)) }
+		   name: #'JamSession-background'
+		   value: (Color lightYellow alpha: 0.05)). (ToTokenProperty
+		   name: #'JamSession-background-url'
+		   value: '') }
 ]
 
 { #category : 'accessing' }

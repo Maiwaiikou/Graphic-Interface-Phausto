@@ -203,11 +203,11 @@ JamSession >> initialize [
 	self initializeMicro.
 	self initializeSpeaker.
 	self addEventHandlerOn: BlDropEvent do: [ :evt |
-			evt consumed: true.
-			self flag: #ToChange.
-			(evt gestureSource isKindOf: JamConnector) ifTrue: [
-					evt gestureSource line: nil.
-					self drawElement ] ].
+		evt consumed: true.
+		self flag: #ToChange.
+		(evt gestureSource isKindOf: JamConnector) ifTrue: [
+			evt gestureSource line: nil.
+			self drawElement ] ].
 	self drawElement
 ]
 
@@ -296,8 +296,7 @@ JamSession >> open [
 	space toTheme: theme.
 	space root addChild: self.
 	space root addEventHandlerOn: BlKeyDownEvent do: [ :anEvent |
-		anEvent key name = 'BACKSPACE' ifTrue: [
-			self closeSelectedWidget ] ].
+		anEvent key name = 'BACKSPACE' ifTrue: [ self closeSelectedWidget ] ].
 	space extent: sizeElt.
 	space resizable: false.
 	space show

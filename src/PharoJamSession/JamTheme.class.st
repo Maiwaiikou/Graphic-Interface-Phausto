@@ -37,9 +37,14 @@ JamTheme class >> defaultConnectorTokenProperties [
 { #category : 'accessing' }
 JamTheme class >> defaultJamSessionPlaygroundTokenProperties [
 
-	^ { (ToTokenProperty
-		   name: #'JSPlayground-background'
-		   value: Color paleBuff ) }
+	^ {
+		  (ToTokenProperty
+			   name: #'JamSession-background'
+			   value: Color paleBuff).
+		  (ToTokenProperty
+			   name: #'JamSession-background-url'
+			   value:
+			   '') }
 ]
 
 { #category : 'accessing' }
@@ -59,8 +64,10 @@ JamTheme class >> defaultMenuTokenProperties [
 			   value: (Color red alpha: 0.09)).
 		  (ToTokenProperty name: #'menu-background' value: Color pink).
 		  (ToTokenProperty name: #'menu-height' value: 40).
-		(ToTokenProperty name:#'menu-border-color' value: (Color red alpha: 0.05)).
-		(ToTokenProperty name:#'menu-border-width' value: 1).
+		  (ToTokenProperty
+			   name: #'menu-border-color'
+			   value: (Color red alpha: 0.05)).
+		  (ToTokenProperty name: #'menu-border-width' value: 1).
 		  (ToTokenProperty
 			   name: #'subMenuContainer-background'
 			   value: (Color pink alpha: 0.1)).
