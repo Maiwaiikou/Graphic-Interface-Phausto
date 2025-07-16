@@ -202,28 +202,6 @@ JamWidgetElement class >> widgetsInstruments [
 	^ self configureFor: instList
 ]
 
-{ #category : 'widgets list' }
-JamWidgetElement class >> widgetsOscillator [
-
-	| oscillators |
-	oscillators := OrderedCollection new.
-	Oscillator subclasses do: [ :subClass |
-			subClass hasSubclasses ifTrue: [oscillators addAll: subClass subclasses] ifFalse: [ oscillators add: subClass ] ].
-	^ self configureFor: oscillators
-]
-
-{ #category : 'widgets list' }
-JamWidgetElement class >> widgetsSynths [
-
-	| synthsList |
-	synthsList := OrderedCollection new.
-	Synths subclasses do: [ :subClass |
-		subClass hasSubclasses
-			ifTrue: [ synthsList addAll: subClass subclasses ]
-			ifFalse: [ synthsList add: subClass ] ].
-	^ self configureWithoutSoundFor: synthsList
-]
-
 { #category : 'event handling' }
 JamWidgetElement >> handleInputConnection [
 

@@ -40,7 +40,13 @@ JamMenu class >> defaultFileMenu [
 
 { #category : 'as yet unclassified' }
 JamMenu class >> defaultSoundsMenu [
-	^ (self new title:'Sounds'; categories: { 'Effects' -> JamWidgetElement widgetsEffects. 'Instruments' -> JamWidgetElement widgetsInstruments. 'Oscillators' -> JamWidgetElement widgetsOscillator. 'Synths' -> JamWidgetElement widgetsSynths. } asDictionary ).
+
+	^ self new
+		  title: 'Sounds';
+		  categories: {
+				  ('Effects' -> JamWidgetElement widgetsEffects).
+				  ('Instruments' -> JamWidgetElement widgetsInstruments).
+				  } asDictionary
 ]
 
 { #category : 'initialization' }
