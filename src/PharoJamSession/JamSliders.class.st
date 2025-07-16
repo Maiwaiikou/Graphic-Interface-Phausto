@@ -228,6 +228,16 @@ JamSliders >> newRawSkin [
 	^ JamSlidersSkin new
 ]
 
+{ #category : 'api - transformations' }
+JamSliders >> pointAt: aNumber [
+
+	| posX diff coeff |
+	diff := aNumber - minValue.
+	coeff := (diff / (maxValue - minValue)).
+	posX := barMargin + (coeff * sliderBar extent x).
+	button position: posX @ 0
+]
+
 { #category : 'accessing' }
 JamSliders >> possibleValues [
 	^ possibleValues
@@ -291,6 +301,6 @@ JamSliders >> value [
 JamSliders >> value: anInteger [
 
 	value := anInteger clampBetween: minValue and: maxValue.
-
+	self whenLayoutedDoOnce: [ :anEvent | self pointAt: value ].
 	self callBack ifNotNil: [ :c | c value: value ]
 ]
