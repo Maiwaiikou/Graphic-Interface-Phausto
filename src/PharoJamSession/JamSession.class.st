@@ -39,6 +39,10 @@ JamSession >> addChildElement: aWidget [
 	aWidget
 		addEventFilterOn: BlClickEvent
 		do: [ :anEvent | selectedWidget := aWidget ].
+	aWidget announcer
+		when: DisconnectionAnnouncer
+		send: #handleSpeakerDisconnectedEvent
+		to: self.
 	self drawElement
 ]
 
