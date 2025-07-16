@@ -97,15 +97,12 @@ JamConnector >> initialize [
 { #category : 'initialization' }
 JamConnector >> initializeDrag [
 
-	| points |
 	self addEventHandlerOn: BlDragStartEvent do: [ :evt |
 		evt consumed: true.
-		self checkBeforeDisconnect.
-		points := OrderedCollection new ].
+		self checkBeforeDisconnect. ].
 	self addEventHandlerOn: BlDragEvent do: [ :evt |
 		evt consumed: true.
-		points add: evt position.
-		parent drawALine: points atConnector: self ].
+		parent drawALineAt: evt position atConnector: self ].
 	self
 		addEventHandlerOn: BlDragEndEvent
 		do: [ :evt | evt consumed: true ]

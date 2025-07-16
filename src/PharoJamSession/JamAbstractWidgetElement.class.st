@@ -63,26 +63,10 @@ JamAbstractWidgetElement >> action: aBlock [
 
 { #category : 'drawing' }
 JamAbstractWidgetElement >> adjustLine: aConnector [
-
-	| points line first last midX |
-	"aConnector line geometry class = BlPolylineGeometry ifFalse: [
-		^ self ]."
-	points := OrderedCollection new.
-	first := aConnector line geometry vertices first.
-	last := aConnector line geometry vertices last.
-	midX := aConnector calcMiddleWith: first x and: last x.
-	points add: first.
-	points add: midX @ first y.
-	points add: midX @ last y.
-	points add: last.
-	line := BlElement new.
-	line geometry: (BlBezierCurveGeometry controlPoints: points).
-	line outskirts: BlOutskirts centered.
-	line border: (BlBorder paint: Color black width: 3).
-	line addEventHandlerOn: BlClickEvent do: [
+	aConnector updateLine.
+	aConnector line addEventHandlerOn: BlClickEvent do: [
 		aConnector disconnect.
 		self notifyDrawingLine ].
-	aConnector line: line.
 	self notifyDrawingLine
 ]
 
@@ -154,12 +138,21 @@ JamAbstractWidgetElement >> connectSlider: aToSlider toLabel: aTextElement [
 ]
 
 { #category : 'drawing' }
-JamAbstractWidgetElement >> drawALine: points atConnector: aConnector [
+JamAbstractWidgetElement >> drawALineAt: aPoint atConnector: aConnector [
 
-	| newline |
+	| newline first last midX points |
 	newline := BlElement new.
-	newline border: (BlBorder paint: Color black width: 2).
-	newline geometry: (BlPolylineGeometry vertices: points).
+	points := OrderedCollection new.
+	newline border: (BlBorder paint: Color black width: 3).
+	first := aConnector positionInSpace
+	         + (aConnector width / 2 @ (aConnector height / 2)).
+	last := aPoint.
+	midX := aConnector calcMiddleWith: first x and: last x.
+	points add: first.
+	points add: midX @ first y.
+	points add: midX @ last y.
+	points add: last.
+	newline geometry: (BlBezierCurveGeometry controlPoints: points).
 	newline zIndex: 2.
 	newline outskirts: BlOutskirts centered.
 	aConnector line: newline.
@@ -227,11 +220,11 @@ JamAbstractWidgetElement >> initializeEvents [
 			line := evt gestureSource line.
 			evt gestureSource isOutputConnect
 				ifTrue: [
-					line geometry vertices: line geometry vertices
+					line geometry controlPoints: line geometry controlPoints
 						, { (inputConnect positionInSpace + (inputConnect extent / 2)) }.
 					inputConnect connect: evt gestureSource ]
 				ifFalse: [
-					line geometry vertices: line geometry vertices
+					line geometry controlPoints: line geometry controlPoints
 						,
 						{ (outputConnect positionInSpace + (outputConnect extent / 2)) }.
 					outputConnect connect: evt gestureSource ].
