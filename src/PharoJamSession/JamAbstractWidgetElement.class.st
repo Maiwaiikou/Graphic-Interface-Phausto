@@ -143,7 +143,8 @@ JamAbstractWidgetElement >> connectSlider: aToSlider toLabel: aTextElement [
 
 	aToSlider callBack: [ :value |
 		aTextElement text: (self configuredString: ((value round: 2) asString)) .
-		self parent activeDSP setValue: value parameter: aToSlider label.
+		self parent activeDSP ifNotNil: [  
+		self parent activeDSP setValue: value parameter: aToSlider label.]
 		
 		].
 
