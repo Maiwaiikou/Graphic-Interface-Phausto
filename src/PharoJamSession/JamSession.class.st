@@ -5,6 +5,7 @@ Class {
 	#name : 'JamSession',
 	#superclass : 'ToElement',
 	#instVars : [
+		'backgroundTiles',
 		'menu',
 		'childrenElements',
 		'selectedWidget',
@@ -44,6 +45,12 @@ JamSession >> addChildElement: aWidget [
 		send: #handleSpeakerDisconnectedEvent
 		to: self.
 	self drawElement
+]
+
+{ #category : 'initialization' }
+JamSession >> backgroundTiles [
+
+^ backgroundTiles
 ]
 
 { #category : 'accessing' }
@@ -108,7 +115,7 @@ JamSession >> drawElement [
 	self removeElementExcept: {
 			menu.
 			micro.
-			speaker }.
+			speaker. backgroundTiles }.
 	micro outputConnect line ifNotNil: [
 		self addChild: micro outputConnect line ].
 	speaker inputConnect line ifNotNil: [
@@ -198,17 +205,20 @@ JamSession >> initialize [
 	self layout: BlBasicLayout new.
 	sizeElt := 1200 @ 600.
 	self extent: sizeElt.
+
 	self initializeDefaultTheme.
+	"self intializeBackgroundTiles.
 	self initializeMenu.
 	self initializeMicro.
-	self initializeSpeaker.
+	self initializeSpeaker."
+
 	self addEventHandlerOn: BlDropEvent do: [ :evt |
-		evt consumed: true.
-		self flag: #ToChange.
-		(evt gestureSource isKindOf: JamConnector) ifTrue: [
-			evt gestureSource line: nil.
-			self drawElement ] ].
-	self drawElement
+			evt consumed: true.
+			self flag: #ToChange.
+			(evt gestureSource isKindOf: JamConnector) ifTrue: [
+					evt gestureSource line: nil.
+					self drawElement ] ].
+	"self drawElement"
 ]
 
 { #category : 'initialization' }
@@ -267,6 +277,27 @@ JamSession >> initializeSpeaker [
 	self addChild: speaker
 ]
 
+{ #category : 'initialization' }
+JamSession >> intializeBackgroundTiles [
+
+	backgroundTiles := BlElement new
+		                   layout: (BlGridLayout new
+				                    columnCount: 64;
+				                    rowCount: 64);
+		                   extent: 1200 @ 600.
+	1 to: 64 squared do: [ :i |
+			backgroundTiles addChild: (BlElement new
+					 geometry: BlRectangleGeometry new;
+					 extent: 20 @ 20;
+					 background: (Color
+							  h: 53
+							  s: 1
+							  l: (Random new nextIntegerBetween: 64 and: 88) / 100
+							  alpha: 1)) ].
+
+	self addChild: (backgroundTiles position: 0 @ 40)
+]
+
 { #category : 'accessing' }
 JamSession >> menu [
 	^ menu
@@ -294,9 +325,17 @@ JamSession >> open [
 	| space |
 	space := BlSpace new.
 	space toTheme: theme.
+	
+	self intializeBackgroundTiles.
+	self initializeMenu.
+	self initializeMicro.
+	self initializeSpeaker.
 	space root addChild: self.
-	space root addEventHandlerOn: BlKeyDownEvent do: [ :anEvent |
-		anEvent key name = 'BACKSPACE' ifTrue: [ self closeSelectedWidget ] ].
+
+	self drawElement space root
+		addEventHandlerOn: BlKeyDownEvent
+		do: [ :anEvent |
+			anEvent key name = 'BACKSPACE' ifTrue: [ self closeSelectedWidget ] ].
 	space extent: sizeElt.
 	space resizable: false.
 	space show
