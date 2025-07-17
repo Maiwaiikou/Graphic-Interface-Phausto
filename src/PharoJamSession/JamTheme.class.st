@@ -70,7 +70,7 @@ JamTheme class >> defaultMenuTokenProperties [
 		  (ToTokenProperty name: #'menu-border-width' value: 1).
 		  (ToTokenProperty
 			   name: #'subMenuContainer-background'
-			   value: (Color pink alpha: 0.1)).
+			   value: (Color pink alpha: 0.7 )).
 		  (ToTokenProperty
 			   name: #'subMenuContainer-effect'
 			   value: BlNullEffect new) }
