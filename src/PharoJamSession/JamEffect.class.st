@@ -22,5 +22,11 @@ JamEffect >> initialize [
 
 	super initialize.
 	numberOfInputs := 1.
-	self initializeControlParameters
+	
+]
+
+{ #category : 'initialization' }
+JamEffect >> initializeControlParameters [
+
+	controlParameters := Dictionary new
 ]
